@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toán Vui — Học Toán tiểu học</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+  :root {
+    --radius: 0.625rem;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+  .dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --primary: oklch(0.985 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+  }
+  a { color: inherit; text-decoration: none; }
+  a:hover { color: inherit; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  body {
+    min-height: 100vh;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: Geist, Inter, ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* HEADER */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    border-bottom: 1px solid var(--border);
+    background: var(--background);
+  }
+  .header-inner {
+    max-width: 1280px; margin: 0 auto; padding: 0 24px;
+    height: 56px; display: flex; align-items: center; gap: 24px;
+  }
+  .brand { display: flex; align-items: center; gap: 9px; }
+  .brand-logo {
+    width: 24px; height: 24px; border-radius: 6px; background: var(--primary);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .brand-name { font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
+  .header-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .icon-btn {
+    width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    background: var(--background); color: var(--foreground); cursor: pointer; transition: background 150ms;
+  }
+  .icon-btn:hover { background: var(--accent); }
+  .cta {
+    display: inline-flex; align-items: center; height: 32px; padding: 0 13px;
+    border-radius: var(--radius-md); background: var(--primary); color: var(--primary-foreground);
+    font-size: 13.5px; font-weight: 500; transition: opacity 150ms;
+  }
+  .cta:hover { opacity: 0.9; color: var(--primary-foreground); }
+
+  /* HERO */
+  .hero { border-bottom: 1px solid var(--border); }
+  .hero-inner {
+    max-width: 1280px; margin: 0 auto; padding: 104px 24px 88px;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+  .hero h1 {
+    margin: 0 0 22px; font-size: clamp(34px, 4.8vw, 56px); line-height: 1.1;
+    font-weight: 600; letter-spacing: -0.035em; max-width: 800px; text-wrap: pretty;
+  }
+  .hero p {
+    margin: 0; font-size: clamp(15.5px, 1.5vw, 17px); line-height: 1.65;
+    color: var(--muted-foreground); max-width: 520px;
+  }
+
+  /* GRADES + LESSONS */
+  .grades { max-width: 1280px; margin: 0 auto; padding: 56px 24px 80px; }
+  .tabs {
+    display: inline-flex; align-items: center; gap: 3px; padding: 3px;
+    background: var(--muted); border-radius: var(--radius-lg); margin-bottom: 28px; flex-wrap: wrap;
+  }
+  .tab {
+    height: 32px; padding: 0 15px; border: none; border-radius: var(--radius-md);
+    font-family: inherit; font-size: 13.5px; font-weight: 500; cursor: pointer; transition: all 150ms;
+    background: transparent; color: var(--muted-foreground); box-shadow: none;
+  }
+  .tab.active {
+    background: var(--background); color: var(--foreground); box-shadow: var(--shadow-xs);
+  }
+  .cards {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;
+    animation: fadeIn 200ms ease;
+  }
+  .card {
+    display: block; padding: 20px; border: 1px solid var(--border); border-radius: var(--radius-lg);
+    background: var(--card); color: var(--card-foreground); transition: background 150ms;
+  }
+  .card.available:hover { background: var(--accent); }
+  .card.soon { opacity: 0.6; pointer-events: none; }
+  .card-top {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px;
+  }
+  .card-symbol {
+    width: 34px; height: 34px; border: 1px solid var(--border); border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600;
+    font-family: 'Geist Mono', ui-monospace, monospace; background: var(--background); flex-shrink: 0;
+  }
+  .badge {
+    display: inline-flex; align-items: center; height: 21px; padding: 0 8px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 500;
+  }
+  .badge.ready { background: var(--primary); color: var(--primary-foreground); }
+  .badge.soon { border: 1px solid var(--border); color: var(--muted-foreground); }
+  .card-title { font-size: 15.5px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .card-desc { font-size: 13.5px; line-height: 1.55; color: var(--muted-foreground); }
+  .card-link {
+    display: inline-flex; align-items: center; gap: 5px; margin-top: 16px;
+    font-size: 13px; font-weight: 500; color: var(--foreground);
+  }
+  .card-link.soon { color: var(--muted-foreground); }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); }
+  .footer-inner {
+    max-width: 1280px; margin: 0 auto; padding: 32px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .footer-inner p { margin: 0; font-size: 13.5px; color: var(--muted-foreground); line-height: 1.6; }
+  .footer-inner .lead { max-width: 520px; }
+</style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary-foreground)" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        </div>
+        <span class="brand-name" id="siteName">Toán Vui</span>
+      </div>
+      <div class="header-actions">
+        <button id="themeToggle" class="icon-btn" title="Đổi giao diện">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
+        </button>
+        <a class="cta" href="dong-ho-hoc-gio.html">Bắt đầu học</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>Hãy yêu thích sự học trong mọi kỷ nguyên, con nhé</h1>
+      <p>Toán tiểu học, Lớp 1 đến Lớp 5. Miễn phí, không quảng cáo.</p>
+    </div>
+  </section>
+
+  <!-- GRADES + LESSONS -->
+  <section class="grades" id="lop">
+    <div class="tabs" id="tabs"></div>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <p class="lead">Làm cho con gái mình và tặng cộng đồng. Mã nguồn mở, dùng thoải mái.</p>
+      <p id="footerNote">© 2026 Toán Vui</p>
+    </div>
+  </footer>
+
+<script>
+  // Chỉ liệt kê các bài ĐÃ LIVE. Thêm lớp/bài mới bằng cách chèn object có 'href'.
+  const GRADES = [
+    { num:0, label:'Mẫu giáo', summary:'5 tuổi — làm quen số và giờ',
+      lessons:[
+        { title:'Xem giờ đơn giản', symbol:'12', desc:'Nhận biết kim ngắn, kim dài và đọc giờ đúng.', href:'dong-ho-hoc-gio.html' },
+        { title:'Nhận biết hình', symbol:'○', desc:'Hình phẳng và khối 3D: vuông, tròn, tam giác, cầu, trụ, nón.', href:'hoc-hinh-khoi.html' },
+        { title:'Điểm và đường thẳng', symbol:'•—', desc:'Làm quen điểm, đoạn thẳng, đường thẳng và tia.', href:'hoc-diem-duong-thang.html' },
+        { title:'So sánh trong phạm vi 10', symbol:'>', desc:'Ba dấu lớn hơn, bé hơn, bằng — tia số và bài tập.', href:'so-sanh-trong-10.html' },
+      ] },
+  ];
+
+  let current = 0;
+  const tabsEl = document.getElementById('tabs');
+  const cardsEl = document.getElementById('cards');
+
+  function renderTabs() {
+    tabsEl.innerHTML = '';
+    GRADES.forEach(g => {
+      const b = document.createElement('button');
+      b.className = 'tab' + (g.num === current ? ' active' : '');
+      b.textContent = g.label;
+      b.addEventListener('click', () => { current = g.num; render(); });
+      tabsEl.appendChild(b);
+    });
+  }
+
+  function renderCards() {
+    const active = GRADES.find(g => g.num === current) || GRADES[0];
+    cardsEl.innerHTML = '';
+    // re-trigger fade-in animation
+    cardsEl.style.animation = 'none';
+    void cardsEl.offsetWidth;
+    cardsEl.style.animation = 'fadeIn 200ms ease';
+
+    active.lessons.forEach(l => {
+      const ready = !!l.href;
+      const card = document.createElement('a');
+      card.className = 'card ' + (ready ? 'available' : 'soon');
+      card.href = ready ? l.href : '#lop';
+      card.innerHTML = `
+        <div class="card-top">
+          <span class="card-symbol">${l.symbol}</span>
+          <span class="badge ${ready ? 'ready' : 'soon'}">${ready ? 'Sẵn sàng' : 'Sắp có'}</span>
+        </div>
+        <div class="card-title">${l.title}</div>
+        <div class="card-desc">${l.desc}</div>
+        <div class="card-link ${ready ? '' : 'soon'}">
+          ${ready ? 'Vào học' : 'Đang soạn'}
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </div>`;
+      cardsEl.appendChild(card);
+    });
+  }
+
+  function render() { renderTabs(); renderCards(); }
+
+  // theme toggle
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark');
+  });
+
+  render();
+</script>
+</body>
+</html>
