@@ -25,8 +25,7 @@
   .tab.on { font-weight: 600; background: #FFFFFF; color: #18181B; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
   .tabhint { font-size: 14px; color: #A1A1AA; }
 
-  .section { display: none; }
-  .section.on { display: block; }
+  .section:not(.on) { display: none !important; }
 
   .signs-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); gap: 16px; }
   .card { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
@@ -59,7 +58,7 @@
   .panel strong { font-weight: 600; color: #09090B; }
 
   .play { max-width: 760px; margin: 0 auto; overflow: hidden; }
-  .phead { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 24px; border-bottom: 1px solid #E4E4E7; }
+  .phead { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 24px; border-bottom: 1px solid #E4E4E7; flex-wrap: wrap; }
   .phead h2 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
   .phead .sub { font-size: 13px; color: #A1A1AA; }
   .score { font-size: 14px; font-weight: 600; }
@@ -81,11 +80,16 @@
   .btn-ghost { padding: 0 12px; height: 32px; font-size: 14px; border: none; background: transparent; color: #52525B; }
   .btn-ghost:hover { background: #F4F4F5; }
 
+  .levels { display: flex; gap: 4px; padding: 4px; background: #F4F4F5; border-radius: 10px; }
+  .lvbtn { padding: 7px 14px; border: none; border-radius: 8px; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); background: transparent; color: #71717A; }
+  .lvbtn.on { font-weight: 600; background: #FFFFFF; color: #18181B; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+
   .quiz { overflow: hidden; }
   .qbody { padding: 8px 24px 24px; display: grid; grid-template-columns: repeat(auto-fill,minmax(320px,1fr)); gap: 4px 28px; }
   .q { padding: 18px 0; border-bottom: 1px solid #F4F4F5; display: flex; flex-direction: column; gap: 12px; }
-  .qtext { display: flex; gap: 10px; font-size: 16px; font-weight: 500; line-height: 1.5; }
-  .qnum { color: #A1A1AA; }
+  .qtext { display: flex; align-items: center; gap: 12px; line-height: 1.5; }
+  .qnum { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; background: #F4F4F5; color: #71717A; font-size: 13px; font-weight: 600; }
+  .qlabel { font-size: 18px; font-weight: 600; letter-spacing: .01em; }
   .qopts { display: grid; grid-template-columns: repeat(auto-fit,minmax(120px,1fr)); gap: 8px; }
   .opt { text-align: center; padding: 12px 14px; border: 1px solid #E4E4E7; border-radius: 8px; background: #FFFFFF; color: #09090B; font-family: inherit; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); }
   .qexplain { font-size: 14px; line-height: 1.6; color: #52525B; background: #FAFAFA; border-radius: 8px; padding: 12px 14px; }
@@ -95,6 +99,8 @@
 </style>
 </head>
 <body>
+<a href="index.html" id="tv-home" aria-label="Về trang chủ" style="position:fixed;top:14px;left:14px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:1px solid #E4E4E7;border-radius:999px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#18181B;font:500 14px/1 'Be Vietnam Pro',system-ui,sans-serif;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Trang chủ</a>
+
 <div class="page">
   <div class="wrap col16" style="padding:64px 0 36px">
     <span class="eyebrow">Mẫu giáo</span>
@@ -164,6 +170,43 @@
   ];
 
   const QUIZ = PAIRS.map(p => fillSign(p[0], p[1])).concat(WORD);
+
+  const EXPR = [
+    ['9', 9, '4 + 1', 5], ['8', 8, '10 − 2', 8], ['7', 7, '2 + 6', 8],
+    ['3 + 4', 7, '7', 7], ['7 + 2', 9, '8', 8], ['10 − 2', 8, '7', 7],
+    ['5 + 5', 10, '10', 10], ['6 − 3', 3, '1 + 1', 2], ['2 + 3', 5, '9 − 4', 5],
+    ['10 − 6', 4, '4 + 2', 6], ['1 + 8', 9, '10 − 1', 9], ['4 + 4', 8, '10 − 3', 7],
+    ['6', 6, '3 + 3', 6], ['10', 10, '5 + 4', 9], ['0 + 7', 7, '9 − 3', 6],
+    ['8 − 5', 3, '2 + 1', 3], ['5 + 2', 7, '10 − 4', 6], ['9 − 9', 0, '0', 0],
+    ['3 + 3', 6, '2 + 5', 7], ['10 − 5', 5, '1 + 3', 4], ['4 + 5', 9, '10 − 2', 8],
+    ['7 − 2', 5, '2 + 4', 6], ['6 + 4', 10, '10 − 0', 10], ['8 − 3', 5, '5', 5]
+  ];
+
+  function fillExpr(row) {
+    const [la, lv, rb, rv] = row;
+    const s = sgOf(lv, rv);
+    return {
+      text: la + '  …  ' + rb, options: SG, answer: SG.indexOf(s),
+      explain: 'Tính hai bên trước: ' + la + ' = ' + lv + ' và ' + rb + ' = ' + rv + '. Vì ' + lv + ' ' + sgWord(s) + ' ' + rv + ' nên điền dấu ' + s + '.'
+    };
+  }
+
+  const ADV_WORD = [
+    { text: 'Điền số thích hợp: 3 + 2 < …', options: ['4','5','6'], answer: 2,
+      explain: '3 + 2 = 5, cần số lớn hơn 5 nên chọn 6.' },
+    { text: 'Điền số thích hợp: … < 10 − 4', options: ['5','6','7'], answer: 0,
+      explain: '10 − 4 = 6, cần số bé hơn 6 nên chọn 5.' },
+    { text: 'Số nào làm cho 7 = 4 + … đúng?', options: ['2','3','4'], answer: 1,
+      explain: '4 + 3 = 7 nên số cần điền là 3.' },
+    { text: 'Bạn An có 4 + 3 quả cam, bạn Bình có 9 − 1 quả cam. Ai nhiều hơn?', options: ['Bạn An','Bạn Bình','Bằng nhau'], answer: 1,
+      explain: '4 + 3 = 7 và 9 − 1 = 8. Vì 8 > 7 nên bạn Bình nhiều hơn.' },
+    { text: 'Trong các số 2 + 5, 10 − 4, 3 + 3 — kết quả nào lớn nhất?', options: ['2 + 5','10 − 4','3 + 3'], answer: 0,
+      explain: '2 + 5 = 7, 10 − 4 = 6, 3 + 3 = 6. Lớn nhất là 7.' },
+    { text: 'Sắp theo thứ tự từ bé đến lớn: 4 + 1, 8 − 5, 2 + 6', options: ['8 − 5, 4 + 1, 2 + 6','4 + 1, 8 − 5, 2 + 6','2 + 6, 4 + 1, 8 − 5'], answer: 0,
+      explain: 'Tính ra: 5, 3, 8. Từ bé đến lớn là 3 < 5 < 8, tức 8 − 5, 4 + 1, 2 + 6.' }
+  ];
+
+  const QUIZ_ADV = EXPR.map(fillExpr).concat(ADV_WORD);
   const SIGNS = ['>', '<', '='];
 
   function rnd(max) { return Math.floor(Math.random() * (max + 1)); }
@@ -177,17 +220,15 @@
     signs: 'Ba dấu cần nhớ: lớn hơn, bé hơn, bằng',
     line: 'Bấm hai số trên tia số để so sánh',
     play: 'Đếm rồi chọn dấu đúng',
-    quiz: '40 bài tập — điền dấu và câu hỏi'
+    quiz: 'Bài tập cơ bản và nâng cao'
   };
 
-  const state = { tab: 'signs', picked: {}, sel: [3, 8], round: { a: 4, b: 6 }, answer: null, right: 0, total: 0 };
+  const state = { tab: 'signs', picked: {}, pickedAdv: {}, level: 'basic', sel: [3, 8], round: { a: 4, b: 6 }, answer: null, right: 0, total: 0 };
 
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const dots = (n, color) => Array.from({ length: n }, () => '<span class="dot" style="background:' + color + '"></span>').join('');
-  const arrowSvg = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 
-  // ---- Tabs ----
   function renderTabs() {
     document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.tab === state.tab));
     document.querySelectorAll('.section').forEach(s => s.classList.remove('on'));
@@ -200,7 +241,7 @@
     if (state.tab === 'play') renderPlay();
   }));
 
-  // ---- Ba dấu (static) ----
+  // ---- Ba dấu ----
   function renderSigns() {
     $('sec-signs').innerHTML = `
       <div class="signs-grid">
@@ -251,8 +292,7 @@
         <p>Trên tia số, số nào đứng <strong>bên phải thì lớn hơn</strong>, số nào đứng <strong>bên trái thì bé hơn</strong>. Số 0 là số bé nhất, số 10 là số lớn nhất trong phạm vi này.</p>
       </div>`;
     $('sec-line').querySelectorAll('.numbtn').forEach(b => b.addEventListener('click', () => {
-      const n = +b.dataset.n;
-      state.sel = [state.sel[1], n];
+      state.sel = [state.sel[1], +b.dataset.n];
       renderLine();
     }));
   }
@@ -302,10 +342,13 @@
     $('play-next').addEventListener('click', () => { state.round = newRound(); state.answer = null; renderPlay(); });
   }
 
-  // ---- Bài tập (quiz) ----
+  // ---- Bài tập (có 2 mức: cơ bản / nâng cao) ----
+  const bank = () => state.level === 'adv' ? QUIZ_ADV : QUIZ;
+  const store = () => state.level === 'adv' ? state.pickedAdv : state.picked;
+
   function optStyle(qi, oi) {
-    const p = state.picked[qi];
-    const correct = QUIZ[qi].answer === oi;
+    const b = bank(), p = store()[qi];
+    const correct = b[qi].answer === oi;
     let bg = '#FFFFFF', bd = '#E4E4E7', fg = '#09090B', fw = '500', extra = '';
     if (p !== undefined) {
       if (correct) { bg = '#F4F4F5'; bd = accent; fg = accent; fw = '600'; }
@@ -314,27 +357,28 @@
     }
     return 'border:1px solid ' + bd + ';background:' + bg + ';color:' + fg + ';font-weight:' + fw + ';cursor:' + (p === undefined ? 'pointer' : 'default') + ';' + extra;
   }
-
   function updateQuizHeader() {
-    const score = Object.keys(state.picked).filter(k => state.picked[k] === QUIZ[k].answer).length;
-    const done = Object.keys(state.picked).length === QUIZ.length;
-    $('quiz-score').textContent = 'Đúng ' + score + '/' + QUIZ.length;
-    $('quiz-closing').textContent = done
-      ? (score === QUIZ.length ? 'Tuyệt vời, em trả lời đúng hết!' : 'Xem lại phần Ba dấu và Tia số rồi thử lại nhé.')
-      : 'Đã làm ' + Object.keys(state.picked).length + '/' + QUIZ.length + ' bài. Làm hết để xem kết quả.';
+    const b = bank(), s = store();
+    const score = Object.keys(s).filter(k => s[k] === b[k].answer).length;
+    const answered = Object.keys(s).length;
+    $('quiz-score').textContent = 'Đúng ' + score + '/' + b.length;
+    $('quiz-sub').textContent = state.level === 'adv'
+      ? b.length + ' bài nâng cao — tính hai bên rồi so sánh'
+      : b.length + ' bài — bấm vào đáp án em chọn';
+    $('quiz-closing').textContent = answered === b.length
+      ? (score === b.length ? 'Tuyệt vời, em trả lời đúng hết!' : 'Xem lại phần Ba dấu và Tia số rồi thử lại nhé.')
+      : 'Đã làm ' + answered + '/' + b.length + ' bài. Làm hết để xem kết quả.';
   }
-
   function updateQuestion(qi) {
     const qEl = $('q-' + qi);
     qEl.querySelectorAll('.opt').forEach((btn, oi) => btn.setAttribute('style', optStyle(qi, oi)));
-    const ex = qEl.querySelector('.qexplain');
-    ex.style.display = state.picked[qi] !== undefined ? 'block' : 'none';
+    qEl.querySelector('.qexplain').style.display = store()[qi] !== undefined ? 'block' : 'none';
   }
-
-  function renderQuiz() {
-    const qs = QUIZ.map((q, qi) => `
+  function renderPractice() {
+    const b = bank();
+    const qs = b.map((q, qi) => `
       <div class="q" id="q-${qi}">
-        <div class="qtext"><span class="qnum">${qi + 1}.</span><span>${esc(q.text)}</span></div>
+        <div class="qtext"><span class="qnum">${qi + 1}</span><span class="qlabel">${esc(q.text)}</span></div>
         <div class="qopts">${q.options.map((label, oi) =>
           '<button type="button" class="opt" data-qi="' + qi + '" data-oi="' + oi + '" style="' + optStyle(qi, oi) + '">' + esc(label) + '</button>').join('')}</div>
         <div class="qexplain" style="display:none">${esc(q.explain)}</div>
@@ -342,32 +386,41 @@
     $('sec-quiz').innerHTML = `
       <div class="phead">
         <div style="display:flex;flex-direction:column;gap:2px">
-          <h2>Bài tập</h2><span class="sub">40 bài — bấm vào đáp án em chọn</span>
+          <h2>Bài tập</h2><span class="sub" id="quiz-sub"></span>
         </div>
-        <div style="display:flex;align-items:center;gap:12px">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <div class="levels">
+            <button type="button" class="lvbtn${state.level==='basic'?' on':''}" data-lv="basic">Cơ bản</button>
+            <button type="button" class="lvbtn${state.level==='adv'?' on':''}" data-lv="adv">Nâng cao</button>
+          </div>
           <span class="score" id="quiz-score"></span>
-          <button type="button" class="btn btn-ghost" id="quiz-reset">Làm lại</button>
+          <button type="button" class="btn-ghost" id="quiz-reset">Làm lại</button>
         </div>
       </div>
       <div class="qbody">${qs}<p class="closing" id="quiz-closing"></p></div>`;
+    $('sec-quiz').querySelectorAll('.lvbtn').forEach(btn => btn.addEventListener('click', () => {
+      if (state.level === btn.dataset.lv) return;
+      state.level = btn.dataset.lv; renderPractice();
+    }));
     $('sec-quiz').querySelectorAll('.opt').forEach(btn => btn.addEventListener('click', () => {
       const qi = +btn.dataset.qi, oi = +btn.dataset.oi;
-      if (state.picked[qi] !== undefined) return;
-      state.picked[qi] = oi;
+      if (store()[qi] !== undefined) return;
+      store()[qi] = oi;
       updateQuestion(qi); updateQuizHeader();
     }));
-    $('quiz-reset').addEventListener('click', () => { state.picked = {}; renderQuiz(); });
-    QUIZ.forEach((q, qi) => updateQuestion(qi));
+    $('quiz-reset').addEventListener('click', () => {
+      if (state.level === 'adv') state.pickedAdv = {}; else state.picked = {};
+      renderPractice();
+    });
+    b.forEach((q, qi) => updateQuestion(qi));
     updateQuizHeader();
   }
 
-  // init
   renderSigns();
   renderLine();
   renderPlay();
-  renderQuiz();
+  renderPractice();
   renderTabs();
 </script>
-<script>(function(){function h(){if(document.getElementById('tv-home'))return;var a=document.createElement('a');a.id='tv-home';a.href='index.html';a.setAttribute('aria-label','Về trang chủ');a.style.cssText="position:fixed;top:14px;left:14px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:1px solid #E4E4E7;border-radius:999px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#18181B;font:500 14px/1 system-ui,-apple-system,'Be Vietnam Pro',sans-serif;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.08)";a.innerHTML='<svg width=\'15\' height=\'15\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><path d=\'M19 12H5M12 19l-7-7 7-7\'/></svg>Trang chủ';document.body.appendChild(a);}if(document.readyState!=='loading')h();document.addEventListener('DOMContentLoaded',h);window.addEventListener('load',h);setTimeout(h,800);setTimeout(h,2000);})();</script>
 </body>
 </html>
