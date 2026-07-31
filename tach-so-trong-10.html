@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tách số trong phạm vi 10 — Toán Vui</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #FFFFFF; color: #09090B; font-family: 'Be Vietnam Pro', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .page { min-height: 100vh; padding: 0 24px 96px; }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+  .col16 { display: flex; flex-direction: column; gap: 16px; }
+
+  .eyebrow { font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: #A1A1AA; }
+  h1.title { margin: 0; font-size: 44px; line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; }
+  .intro { margin: 0; max-width: 660px; font-size: 17px; line-height: 1.65; color: #52525B; text-wrap: pretty; }
+
+  .tabbar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 0 auto 36px; }
+  .tabs { display: flex; gap: 4px; padding: 4px; background: #F4F4F5; border-radius: 10px; width: fit-content; }
+  .tab { padding: 9px 18px; border: none; border-radius: 8px; white-space: nowrap; font-family: inherit; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); background: transparent; color: #71717A; }
+  .tab.on { font-weight: 600; background: #FFFFFF; color: #18181B; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+  .tabhint { font-size: 14px; color: #A1A1AA; }
+
+  .section:not(.on) { display: none !important; }
+
+  .card { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 22px; }
+  .try-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .try-head h2 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+  .try-head .sub { font-size: 14px; color: #71717A; }
+  .numsel { display: flex; gap: 8px; flex-wrap: wrap; }
+  .numbtn { min-width: 48px; padding: 10px 0; border: 1px solid #E4E4E7; border-radius: 8px; background: #FFFFFF; color: #09090B; font-family: inherit; font-size: 18px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); }
+  .numbtn.on { border-color: #18181B; background: #F4F4F5; color: #18181B; font-weight: 700; }
+
+  .arena { background: #FAFAFA; border-radius: 10px; padding: 28px 24px; display: flex; flex-direction: column; gap: 24px; align-items: center; }
+  .arena-total { display: flex; align-items: center; gap: 10px; }
+  .arena-total .lbl { font-size: 15px; color: #71717A; }
+  .arena-total .val { font-size: 40px; font-weight: 700; line-height: 1; }
+  .dots { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; max-width: 520px; }
+  .slider { width: min(440px,100%); accent-color: #FF6B00; cursor: pointer; }
+  .parts { display: grid; grid-template-columns: 1fr auto 1fr; gap: 18px; align-items: center; width: min(520px,100%); }
+  .partbox { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .partbox .lbl { font-size: 13px; color: #A1A1AA; }
+  .partbox .val { font-size: 34px; font-weight: 700; line-height: 1; }
+  .parts .and { font-size: 24px; font-weight: 600; color: #A1A1AA; text-align: center; }
+  .sumtext { font-size: 19px; font-weight: 600; letter-spacing: .02em; }
+  .trynote { margin: 0; font-size: 15px; line-height: 1.65; color: #52525B; }
+
+  .tip { background: #FAFAFA; border: 1px solid #E4E4E7; border-radius: 12px; padding: 22px 24px; display: flex; flex-direction: column; gap: 10px; }
+  .tip h3 { margin: 0; font-size: 17px; font-weight: 600; }
+  .tip p { margin: 0; font-size: 15px; line-height: 1.65; color: #52525B; }
+  .tip strong { font-weight: 600; color: #09090B; }
+
+  .table-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(320px,1fr)); gap: 16px; align-items: start; }
+  .tcard { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .tcard-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .tcard-head h3 { margin: 0; font-size: 18px; font-weight: 600; }
+  .tcard-head .cnt { font-size: 13px; color: #A1A1AA; }
+  .trow { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; background: #FAFAFA; border-radius: 8px; padding: 10px 14px; }
+  .trow .expr { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .trow .rdots { display: flex; gap: 5px; justify-content: flex-end; flex-wrap: wrap; }
+
+  .panel { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; overflow: hidden; }
+  .phead { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 24px; border-bottom: 1px solid #E4E4E7; flex-wrap: wrap; }
+  .phead h2 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+  .phead .sub { font-size: 13px; color: #A1A1AA; }
+  .score { font-size: 14px; font-weight: 600; }
+  .btn-ghost { padding: 0 12px; height: 32px; font-size: 14px; border: none; background: transparent; color: #52525B; font-family: inherit; font-weight: 600; cursor: pointer; border-radius: 8px; }
+  .btn-ghost:hover { background: #F4F4F5; }
+  .qbody { padding: 8px 24px 24px; display: grid; grid-template-columns: repeat(auto-fill,minmax(320px,1fr)); gap: 4px 28px; }
+  .q { padding: 18px 0; border-bottom: 1px solid #F4F4F5; display: flex; flex-direction: column; gap: 12px; }
+  .qtext { display: flex; gap: 10px; font-size: 16px; font-weight: 500; line-height: 1.5; }
+  .qnum { color: #A1A1AA; }
+  .qopts { display: grid; grid-template-columns: repeat(auto-fit,minmax(96px,1fr)); gap: 8px; }
+  .opt { text-align: center; padding: 12px 10px; border: 1px solid #E4E4E7; border-radius: 8px; background: #FFFFFF; color: #09090B; font-family: inherit; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); }
+  .qexplain { font-size: 14px; line-height: 1.6; color: #52525B; background: #FAFAFA; border-radius: 8px; padding: 12px 14px; }
+  .closing { margin: 20px 0 0; grid-column: 1/-1; font-size: 14px; color: #A1A1AA; }
+
+  @media (max-width: 640px) { h1.title { font-size: 34px; } }
+</style>
+</head>
+<body>
+<a href="index.html" id="tv-home" aria-label="Về trang chủ" style="position:fixed;top:14px;left:14px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:1px solid #E4E4E7;border-radius:999px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#18181B;font:500 14px/1 'Be Vietnam Pro',system-ui,sans-serif;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Trang chủ</a>
+
+<div class="page">
+  <div class="wrap col16" style="padding:64px 0 36px">
+    <span class="eyebrow">Mẫu giáo</span>
+    <h1 class="title">Tách số trong phạm vi 10</h1>
+    <p class="intro">Một số có thể tách thành hai phần. Ví dụ 4 tách được thành 1 và 3, 2 và 2, hoặc 3 và 1. Kéo thanh trượt để tự tách, xem đủ các cách tách của từng số, rồi làm bài tập.</p>
+  </div>
+
+  <div class="tabbar wrap">
+    <div class="tabs">
+      <button type="button" class="tab" data-tab="try">Tự tách</button>
+      <button type="button" class="tab" data-tab="table">Bảng các cách tách</button>
+      <button type="button" class="tab" data-tab="practice">Bài tập</button>
+    </div>
+    <span class="tabhint" id="tabhint"></span>
+  </div>
+
+  <div class="section wrap col16" id="sec-try"></div>
+  <div class="section wrap table-grid" id="sec-table"></div>
+  <div class="section wrap panel" id="sec-practice"></div>
+</div>
+
+<script>
+  const accent = '#18181B';
+  const showSwapped = true;
+
+  const dot = color => 'width:22px;height:22px;border-radius:999px;display:block;background:' + color;
+  const DOT_L = dot('#FF6B00'), DOT_R = dot('#1660C7');
+  const smallDot = color => 'width:13px;height:13px;border-radius:999px;display:block;background:' + color;
+  const SDOT_L = smallDot('#FF6B00'), SDOT_R = smallDot('#1660C7');
+
+  function shuffleFixed(arr, seed) {
+    const a = arr.slice();
+    let s = seed;
+    for (let i = a.length - 1; i > 0; i--) {
+      s = (s * 1103515245 + 12345) % 2147483648;
+      const j = s % (i + 1);
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function buildQuiz() {
+    const qs = [];
+    const t1 = [[4,1],[4,2],[4,3],[5,2],[5,4],[6,1],[6,3],[6,5],[7,2],[7,4],
+                [8,3],[8,6],[9,4],[9,7],[10,5],[10,8],[3,1],[5,3],[7,6],[9,2]];
+    t1.forEach(([n, a]) => {
+      const b = n - a;
+      const opts = shuffleFixed([b, Math.max(0, b - 1), Math.min(10, b + 1), Math.min(10, b + 2)].filter((v, i, arr) => arr.indexOf(v) === i).slice(0, 4), n * 31 + a);
+      qs.push({
+        text: 'Tách ' + n + ' thành ' + a + ' và mấy?',
+        options: opts.map(String), answer: opts.indexOf(b),
+        explain: a + ' và ' + b + ' gộp lại được ' + n + ', nên tách ' + n + ' thành ' + a + ' và ' + b + '.'
+      });
+    });
+    const t2 = [4,5,6,7,8,9,10,3,6,9];
+    t2.forEach((n, i) => {
+      const a = (i % (n - 1)) + 1, b = n - a;
+      const wrongs = [[a, b + 1], [a + 1, b + 1], [a, Math.max(0, b - 2)]];
+      const opts = shuffleFixed([[a, b]].concat(wrongs).map(p => p[0] + ' và ' + p[1]), n * 17 + i);
+      qs.push({
+        text: 'Cặp số nào là một cách tách của ' + n + '?',
+        options: opts, answer: opts.indexOf(a + ' và ' + b),
+        explain: a + ' + ' + b + ' = ' + n + ' nên "' + a + ' và ' + b + '" là cách tách đúng.'
+      });
+    });
+    [3,4,6,8,10].forEach(n => {
+      const right = n - 1;
+      const opts = shuffleFixed([right, right - 1, right + 1, right + 2].map(String), n * 7);
+      qs.push({
+        text: 'Số ' + n + ' có mấy cách tách thành hai phần, mỗi phần ít nhất 1?',
+        options: opts, answer: opts.indexOf(String(right)),
+        explain: 'Phần thứ nhất chọn từ 1 đến ' + right + ', nên có ' + right + ' cách tách.'
+      });
+    });
+    qs.push({ text: 'Em có 7 cái kẹo, chia cho bạn 3 cái. Em còn lại mấy cái?', options: ['3','4','5','7'], answer: 1,
+      explain: 'Tách 7 thành 3 và 4, nên em còn 4 cái kẹo.' });
+    qs.push({ text: 'Trong 6 quả bóng có 2 quả màu đỏ, còn lại màu xanh. Có mấy quả xanh?', options: ['2','3','4','6'], answer: 2,
+      explain: 'Tách 6 thành 2 và 4, nên có 4 quả xanh.' });
+    qs.push({ text: 'Hai đĩa có tất cả 10 cái bánh, đĩa thứ nhất có 6 cái. Đĩa thứ hai có mấy cái?', options: ['3','4','5','6'], answer: 1,
+      explain: 'Tách 10 thành 6 và 4, nên đĩa thứ hai có 4 cái bánh.' });
+    qs.push({ text: 'Tách 8 thành hai phần bằng nhau thì mỗi phần là mấy?', options: ['2','3','4','8'], answer: 2,
+      explain: '4 và 4 gộp lại được 8, nên mỗi phần là 4.' });
+    qs.push({ text: 'Số nào tách được thành hai phần bằng nhau: 5, 7, 9 hay 10?', options: ['5','7','9','10'], answer: 3,
+      explain: '10 tách thành 5 và 5. Các số 5, 7, 9 không tách được thành hai phần bằng nhau.' });
+    return qs;
+  }
+
+  const QUIZ = buildQuiz();
+  const HINTS = {
+    try: 'Kéo thanh trượt để chia số thành hai phần',
+    table: 'Đủ các cách tách của từng số từ 2 đến 10',
+    practice: QUIZ.length + ' bài tập'
+  };
+
+  const state = { tab: 'try', total: 4, left: 1, picked: {} };
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  function renderTabs() {
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.tab === state.tab));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('on'));
+    $('sec-' + state.tab).classList.add('on');
+    $('tabhint').textContent = HINTS[state.tab];
+  }
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { state.tab = b.dataset.tab; renderTabs(); }));
+
+  // ---- Tự tách ---- (build skeleton once, update pieces so the slider isn't recreated mid-drag)
+  function buildTry() {
+    const nums = Array.from({ length: 9 }, (_, i) =>
+      '<button type="button" class="numbtn" data-n="' + (i + 2) + '">' + (i + 2) + '</button>').join('');
+    $('sec-try').innerHTML = `
+      <div class="card">
+        <div class="try-head">
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <h2>Chọn số cần tách</h2>
+            <span class="sub">Bấm chọn số, rồi kéo thanh trượt để chia thành hai phần</span>
+          </div>
+          <div class="numsel" id="ts-nums">${nums}</div>
+        </div>
+        <div class="arena">
+          <div class="arena-total"><span class="lbl">Số cần tách</span><span class="val" id="ts-total"></span></div>
+          <div class="dots" id="ts-dots"></div>
+          <input type="range" min="1" step="1" class="slider" id="ts-slider">
+          <div class="parts">
+            <div class="partbox"><span class="lbl">Phần thứ nhất</span><span class="val" id="ts-left" style="color:#FF6B00"></span></div>
+            <span class="and">và</span>
+            <div class="partbox"><span class="lbl">Phần thứ hai</span><span class="val" id="ts-right" style="color:#1660C7"></span></div>
+          </div>
+          <span class="sumtext" id="ts-sum"></span>
+        </div>
+        <p class="trynote" id="ts-note"></p>
+      </div>
+      <div class="tip">
+        <h3>Điều cần nhớ</h3>
+        <p>Tách số là chia một số thành hai phần. Cộng hai phần lại thì được đúng số ban đầu. Đổi chỗ hai phần vẫn ra số đó — nên <strong>1 và 3</strong> cũng như <strong>3 và 1</strong> đều là cách tách của số 4.</p>
+      </div>`;
+    $('sec-try').querySelectorAll('.numbtn').forEach(b => b.addEventListener('click', () => {
+      const n = +b.dataset.n;
+      state.total = n;
+      state.left = Math.max(1, Math.min(state.left, n - 1));
+      updateTry(true);
+    }));
+    $('ts-slider').addEventListener('input', e => {
+      state.left = Math.max(1, Math.min(Number(e.target.value), state.total - 1));
+      updateTry(false);
+    });
+    updateTry(true);
+  }
+  function updateTry(syncSlider) {
+    const total = state.total;
+    const l = Math.max(1, Math.min(state.left, total - 1)), r = total - l;
+    $('ts-total').textContent = total;
+    $('sec-try').querySelectorAll('.numbtn').forEach(b => b.classList.toggle('on', +b.dataset.n === total));
+    const sl = $('ts-slider');
+    sl.max = total - 1;
+    if (syncSlider) sl.value = l;
+    $('ts-dots').innerHTML = Array.from({ length: total }, (_, i) =>
+      '<span style="' + (i < l ? DOT_L : DOT_R) + '"></span>').join('');
+    $('ts-left').textContent = l;
+    $('ts-right').textContent = r;
+    $('ts-sum').textContent = l + ' + ' + r + ' = ' + total;
+    $('ts-note').textContent = 'Tách ' + total + ' thành ' + l + ' và ' + r + '. Gộp lại: ' + l + ' + ' + r + ' = ' + total + '.';
+  }
+
+  // ---- Bảng các cách tách ----
+  function renderTable() {
+    let html = '';
+    for (let i = 0; i < 9; i++) {
+      const n = i + 2;
+      const pairs = [];
+      for (let a = 1; a < n; a++) if (showSwapped || a <= n - a) pairs.push([a, n - a]);
+      const rows = pairs.map(([a, b]) => {
+        const rd = Array.from({ length: n }, (_, k) => '<span style="' + (k < a ? SDOT_L : SDOT_R) + '"></span>').join('');
+        return '<div class="trow"><span class="expr">' + n + ' = ' + a + ' + ' + b + '</span><div class="rdots">' + rd + '</div></div>';
+      }).join('');
+      html += `<div class="tcard"><div class="tcard-head"><h3>Tách số ${n}</h3><span class="cnt">${pairs.length} cách</span></div><div style="display:flex;flex-direction:column;gap:8px">${rows}</div></div>`;
+    }
+    $('sec-table').innerHTML = html;
+  }
+
+  // ---- Bài tập ----
+  function optStyle(qi, oi) {
+    const p = state.picked[qi];
+    const correct = QUIZ[qi].answer === oi;
+    let bg = '#FFFFFF', bd = '#E4E4E7', fg = '#09090B', fw = '500', extra = '';
+    if (p !== undefined) {
+      if (correct) { bg = '#F4F4F5'; bd = accent; fg = accent; fw = '600'; }
+      else if (p === oi) { bg = '#FAFAFA'; bd = '#D4D4D8'; fg = '#71717A'; extra = 'text-decoration:line-through;'; }
+      else { fg = '#A1A1AA'; }
+    }
+    return 'border:1px solid ' + bd + ';background:' + bg + ';color:' + fg + ';font-weight:' + fw + ';cursor:' + (p === undefined ? 'pointer' : 'default') + ';' + extra;
+  }
+  function updateQuizHeader() {
+    const score = Object.keys(state.picked).filter(k => state.picked[k] === QUIZ[k].answer).length;
+    const answered = Object.keys(state.picked).length;
+    $('quiz-score').textContent = 'Đúng ' + score + '/' + QUIZ.length;
+    $('quiz-closing').textContent = answered === QUIZ.length
+      ? (score === QUIZ.length ? 'Tuyệt vời, em làm đúng hết!' : 'Xem lại phần Tự tách và Bảng các cách tách rồi thử lại nhé.')
+      : 'Đã làm ' + answered + '/' + QUIZ.length + ' bài. Làm hết để xem kết quả.';
+  }
+  function updateQuestion(qi) {
+    const qEl = $('q-' + qi);
+    qEl.querySelectorAll('.opt').forEach((btn, oi) => btn.setAttribute('style', optStyle(qi, oi)));
+    qEl.querySelector('.qexplain').style.display = state.picked[qi] !== undefined ? 'block' : 'none';
+  }
+  function renderPractice() {
+    const qs = QUIZ.map((q, qi) => `
+      <div class="q" id="q-${qi}">
+        <div class="qtext"><span class="qnum">${qi + 1}.</span><span>${esc(q.text)}</span></div>
+        <div class="qopts">${q.options.map((label, oi) =>
+          '<button type="button" class="opt" data-qi="' + qi + '" data-oi="' + oi + '" style="' + optStyle(qi, oi) + '">' + esc(label) + '</button>').join('')}</div>
+        <div class="qexplain" style="display:none">${esc(q.explain)}</div>
+      </div>`).join('');
+    $('sec-practice').innerHTML = `
+      <div class="phead">
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <h2>Bài tập tách số</h2><span class="sub">${QUIZ.length} bài — bấm vào đáp án em chọn</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span class="score" id="quiz-score"></span>
+          <button type="button" class="btn-ghost" id="quiz-reset">Làm lại</button>
+        </div>
+      </div>
+      <div class="qbody">${qs}<p class="closing" id="quiz-closing"></p></div>`;
+    $('sec-practice').querySelectorAll('.opt').forEach(btn => btn.addEventListener('click', () => {
+      const qi = +btn.dataset.qi, oi = +btn.dataset.oi;
+      if (state.picked[qi] !== undefined) return;
+      state.picked[qi] = oi;
+      updateQuestion(qi); updateQuizHeader();
+    }));
+    $('quiz-reset').addEventListener('click', () => { state.picked = {}; renderPractice(); });
+    QUIZ.forEach((q, qi) => updateQuestion(qi));
+    updateQuizHeader();
+  }
+
+  buildTry();
+  renderTable();
+  renderPractice();
+  renderTabs();
+</script>
+</body>
+</html>
