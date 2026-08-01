@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Các số đến 99 — Toán Vui</title>
+<link rel="icon" type="image/jpeg" href="logo-teacher-b.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #FFFFFF; color: #09090B; font-family: 'Be Vietnam Pro', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .page { min-height: 100vh; padding: 0 24px 96px; }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+  .col16 { display: flex; flex-direction: column; gap: 16px; }
+
+  .eyebrow { font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: #A1A1AA; }
+  h1.title { margin: 0; font-size: 44px; line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; }
+  .intro { margin: 0; max-width: 680px; font-size: 17px; line-height: 1.65; color: #52525B; text-wrap: pretty; }
+  .intro strong { font-weight: 600; color: #09090B; }
+
+  .tabbar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 0 auto 36px; }
+  .tabs { display: flex; gap: 4px; padding: 4px; background: #F4F4F5; border-radius: 10px; width: fit-content; }
+  .tab { padding: 9px 18px; border: none; border-radius: 8px; white-space: nowrap; font-family: inherit; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); background: transparent; color: #71717A; }
+  .tab.on { font-weight: 600; background: #FFFFFF; color: #18181B; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+  .tabhint { font-size: 14px; color: #A1A1AA; }
+
+  .section:not(.on) { display: none !important; }
+
+  /* Khám phá — bảng */
+  .escroll { overflow-x: auto; }
+  .etable { min-width: 600px; border: 1px solid #E4E4E7; border-radius: 12px; overflow: hidden; }
+  .ehead, .erow { display: grid; grid-template-columns: minmax(0,1fr) 84px 84px 96px minmax(150px,180px); align-items: center; }
+  .ehead { background: #FAFAFA; border-bottom: 1px solid #E4E4E7; }
+  .ehead span { padding: 14px 10px; font-size: 14px; font-weight: 600; color: #52525B; text-align: center; }
+  .ehead .first, .ehead .last { padding: 14px 18px; text-align: left; }
+  .erow { border-bottom: 1px solid #F4F4F5; }
+  .cell-fig { padding: 16px 18px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .ebag { display: grid; grid-template-columns: repeat(5,8px); gap: 3px; padding: 5px; border: 1px solid #D4D4D8; border-radius: 5px; background: #FAFAFA; }
+  .ebag .d { width: 8px; height: 8px; border-radius: 999px; background: #18181B; display: block; }
+  .eloose { display: flex; gap: 4px; padding-left: 4px; }
+  .eloose .d { width: 8px; height: 8px; border-radius: 999px; background: #A1A1AA; display: block; }
+  .ecell { padding: 16px 10px; text-align: center; font-weight: 700; }
+  .ecell.tens, .ecell.units { font-size: 20px; }
+  .ecell.num { font-size: 24px; }
+  .ecell.word { padding: 16px 18px; font-size: 16px; text-align: left; color: #09090B; }
+
+  .tip { background: #FAFAFA; border: 1px solid #E4E4E7; border-radius: 12px; padding: 22px 24px; display: flex; flex-direction: column; gap: 10px; }
+  .tip h3 { margin: 0; font-size: 17px; font-weight: 600; }
+  .tip p { margin: 0; font-size: 15px; line-height: 1.65; color: #52525B; }
+  .tip strong { font-weight: 600; color: #09090B; }
+
+  /* Tự lập số */
+  .panel { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; padding: 22px 24px; display: flex; flex-direction: column; gap: 20px; }
+  .panel h2 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+  .panel .muted { font-size: 14px; color: #71717A; }
+  .panel > p { margin: 0; font-size: 15px; line-height: 1.65; color: #52525B; }
+  .build-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(320px,1fr)); gap: 16px; }
+  .bpanel { border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
+  .bphead { padding: 12px 16px; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #0D1B2A; }
+  .bphead.t { background: #FFF7F0; }
+  .bphead.u { background: #EFF5FD; }
+  .bdot { width: 12px; height: 12px; border-radius: 999px; display: block; }
+  .bpicks { padding: 16px; display: grid; grid-template-columns: repeat(auto-fill,minmax(52px,1fr)); gap: 8px; }
+  .bview { padding: 16px; border-top: 1px dashed #E5E7EB; background: #FAFAFA; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; min-height: 120px; flex: 1; }
+  .bview.u { gap: 8px; align-content: flex-start; align-items: flex-start; }
+  .bbag { display: grid; grid-template-columns: repeat(5,12px); gap: 4px; padding: 7px; border: 1px solid #FFB27A; border-radius: 8px; background: #FFFFFF; }
+  .bbag .d { width: 12px; height: 12px; border-radius: 999px; background: #FF6B00; display: block; }
+  .loosedot { width: 12px; height: 12px; border-radius: 999px; background: #1660C7; display: block; }
+  .bcap { padding: 12px 16px; border-top: 1px solid #E5E7EB; font-size: 14px; color: #4B5563; }
+  .bstats { display: grid; grid-template-columns: repeat(auto-fit,minmax(190px,1fr)); gap: 12px; }
+  .bstat { border: 1px solid #E4E4E7; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 4px; }
+  .bstat .lbl { font-size: 13px; color: #A1A1AA; }
+  .bstat .big { font-size: 32px; font-weight: 700; line-height: 1.1; }
+  .bstat .med { font-size: 20px; font-weight: 600; line-height: 1.4; }
+
+  /* Cách đọc */
+  .read-cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); gap: 16px; }
+  .rcard { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .rcard h3 { margin: 0; font-size: 18px; font-weight: 600; }
+  .rcard p { margin: 0; font-size: 15px; line-height: 1.6; color: #52525B; }
+  .rcard strong { font-weight: 600; color: #09090B; }
+  .rex { display: flex; flex-direction: column; gap: 6px; background: #FAFAFA; border-radius: 8px; padding: 14px 16px; font-size: 15px; line-height: 1.7; }
+  .rex .muted { color: #71717A; }
+  .rgrid-wrap { border: 1px solid #E4E4E7; border-radius: 12px; overflow: hidden; }
+  .rgrid-head { padding: 20px 24px; border-bottom: 1px solid #E4E4E7; display: flex; flex-direction: column; gap: 2px; }
+  .rgrid-head .t1 { font-size: 15px; font-weight: 600; }
+  .rgrid-head .t2 { font-size: 13px; color: #71717A; }
+  .rgrid { padding: 20px 24px; display: grid; grid-template-columns: repeat(10,minmax(0,1fr)); gap: 6px; }
+  .rgrid-foot { padding: 20px 24px; border-top: 1px solid #E4E4E7; display: flex; flex-direction: column; gap: 6px; background: #FAFAFA; }
+  .rgrid-foot .word { font-size: 32px; font-weight: 700; line-height: 1.2; }
+  .rgrid-foot .note { font-size: 15px; color: #52525B; }
+
+  /* Bài tập */
+  .quizpanel { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; overflow: hidden; }
+  .phead { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 24px; border-bottom: 1px solid #E4E4E7; flex-wrap: wrap; }
+  .phead h2 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+  .phead .sub { font-size: 13px; color: #A1A1AA; }
+  .score { font-size: 14px; font-weight: 600; }
+  .btn-ghost { padding: 0 12px; height: 32px; font-size: 14px; border: none; background: transparent; color: #52525B; font-family: inherit; font-weight: 600; cursor: pointer; border-radius: 8px; }
+  .btn-ghost:hover { background: #F4F4F5; }
+  .levels { display: flex; gap: 4px; padding: 4px; background: #F4F4F5; border-radius: 10px; }
+  .lvbtn { padding: 7px 14px; border: none; border-radius: 8px; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); background: transparent; color: #71717A; }
+  .lvbtn.on { font-weight: 600; background: #FFFFFF; color: #18181B; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+  .qbody { padding: 8px 24px 24px; display: grid; grid-template-columns: repeat(auto-fill,minmax(320px,1fr)); gap: 4px 28px; }
+  .q { padding: 18px 0; border-bottom: 1px solid #F4F4F5; display: flex; flex-direction: column; gap: 12px; }
+  .qtext { display: flex; align-items: center; gap: 12px; line-height: 1.5; }
+  .qnum { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; background: #F4F4F5; color: #71717A; font-size: 13px; font-weight: 600; }
+  .qlabel { font-size: 17px; font-weight: 600; letter-spacing: .01em; }
+  .qopts { display: grid; grid-template-columns: repeat(auto-fit,minmax(96px,1fr)); gap: 8px; }
+  .opt { text-align: center; padding: 12px 10px; border: 1px solid #E4E4E7; border-radius: 8px; background: #FFFFFF; color: #09090B; font-family: inherit; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); }
+  .qexplain { font-size: 14px; line-height: 1.6; color: #52525B; background: #FAFAFA; border-radius: 8px; padding: 12px 14px; }
+  .closing { margin: 20px 0 0; grid-column: 1/-1; font-size: 14px; color: #A1A1AA; }
+
+  @media (max-width: 640px) { h1.title { font-size: 34px; } }
+</style>
+</head>
+<body>
+<a href="index.html" id="tv-home" aria-label="Về trang chủ" style="position:fixed;top:14px;left:14px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:1px solid #E4E4E7;border-radius:999px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#18181B;font:500 14px/1 'Be Vietnam Pro',system-ui,sans-serif;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Trang chủ</a>
+
+<div class="page">
+  <div class="wrap col16" style="padding:64px 0 36px">
+    <span class="eyebrow">Mẫu giáo</span>
+    <h1 class="title">Các số đến 99</h1>
+    <p class="intro">Mỗi túi có 10 quả — đó là <strong>1 chục</strong>. Đếm số túi được số chục, đếm số quả lẻ được số đơn vị. Ví dụ 2 chục và 4 đơn vị viết là <strong>24</strong>, đọc là <strong>hai mươi tư</strong>.</p>
+  </div>
+
+  <div class="tabbar wrap">
+    <div class="tabs">
+      <button type="button" class="tab" data-tab="explore">Khám phá</button>
+      <button type="button" class="tab" data-tab="build">Tự lập số</button>
+      <button type="button" class="tab" data-tab="read">Cách đọc</button>
+      <button type="button" class="tab" data-tab="quiz">Bài tập</button>
+    </div>
+    <span class="tabhint" id="tabhint"></span>
+  </div>
+
+  <div class="section wrap col16" id="sec-explore"></div>
+  <div class="section wrap" id="sec-build"></div>
+  <div class="section wrap col16" id="sec-read"></div>
+  <div class="section wrap quizpanel" id="sec-quiz"></div>
+</div>
+
+<script>
+  const accent = '#18181B';
+  const ONES = ['không', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
+  function say(n) {
+    if (n < 10) return ONES[n];
+    const t = Math.floor(n / 10), u = n % 10;
+    if (t === 1) {
+      if (u === 0) return 'mười';
+      if (u === 5) return 'mười lăm';
+      return 'mười ' + ONES[u];
+    }
+    const head = ONES[t] + ' mươi';
+    if (u === 0) return head;
+    if (u === 1) return head + ' mốt';
+    if (u === 4) return head + ' tư';
+    if (u === 5) return head + ' lăm';
+    return head + ' ' + ONES[u];
+  }
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+  function shuffle(a, seed) {
+    const out = a.slice();
+    for (let i = out.length - 1; i > 0; i--) {
+      seed = (seed * 9301 + 49297) % 233280;
+      const j = Math.floor(seed / 233280 * (i + 1));
+      [out[i], out[j]] = [out[j], out[i]];
+    }
+    return out;
+  }
+  function mc(text, correct, wrongs, explain, seed) {
+    const uniq = [String(correct)];
+    wrongs.map(String).forEach(w => { if (!uniq.includes(w)) uniq.push(w); });
+    const options = shuffle(uniq, seed);
+    return { text, options, answer: options.indexOf(String(correct)), explain };
+  }
+
+  const SAMPLE = [24, 35, 71, 89];
+
+  const EASY = [];
+  [23, 18, 45, 62, 57, 96, 34, 80, 41, 75].forEach((n, i) => {
+    const t = Math.floor(n / 10), u = n % 10;
+    EASY.push(mc('Số ' + n + ' gồm mấy chục và mấy đơn vị?', t + ' chục ' + u + ' đơn vị',
+      [u + ' chục ' + t + ' đơn vị', t + ' chục ' + (u + 1 > 9 ? u - 1 : u + 1) + ' đơn vị'],
+      'Chữ số bên trái là ' + t + ' nên có ' + t + ' chục; chữ số bên phải là ' + u + ' nên có ' + u + ' đơn vị.', 11 + i));
+  });
+  [[3, 6], [5, 0], [7, 2], [2, 8], [9, 4], [4, 1], [6, 5], [8, 7], [2, 4], [7, 1]].forEach((p, i) => {
+    const [t, u] = p, n = t * 10 + u;
+    EASY.push(mc(t + ' chục và ' + u + ' đơn vị viết là số nào?', n, [u * 10 + t, n + 10],
+      'Số chục viết trước, số đơn vị viết sau nên được ' + n + '.', 51 + i));
+  });
+  [21, 24, 35, 44, 55, 61, 74, 85, 91, 99].forEach((n, i) => {
+    EASY.push(mc('Số ' + n + ' đọc là gì?', say(n),
+      [say(n + 1 > 99 ? n - 2 : n + 1), say(n - 1)],
+      'Số ' + n + ' đọc là "' + say(n) + '".', 91 + i));
+  });
+  [['hai mươi tư', 24], ['ba mươi lăm', 35], ['bảy mươi mốt', 71], ['tám mươi chín', 89], ['năm mươi lăm', 55],
+   ['chín mươi mốt', 91], ['sáu mươi tư', 64], ['bốn mươi tám', 48], ['hai mươi mốt', 21], ['bảy mươi lăm', 75]].forEach((p, i) => {
+    const [w, n] = p;
+    EASY.push(mc('"' + cap(w) + '" viết là số nào?', n, [Number(String(n).split('').reverse().join('')), n + 10],
+      '"' + w + '" viết là ' + n + '.', 131 + i));
+  });
+
+  const SG = ['>', '<', '='];
+  const ADV = [];
+  [[45, 54], [78, 78], [90, 89], [36, 63], [67, 67], [21, 12], [88, 92], [50, 49], [73, 73], [99, 89], [40, 44], [61, 16]].forEach(p => {
+    const [a, b] = p;
+    const s = a > b ? '>' : (a < b ? '<' : '=');
+    const ta = Math.floor(a / 10), tb = Math.floor(b / 10);
+    ADV.push({
+      text: 'Điền dấu:  ' + a + '  …  ' + b, options: SG, answer: SG.indexOf(s),
+      explain: ta === tb
+        ? 'Cùng ' + ta + ' chục nên so số đơn vị: ' + (a % 10) + ' và ' + (b % 10) + ' → ' + a + ' ' + s + ' ' + b + '.'
+        : a + ' có ' + ta + ' chục, ' + b + ' có ' + tb + ' chục → ' + a + ' ' + s + ' ' + b + '.'
+    });
+  });
+  [38, 50, 71, 99, 60, 45].forEach((n, i) => {
+    ADV.push(mc('Số liền sau của ' + n + ' là số nào?', n + 1, [n - 1, n + 10],
+      'Đếm tiếp sau ' + n + ' là ' + (n + 1) + '.', 181 + i));
+  });
+  [40, 61, 90, 30, 100, 55].forEach((n, i) => {
+    ADV.push(mc('Số liền trước của ' + n + ' là số nào?', n - 1, [n + 1, n - 10],
+      'Ngay trước ' + n + ' là ' + (n - 1) + '.', 211 + i));
+  });
+  ADV.push(mc('Số nào lớn nhất: 68, 86, 76, 66?', 86, [76, 68], '86 có 8 chục — nhiều chục nhất nên lớn nhất.', 241));
+  ADV.push(mc('Số nào bé nhất: 47, 74, 44, 71?', 44, [47, 71], '44 và 47 cùng 4 chục; 4 đơn vị ít hơn 7 nên 44 bé nhất.', 242));
+  ADV.push(mc('Sắp từ bé đến lớn 52, 25, 55 — số đứng giữa là?', 52, [25, 55], 'Thứ tự đúng: 25 < 52 < 55.', 243));
+  ADV.push(mc('Số lớn nhất có hai chữ số là số nào?', 99, [90, 100], '99 gồm 9 chục 9 đơn vị — lớn nhất trong các số hai chữ số.', 244));
+  ADV.push(mc('Số bé nhất có hai chữ số là số nào?', 10, [11, 20], '10 gồm 1 chục 0 đơn vị — bé nhất trong các số hai chữ số.', 245));
+  ADV.push(mc('Số nào vừa lớn hơn 79 vừa bé hơn 81?', 80, [79, 81], '79 < 80 < 81 nên số cần tìm là 80.', 246));
+  ADV.push(mc('Mẹ có 6 túi cam, mỗi túi 10 quả, và 3 quả lẻ. Mẹ có bao nhiêu quả?', 63, [36, 630], '6 chục và 3 đơn vị viết là 63.', 247));
+  ADV.push(mc('Số 47 và 74 khác nhau ở chỗ nào?', 'Khác số chục và số đơn vị', ['Bằng nhau', 'Chỉ khác cách đọc'],
+    '47 là 4 chục 7 đơn vị, còn 74 là 7 chục 4 đơn vị — hai số khác nhau.', 248));
+
+  const HINTS = {
+    explore: 'Đọc bảng: chục · đơn vị · viết số · đọc số',
+    build: 'Chọn số túi và số quả lẻ để lập số',
+    read: 'Chú ý mốt, tư, lăm',
+    quiz: 'Cơ bản ' + EASY.length + ' bài · Nâng cao ' + ADV.length + ' bài'
+  };
+
+  const state = { tab: 'explore', tens: 4, units: 5, gridSel: 35, level: 'easy', picked: {}, pickedAdv: {} };
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  function pickBtn(on, small, tone) {
+    const c = tone || accent;
+    return 'padding:' + (small ? '9px 0' : '11px 0') + ';border:1px solid ' + (on ? c : '#E5E7EB') +
+      ';border-radius:6px;background:' + (on ? c : '#FFFFFF') + ';color:' + (on ? '#FFFFFF' : '#0D1B2A') +
+      ';font-family:inherit;font-size:' + (small ? '14px' : '17px') + ';font-weight:' + (on ? '700' : '500') + ';cursor:pointer;transition:all 150ms';
+  }
+  const ebag = () => '<span class="ebag">' + '<span class="d"></span>'.repeat(10) + '</span>';
+  const bbag = () => '<span class="bbag">' + '<span class="d"></span>'.repeat(10) + '</span>';
+
+  function renderTabs() {
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.tab === state.tab));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('on'));
+    $('sec-' + state.tab).classList.add('on');
+    $('tabhint').textContent = HINTS[state.tab];
+  }
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { state.tab = b.dataset.tab; renderTabs(); }));
+
+  // ---- Khám phá ----
+  function renderExplore() {
+    const rows = SAMPLE.map(n => {
+      const t = Math.floor(n / 10), u = n % 10;
+      const fig = ebag().repeat(t) + '<span class="eloose">' + '<span class="d"></span>'.repeat(u) + '</span>';
+      return `<div class="erow">
+        <div class="cell-fig">${fig}</div>
+        <span class="ecell tens">${t}</span>
+        <span class="ecell units">${u}</span>
+        <span class="ecell num">${n}</span>
+        <span class="ecell word">${say(n)}</span>
+      </div>`;
+    }).join('');
+    $('sec-explore').innerHTML = `
+      <div class="escroll"><div class="etable">
+        <div class="ehead"><span class="first">Hình</span><span>Chục</span><span>Đơn vị</span><span>Viết số</span><span class="last">Đọc số</span></div>
+        ${rows}
+      </div></div>
+      <div class="tip">
+        <h3>Cấu tạo số có hai chữ số</h3>
+        <p>Chữ số bên trái chỉ <strong>số chục</strong>, chữ số bên phải chỉ <strong>số đơn vị</strong>. Số 71 gồm 7 chục và 1 đơn vị; số 17 gồm 1 chục và 7 đơn vị — cùng hai chữ số nhưng khác nhau hoàn toàn.</p>
+      </div>`;
+  }
+
+  // ---- Tự lập số ----
+  function renderBuild() {
+    const { tens, units } = state, num = tens * 10 + units;
+    const tensBtns = Array.from({ length: 9 }, (_, i) => {
+      const t = i + 1;
+      return '<button type="button" class="pk-t" data-t="' + t + '" style="' + pickBtn(t === tens, false, '#FF6B00') + '">' + t + '</button>';
+    }).join('');
+    const unitsBtns = Array.from({ length: 10 }, (_, u) =>
+      '<button type="button" class="pk-u" data-u="' + u + '" style="' + pickBtn(u === units, false, '#1660C7') + '">' + u + '</button>').join('');
+    const tensCap = tens + ' túi = ' + tens + ' chục = ' + tens * 10 + ' quả';
+    const unitsCap = units === 0 ? 'Không có quả lẻ = 0 đơn vị' : units + ' quả lẻ = ' + units + ' đơn vị';
+    const note = units === 0
+      ? 'Không có quả lẻ nên đây là số tròn chục: ' + num + ' — đọc là "' + say(num) + '".'
+      : 'Có ' + tens + ' túi (mỗi túi 10 quả) và ' + units + ' quả lẻ, tất cả là ' + num + ' quả. Viết ' + num + ', đọc "' + say(num) + '".';
+    $('sec-build').innerHTML = `
+      <div class="panel">
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <h2>Chọn số chục và số đơn vị</h2><span class="muted">Bấm số túi và số quả lẻ để lập nên một số</span>
+        </div>
+        <div class="build-grid">
+          <div class="bpanel">
+            <div class="bphead t"><span class="bdot" style="background:#FF6B00"></span>Số chục — mỗi túi 10 quả</div>
+            <div class="bpicks">${tensBtns}</div>
+            <div class="bview">${bbag().repeat(tens)}</div>
+            <div class="bcap">${tensCap}</div>
+          </div>
+          <div class="bpanel">
+            <div class="bphead u"><span class="bdot" style="background:#1660C7"></span>Số đơn vị — quả lẻ</div>
+            <div class="bpicks">${unitsBtns}</div>
+            <div class="bview u">${'<span class="loosedot"></span>'.repeat(units)}</div>
+            <div class="bcap">${unitsCap}</div>
+          </div>
+        </div>
+        <div class="bstats">
+          <div class="bstat"><span class="lbl">Cấu tạo</span><span class="med"><span style="color:#FF6B00">${tens} chục</span> và <span style="color:#1660C7">${units} đơn vị</span></span></div>
+          <div class="bstat"><span class="lbl">Viết số</span><span class="big">${num}</span></div>
+          <div class="bstat"><span class="lbl">Đọc số</span><span class="med">${cap(say(num))}</span></div>
+        </div>
+        <p>${note}</p>
+      </div>`;
+    $('sec-build').querySelectorAll('.pk-t').forEach(b => b.addEventListener('click', () => { state.tens = +b.dataset.t; renderBuild(); }));
+    $('sec-build').querySelectorAll('.pk-u').forEach(b => b.addEventListener('click', () => { state.units = +b.dataset.u; renderBuild(); }));
+  }
+
+  // ---- Cách đọc ----
+  function renderRead() {
+    const gsel = state.gridSel, gu = gsel % 10;
+    const gnote = gu === 1 ? 'Đơn vị là 1 nên đọc "mốt", không đọc "một".'
+      : gu === 4 ? 'Đơn vị là 4 nên đọc "tư", không đọc "bốn".'
+      : gu === 5 ? 'Đơn vị là 5 nên đọc "lăm", không đọc "năm".'
+      : gu === 0 ? 'Đây là số tròn chục, không có đơn vị lẻ.'
+      : 'Đọc số chục rồi đọc số đơn vị như bình thường.';
+    const grid = Array.from({ length: 80 }, (_, i) => {
+      const n = 20 + i;
+      return '<button type="button" class="gbtn" data-n="' + n + '" style="' + pickBtn(n === gsel, true) + '">' + n + '</button>';
+    }).join('');
+    $('sec-read').innerHTML = `
+      <div class="read-cards">
+        <div class="rcard">
+          <h3>Đơn vị 1 đọc là "mốt"</h3>
+          <p>Từ 21 trở đi, số tận cùng bằng 1 đọc là <strong>mốt</strong>.</p>
+          <div class="rex"><span>21 — hai mươi <strong>mốt</strong></span><span>51 — năm mươi <strong>mốt</strong></span><span class="muted">11 — mười một (giữ nguyên "một")</span></div>
+        </div>
+        <div class="rcard">
+          <h3>Đơn vị 4 đọc là "tư"</h3>
+          <p>Từ 21 trở đi, số tận cùng bằng 4 thường đọc là <strong>tư</strong>.</p>
+          <div class="rex"><span>24 — hai mươi <strong>tư</strong></span><span>74 — bảy mươi <strong>tư</strong></span><span class="muted">14 — mười bốn (giữ nguyên "bốn")</span></div>
+        </div>
+        <div class="rcard">
+          <h3>Đơn vị 5 đọc là "lăm"</h3>
+          <p>Mọi số tận cùng bằng 5 (từ 15 trở đi) đọc là <strong>lăm</strong>.</p>
+          <div class="rex"><span>15 — mười <strong>lăm</strong></span><span>35 — ba mươi <strong>lăm</strong></span><span>95 — chín mươi <strong>lăm</strong></span></div>
+        </div>
+      </div>
+      <div class="rgrid-wrap">
+        <div class="rgrid-head"><span class="t1">Bấm một số bất kì để nghe cách đọc</span><span class="t2">Bảng số từ 20 đến 99</span></div>
+        <div class="escroll"><div class="rgrid" style="min-width:520px">${grid}</div></div>
+        <div class="rgrid-foot"><span class="word">${gsel} — ${say(gsel)}</span><span class="note">${gnote}</span></div>
+      </div>`;
+    $('sec-read').querySelectorAll('.gbtn').forEach(b => b.addEventListener('click', () => { state.gridSel = +b.dataset.n; renderRead(); }));
+  }
+
+  // ---- Bài tập ----
+  const bank = () => state.level === 'adv' ? ADV : EASY;
+  const store = () => state.level === 'adv' ? state.pickedAdv : state.picked;
+  function optStyle(qi, oi) {
+    const b = bank(), p = store()[qi];
+    const correct = b[qi].answer === oi;
+    let bg = '#FFFFFF', bd = '#E4E4E7', fg = '#09090B', fw = '500', extra = '';
+    if (p !== undefined) {
+      if (correct) { bg = '#F4F4F5'; bd = accent; fg = accent; fw = '600'; }
+      else if (p === oi) { bg = '#FAFAFA'; bd = '#D4D4D8'; fg = '#71717A'; extra = 'text-decoration:line-through;'; }
+      else { fg = '#A1A1AA'; }
+    }
+    return 'border:1px solid ' + bd + ';background:' + bg + ';color:' + fg + ';font-weight:' + fw + ';cursor:' + (p === undefined ? 'pointer' : 'default') + ';' + extra;
+  }
+  function updateQuizHeader() {
+    const b = bank(), s = store();
+    const score = Object.keys(s).filter(k => s[k] === b[k].answer).length;
+    const answered = Object.keys(s).length;
+    $('quiz-score').textContent = 'Đúng ' + score + '/' + b.length;
+    $('quiz-sub').textContent = state.level === 'adv'
+      ? b.length + ' bài nâng cao — so sánh, liền trước liền sau'
+      : b.length + ' bài — chục và đơn vị, đọc số, viết số';
+    $('quiz-closing').textContent = answered === b.length
+      ? (score === b.length ? 'Tuyệt vời, em trả lời đúng hết!' : 'Xem lại phần Khám phá và Cách đọc rồi thử lại nhé.')
+      : 'Đã làm ' + answered + '/' + b.length + ' bài. Làm hết để xem kết quả.';
+  }
+  function updateQuestion(qi) {
+    const qEl = $('q-' + qi);
+    qEl.querySelectorAll('.opt').forEach((btn, oi) => btn.setAttribute('style', optStyle(qi, oi)));
+    qEl.querySelector('.qexplain').style.display = store()[qi] !== undefined ? 'block' : 'none';
+  }
+  function renderQuiz() {
+    const b = bank();
+    const qs = b.map((q, qi) => `
+      <div class="q" id="q-${qi}">
+        <div class="qtext"><span class="qnum">${qi + 1}</span><span class="qlabel">${esc(q.text)}</span></div>
+        <div class="qopts">${q.options.map((label, oi) =>
+          '<button type="button" class="opt" data-qi="' + qi + '" data-oi="' + oi + '" style="' + optStyle(qi, oi) + '">' + esc(label) + '</button>').join('')}</div>
+        <div class="qexplain" style="display:none">${esc(q.explain)}</div>
+      </div>`).join('');
+    $('sec-quiz').innerHTML = `
+      <div class="phead">
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <h2>Bài tập</h2><span class="sub" id="quiz-sub"></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <div class="levels">
+            <button type="button" class="lvbtn${state.level==='easy'?' on':''}" data-lv="easy">Cơ bản</button>
+            <button type="button" class="lvbtn${state.level==='adv'?' on':''}" data-lv="adv">Nâng cao</button>
+          </div>
+          <span class="score" id="quiz-score"></span>
+          <button type="button" class="btn-ghost" id="quiz-reset">Làm lại</button>
+        </div>
+      </div>
+      <div class="qbody">${qs}<p class="closing" id="quiz-closing"></p></div>`;
+    $('sec-quiz').querySelectorAll('.lvbtn').forEach(btn => btn.addEventListener('click', () => {
+      if (state.level === btn.dataset.lv) return;
+      state.level = btn.dataset.lv; renderQuiz();
+    }));
+    $('sec-quiz').querySelectorAll('.opt').forEach(btn => btn.addEventListener('click', () => {
+      const qi = +btn.dataset.qi, oi = +btn.dataset.oi;
+      if (store()[qi] !== undefined) return;
+      store()[qi] = oi;
+      updateQuestion(qi); updateQuizHeader();
+    }));
+    $('quiz-reset').addEventListener('click', () => {
+      if (state.level === 'adv') state.pickedAdv = {}; else state.picked = {};
+      renderQuiz();
+    });
+    b.forEach((q, qi) => updateQuestion(qi));
+    updateQuizHeader();
+  }
+
+  renderExplore();
+  renderBuild();
+  renderRead();
+  renderQuiz();
+  renderTabs();
+</script>
+</body>
+</html>
