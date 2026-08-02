@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mê cung Pony — Toán Vui</title>
+<link rel="icon" type="image/jpeg" href="logo-teacher-b.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #FAFAFA; color: #09090B; font-family: 'Be Vietnam Pro', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .page { min-height: 100vh; padding: 0 24px 96px; }
+  .wrap { max-width: 1200px; margin: 0 auto; }
+
+  .head { padding: 56px 0 28px; display: flex; flex-direction: column; gap: 14px; }
+  .eyebrow { font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: #E0568B; }
+  h1.title { margin: 0; font-size: 42px; line-height: 1.12; font-weight: 700; letter-spacing: -0.02em; }
+  .intro { margin: 0; max-width: 680px; font-size: 16px; line-height: 1.6; color: #52525B; text-wrap: pretty; }
+
+  .game { display: grid; grid-template-columns: minmax(0,1fr) minmax(280px,344px); gap: 24px; align-items: start; }
+  @media (max-width: 860px) { .game { grid-template-columns: 1fr; } .side { position: static !important; } }
+
+  .board-card { min-width: 0; background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.05); overflow: hidden; }
+  .board-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 20px; border-bottom: 1px solid #E4E4E7; flex-wrap: wrap; }
+  .pips { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .pip { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 999px; font-size: 12px; font-weight: 700; transition: all 200ms cubic-bezier(.4,0,.2,1); }
+  .opened-text { margin-left: 6px; font-size: 14px; font-weight: 600; color: #52525B; }
+  .stats { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .stat { display: flex; align-items: center; gap: 6px; font-size: 14px; color: #71717A; }
+  .stat strong { font-weight: 600; color: #09090B; }
+  .btn-restart { padding: 8px 16px; border: 1px solid #E0568B; border-radius: 6px; background: #FFFFFF; color: #C7407A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 150ms; }
+  .btn-restart:hover { background: #FDF1F6; }
+
+  .board-wrap { padding: 20px; background: linear-gradient(180deg,#F4FAF6 0%,#FDF3F7 100%); display: flex; justify-content: center; }
+  .board { position: relative; width: 100%; max-width: 600px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+  .cells { position: absolute; inset: 0; display: grid; }
+  .cell { display: grid; place-items: center; font-family: inherit; font-weight: 700; font-size: clamp(10px,2.4vw,16px); transition: background 220ms cubic-bezier(.4,0,.2,1); }
+  .pony { position: absolute; display: grid; place-items: center; pointer-events: none; animation: ponyBob 1000ms ease-in-out infinite;
+    transition: left 180ms cubic-bezier(.4,0,.2,1), top 180ms cubic-bezier(.4,0,.2,1), transform 180ms cubic-bezier(.4,0,.2,1); }
+
+  .dpad-wrap { padding: 16px 20px; border-top: 1px solid #E4E4E7; display: flex; align-items: center; justify-content: center; }
+  .dpad { display: grid; grid-template-columns: repeat(3,58px); grid-auto-rows: 50px; gap: 8px; }
+  .padbtn { display: grid; place-items: center; border: 1px solid #E4E4E7; border-radius: 6px; background: #FFFFFF; color: #52525B; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); }
+  .padbtn:hover { border-color: #E0568B; color: #C7407A; background: #FDF1F6; }
+  .padbtn:active { transform: scale(.94); }
+
+  .side { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 24px; }
+  .ask { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,.08); overflow: hidden; }
+  .ask.shake { animation: shakeX 300ms cubic-bezier(.4,0,.2,1); }
+  .ask.rise { animation: cardRise 260ms cubic-bezier(.4,0,.2,1); }
+  .ask-head { padding: 14px 20px; background: linear-gradient(135deg,#E0568B 0%,#7FCBAA 130%); display: flex; align-items: center; gap: 10px; }
+  .ask-head .q { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; background: #FFFFFF; color: #C7407A; font-size: 15px; font-weight: 700; }
+  .ask-head .t { font-size: 15px; font-weight: 600; color: #FFFFFF; }
+  .ask-body { padding: 22px 20px; display: flex; flex-direction: column; gap: 18px; }
+  .qtext { font-size: 36px; font-weight: 700; text-align: center; letter-spacing: .04em; line-height: 1.2; }
+  .qopts { display: grid; grid-template-columns: repeat(auto-fit,minmax(80px,1fr)); gap: 10px; }
+  .qopt { padding: 15px 10px; border: 1px solid #E4E4E7; border-radius: 6px; background: #FFFFFF; color: #09090B; font-family: inherit; font-size: 21px; font-weight: 700; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); }
+  .feedback { font-size: 14px; line-height: 1.6; min-height: 44px; }
+
+  .wincard { background: #FFFFFF; border: 1px solid #E0568B; border-radius: 8px; padding: 22px 20px; display: flex; flex-direction: column; gap: 12px; animation: cardRise 300ms cubic-bezier(.4,0,.2,1); }
+  .wincard .wh { display: flex; align-items: center; gap: 10px; }
+  .wincard .wt { font-size: 20px; font-weight: 700; color: #C7407A; }
+  .wincard .ws { font-size: 15px; line-height: 1.6; color: #52525B; }
+  .btn-next { padding: 11px 16px; border: none; border-radius: 6px; background: linear-gradient(135deg,#E0568B 0%,#F2A0C0 100%); color: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 150ms; }
+  .btn-next:active { transform: scale(.98); }
+
+  .info { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .info .h { font-size: 15px; font-weight: 600; }
+  .leg { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #52525B; }
+  .leg .ic { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; font-size: 16px; font-weight: 700; flex: none; }
+  .info .tip { font-size: 14px; line-height: 1.65; color: #52525B; }
+
+  @keyframes gateFloat { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-2px) scale(1.05); } }
+  @keyframes gatePop { 0% { transform: scale(.4) rotate(-12deg); } 60% { transform: scale(1.16) rotate(4deg); } 100% { transform: scale(1) rotate(0); } }
+  @keyframes crownGlow { 0%,100% { box-shadow: 0 0 0 0 rgba(224,86,139,.4); } 50% { box-shadow: 0 0 0 10px rgba(224,86,139,0); } }
+  @keyframes confettiFall { 0% { transform: translateY(-40px) rotate(0deg); opacity: 1; } 100% { transform: translateY(340px) rotate(520deg); opacity: 0; } }
+  @keyframes cardRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes shakeX { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+  @keyframes bloom { 0%,100% { opacity: .5; transform: scale(.85); } 50% { opacity: .95; transform: scale(1.05); } }
+  @keyframes ponyBob { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-2.5px) rotate(-1.5deg); } }
+  @keyframes candySpin { 0%,100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
+  @media (max-width: 640px) { h1.title { font-size: 32px; } }
+</style>
+</head>
+<body>
+<a href="index.html" id="tv-home" aria-label="Về trang chủ" style="position:fixed;top:14px;left:14px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:1px solid #E4E4E7;border-radius:999px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#18181B;font:500 14px/1 'Be Vietnam Pro',system-ui,sans-serif;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Trang chủ</a>
+
+<div class="page"><div class="wrap">
+  <div class="head">
+    <span class="eyebrow">Trò chơi toán · <span id="lv-eyebrow"></span></span>
+    <h1 class="title">Vườn cổ tích — pony đi tìm vương miện</h1>
+    <p class="intro">Dắt chú pony băng qua vườn hàng rào bằng phím mũi tên hoặc các nút ▲◀▶▼. Nhặt kẹo, mở cổng phép thuật bằng cách trả lời đúng câu toán, rồi tới vương miện ở cuối vườn. Qua được cả <strong>3 màn</strong> khó dần nhé!</p>
+  </div>
+
+  <div class="game">
+    <div class="board-card">
+      <div class="board-top">
+        <div class="pips" id="pips"></div>
+        <div class="stats">
+          <span class="stat"><svg viewBox="0 0 24 24" width="17" height="17"><circle cx="12" cy="12" r="6" fill="#E0568B"></circle><circle cx="12" cy="12" r="3" fill="#FFD9E6"></circle><path d="M6 12 L1 8 v8 z" fill="#F2A0C0"></path><path d="M18 12 L23 8 v8 z" fill="#F2A0C0"></path></svg> Kẹo <strong id="candy-text"></strong></span>
+          <span class="stat">Bước <strong id="steps-text"></strong></span>
+          <button type="button" class="btn-restart" id="btn-restart">Chơi lại</button>
+        </div>
+      </div>
+      <div class="board-wrap">
+        <div class="board" id="board">
+          <div class="cells" id="cells"></div>
+          <div class="pony" id="pony"><svg viewBox="0 0 44 40" width="88%" height="88%" style="display:block;filter:drop-shadow(0 2px 4px rgba(58,46,68,.3))"><path d="M8 30 q0 4 4 4 h18 q4 0 4-4 v-8 q0-7-8-8 h-10 q-8 1-8 8 z" fill="#FFF0F5"></path><path d="M30 18 q7-1 8-8 q-1-5-6-4 q-5 1-6 7 z" fill="#FFF0F5"></path><path d="M29 8 q3-6 8-5 q-2 4-5 6 z" fill="#B9E4D0"></path><path d="M22 12 q-6 2-8 9 q5-3 9-3 z" fill="#7FCBAA"></path><path d="M10 22 q-6 3-6 9 q4-2 7-6 z" fill="#F2A0C0"></path><path d="M34 6 l2-6 l2 6 z" fill="#F5C451"></path><circle cx="33" cy="12" r="1.7" fill="#09090B"></circle><rect x="12" y="32" width="4" height="5" rx="2" fill="#F7D9E5"></rect><rect x="26" y="32" width="4" height="5" rx="2" fill="#F7D9E5"></rect></svg></div>
+          <div class="confetti" id="confetti"></div>
+        </div>
+      </div>
+      <div class="dpad-wrap">
+        <div class="dpad">
+          <span></span><button type="button" class="padbtn" data-dir="up">▲</button><span></span>
+          <button type="button" class="padbtn" data-dir="left">◀</button><span></span><button type="button" class="padbtn" data-dir="right">▶</button>
+          <span></span><button type="button" class="padbtn" data-dir="down">▼</button><span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="side" id="side"></div>
+  </div>
+</div></div>
+
+<script>
+  // ---- Dữ liệu 3 màn (mê cung đã kiểm tra thông đường bằng BFS) ----
+  const LEVELS = [
+    { name: 'Màn 1 — Vườn nhỏ', rows: 9, cols: 13, start: [1,1], goal: [7,11],
+      map: ['#############','#...........#','###.###.###.#','#...........#','#.###.###.###','#...........#','###.#####.#.#','#.........#.#','#############'],
+      gates: [[3,3],[5,5],[5,9]], candy: [[1,4],[2,7],[1,10],[7,3]], diff: 'easy' },
+    { name: 'Màn 2 — Vườn hoa', rows: 9, cols: 13, start: [1,1], goal: [7,11],
+      map: ['#############','#.....#.....#','#.###.#.###.#','#.#.......#.#','#.#.#####.#.#','#...#...#...#','###.#.#.#.###','#.....#.....#','#############'],
+      gates: [[1,5],[3,6],[3,9],[6,9]], candy: [[2,1],[6,3],[7,2],[1,8],[5,7]], diff: 'medium' },
+    { name: 'Màn 3 — Vườn phép thuật', rows: 11, cols: 15, start: [1,1], goal: [9,13],
+      map: ['###############','#.....#.......#','#.###.#.#####.#','#.#.....#...#.#','#.#.#####.#.#.#','#.#.#...#.#.#.#','#.#.#.#.#.#.#.#','#...#.#...#.#.#','#.###.#####.#.#','#...........#.#','###############'],
+      gates: [[1,5],[3,6],[1,7],[1,11],[2,13],[5,13]], candy: [[2,1],[7,2],[4,3],[7,5],[9,10],[7,8]], diff: 'hard' },
+  ];
+
+  // ---- Câu hỏi ----
+  const SG = ['>', '<', '='];
+  const sgOf = (a, b) => a > b ? '>' : (a < b ? '<' : '=');
+  const sgWord = s => s === '>' ? 'lớn hơn' : (s === '<' ? 'bé hơn' : 'bằng');
+  function cmpQ(a, b) {
+    const s = sgOf(a, b), ta = Math.floor(a / 10), tb = Math.floor(b / 10);
+    return { text: a + '  ?  ' + b, options: SG.slice(), answer: s,
+      explain: (ta === tb && a !== b)
+        ? 'Cùng ' + ta + ' chục nên so số đơn vị: ' + (a % 10) + ' và ' + (b % 10) + ' → ' + a + ' ' + s + ' ' + b + '.'
+        : a + ' ' + sgWord(s) + ' ' + b + ' nên điền dấu ' + s + '.' };
+  }
+  function shuffle(a, seed) {
+    const out = a.slice();
+    for (let i = out.length - 1; i > 0; i--) {
+      seed = (seed * 9301 + 49297) % 233280;
+      const j = Math.floor(seed / 233280 * (i + 1));
+      [out[i], out[j]] = [out[j], out[i]];
+    }
+    return out;
+  }
+  function calcQ(a, b, op) {
+    const val = op === '+' ? a + b : a - b;
+    const wrongs = [val + 10, val - 1, val + 1, val - 10].filter(v => v >= 0 && v !== val);
+    const opts = [val, wrongs[(a + b) % wrongs.length], wrongs[(a + b + 1) % wrongs.length]];
+    const uniq = [];
+    opts.forEach(v => { if (!uniq.includes(v)) uniq.push(v); });
+    while (uniq.length < 3) { const cand = val + uniq.length + 2; if (!uniq.includes(cand)) uniq.push(cand); }
+    return { text: a + ' ' + op + ' ' + b + ' = ?', options: shuffle(uniq.map(String), a * 37 + b * 11 + op.charCodeAt(0)),
+      answer: String(val), explain: a + ' ' + op + ' ' + b + ' = ' + val + '.' };
+  }
+  const POOLS = {
+    easy: [ cmpQ(3,7), cmpQ(9,5), cmpQ(6,6), cmpQ(10,4), cmpQ(2,8), cmpQ(12,15), cmpQ(14,14), cmpQ(18,11), cmpQ(7,10), cmpQ(20,17),
+      calcQ(2,3,'+'), calcQ(5,4,'+'), calcQ(10,5,'+'), calcQ(8,3,'-'), calcQ(9,4,'-'), calcQ(6,6,'+') ],
+    medium: [ cmpQ(45,54), cmpQ(67,67), cmpQ(90,89), cmpQ(30,50), cmpQ(21,12), cmpQ(78,22), cmpQ(40,34), cmpQ(80,75),
+      calcQ(20,30,'+'), calcQ(40,5,'+'), calcQ(60,20,'-'), calcQ(50,30,'+'), calcQ(70,40,'-'), calcQ(35,4,'+') ],
+    hard: [ cmpQ(14,29), cmpQ(54,18), cmpQ(36,36), cmpQ(80,75), cmpQ(45,54), cmpQ(91,19), cmpQ(67,76), cmpQ(88,92),
+      calcQ(43,5,'+'), calcQ(96,6,'-'), calcQ(75,5,'-'), calcQ(12,6,'+'), calcQ(88,8,'-'), calcQ(30,60,'+'), calcQ(24,15,'+'), calcQ(59,14,'-') ],
+  };
+  function pickN(pool, n) {
+    const idx = [], pl = pool.length;
+    while (idx.length < n) { const i = Math.floor(Math.random() * pl); if (!idx.includes(i)) idx.push(i); }
+    return idx.map(i => pool[i]);
+  }
+
+  const BLOOM = ['✿', '❁', '✾'];
+
+  // ---- Trạng thái ----
+  const $ = id => document.getElementById(id);
+  const state = {};
+  function L() { return LEVELS[state.li]; }
+
+  function initLevel(li) {
+    const lv = LEVELS[li];
+    state.li = li;
+    state.pos = { r: lv.start[0], c: lv.start[1] };
+    state.flip = 1;
+    state.trail = { [lv.start[0] + '-' + lv.start[1]]: true };
+    state.solved = {}; state.got = {}; state.active = null; state.wrong = 0; state.steps = 0;
+    state.feedback = ''; state.tone = 'idle'; state.picked = null; state.won = false;
+    state.qs = pickN(POOLS[lv.diff], lv.gates.length);
+    // thiết lập kích thước bàn cờ theo màn
+    $('board').style.aspectRatio = lv.cols + '/' + lv.rows;
+    $('cells').style.gridTemplateColumns = 'repeat(' + lv.cols + ',1fr)';
+    $('cells').style.gridTemplateRows = 'repeat(' + lv.rows + ',1fr)';
+    $('pony').style.width = (100 / lv.cols) + '%';
+    $('pony').style.height = (100 / lv.rows) + '%';
+    $('lv-eyebrow').textContent = lv.name;
+    renderAll();
+  }
+
+  function gateIdAt(r, c) { const i = L().gates.findIndex(g => g[0] === r && g[1] === c); return i < 0 ? null : i + 1; }
+  function candyAt(r, c) { return L().candy.some(p => p[0] === r && p[1] === c); }
+
+  // ---- Vẽ ----
+  function renderCells() {
+    const lv = L(), map = lv.map, html = [];
+    for (let r = 0; r < lv.rows; r++) {
+      for (let c = 0; c < lv.cols; c++) {
+        const wall = map[r][c] === '#';
+        const gid = gateIdAt(r, c);
+        const goal = lv.goal[0] === r && lv.goal[1] === c;
+        const candy = candyAt(r, c) && !state.got[r + '-' + c];
+        const visited = state.trail[r + '-' + c];
+        let s = '', label = '';
+        if (wall) {
+          s += 'background:linear-gradient(155deg,#A8DCC0 0%,#7FCBAA 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.45);color:#FFF6FA;font-size:clamp(8px,1.7vw,11px);';
+          if ((r * lv.cols + c) % 4 === 0) { label = BLOOM[(r + c) % 3]; s += 'animation:bloom 3400ms ease-in-out ' + ((r + c) % 6) * 220 + 'ms infinite;'; }
+        } else {
+          s += 'background:' + (visited ? '#FDF0E8' : '#FFFCFA') + ';box-shadow:inset 0 0 0 1px #F4F4F5;';
+        }
+        if (candy) { s += 'color:#E0568B;font-size:clamp(12px,2.6vw,18px);animation:candySpin 2400ms ease-in-out ' + ((r + c) % 4) * 180 + 'ms infinite;'; label = '❃'; }
+        if (gid) {
+          const opened = !!state.solved[gid];
+          s += 'background:' + (opened ? 'linear-gradient(155deg,#8FDCC2 0%,#5FBF9C 100%)' : 'linear-gradient(155deg,#D8B4F5 0%,#B584E8 100%)') +
+            ';color:#FFFFFF;border-radius:7px;font-size:clamp(11px,2.4vw,17px);animation:' + (opened ? 'gatePop 340ms cubic-bezier(.4,0,.2,1)' : 'gateFloat 2000ms ease-in-out infinite') + ';';
+          label = opened ? '♥' : '?';
+        }
+        if (goal) { s += 'background:linear-gradient(155deg,#F2A0C0 0%,#E0568B 100%);color:#FFE7A8;border-radius:7px;font-size:clamp(12px,2.7vw,19px);animation:crownGlow 2100ms ease-in-out infinite;'; label = '♛'; }
+        html.push('<span class="cell" style="' + s + '">' + label + '</span>');
+      }
+    }
+    $('cells').innerHTML = html.join('');
+  }
+  function updatePony() {
+    const lv = L(), p = $('pony');
+    p.style.left = (state.pos.c * 100 / lv.cols) + '%';
+    p.style.top = (state.pos.r * 100 / lv.rows) + '%';
+    p.style.transform = 'scaleX(' + state.flip + ')' + (state.tone === 'bump' ? ' scale(.88)' : '');
+  }
+  function renderTop() {
+    const lv = L();
+    const opened = Object.keys(state.solved).length;
+    $('pips').innerHTML = lv.gates.map((g, i) => {
+      const on = !!state.solved[i + 1];
+      return '<span class="pip" style="background:' + (on ? '#5FBF9C' : '#F4F4F5') + ';color:' + (on ? '#FFF' : '#A1A1AA') + '">' + (on ? '♥' : (i + 1)) + '</span>';
+    }).join('') + '<span class="opened-text">' + opened + '/' + lv.gates.length + ' cổng</span>';
+    $('candy-text').textContent = Object.keys(state.got).length + '/' + lv.candy.length;
+    $('steps-text').textContent = state.steps;
+    // confetti
+    if (state.won) {
+      const cols = ['#E0568B', '#7FCBAA', '#F5C451', '#C9A7E8'];
+      $('confetti').innerHTML = Array.from({ length: 20 }, (_, i) =>
+        '<span style="position:absolute;top:-16px;left:' + (5 + (i * 4.8) % 90) + '%;width:9px;height:14px;border-radius:2px;background:' + cols[i % 4] +
+        ';animation:confettiFall ' + (1400 + (i % 5) * 240) + 'ms cubic-bezier(.4,0,.2,1) ' + (i % 7) * 140 + 'ms forwards;pointer-events:none"></span>').join('');
+    } else $('confetti').innerHTML = '';
+  }
+  function renderSide() {
+    const lv = L(), q = state.active ? state.qs[state.active - 1] : null;
+    let html = '';
+    if (q && !state.won) {
+      const opts = q.options.map(o => {
+        const isP = state.picked === o, right = o === q.answer;
+        let bd = '#E4E4E7', bg = '#FFFFFF', fg = '#09090B', extra = '';
+        if (isP) { if (right) { bd = '#5FBF9C'; bg = '#E6F6EF'; fg = '#0E7C6B'; extra = 'transform:scale(1.04);'; } else { bd = '#EF4444'; bg = 'rgba(239,68,68,.07)'; fg = '#B91C1C'; } }
+        return '<button type="button" class="qopt" data-o="' + o + '" style="border-color:' + bd + ';background:' + bg + ';color:' + fg + ';' + extra + '">' + o + '</button>';
+      }).join('');
+      const fbColor = state.tone === 'right' ? '#0E7C6B' : (state.tone === 'wrong' ? '#B91C1C' : '#52525B');
+      html += '<div class="ask ' + (state.tone === 'wrong' ? 'shake' : 'rise') + '">' +
+        '<div class="ask-head"><span class="q">?</span><span class="t">Cổng phép thuật số ' + state.active + '</span></div>' +
+        '<div class="ask-body"><span class="qtext">' + q.text + '</span><div class="qopts">' + opts + '</div>' +
+        '<span class="feedback" style="color:' + fbColor + '">' + state.feedback + '</span></div></div>';
+    }
+    if (state.won) {
+      const opened = Object.keys(state.solved).length, candy = Object.keys(state.got).length;
+      const last = state.li >= LEVELS.length - 1;
+      const title = last ? 'Hoàn thành cả 3 màn! 🎉' : 'Qua màn rồi! 🏆';
+      const stats = 'Màn "' + lv.name.replace(/^Màn \d+ — /, '') + '": mở ' + opened + ' cổng, nhặt ' + candy + '/' + lv.candy.length + ' kẹo, đi ' + state.steps + ' bước, sai ' + state.wrong + ' lần.';
+      const btn = last
+        ? '<button type="button" class="btn-next" id="btn-next" data-act="restart">Chơi lại từ màn 1</button>'
+        : '<button type="button" class="btn-next" id="btn-next" data-act="next">Sang màn ' + (state.li + 2) + ' →</button>';
+      html += '<div class="wincard"><div class="wh">' +
+        '<svg viewBox="0 0 32 32" width="30" height="30"><path d="M4 24 L7 10 L13 17 L16 7 L19 17 L25 10 L28 24 Z" fill="#F5C451"></path><rect x="4" y="24" width="24" height="4" rx="2" fill="#E0AA3A"></rect></svg>' +
+        '<span class="wt">' + title + '</span></div><span class="ws">' + stats + '</span>' + btn + '</div>';
+    }
+    html += '<div class="info"><span class="h">Ký hiệu trong vườn</span>' +
+      '<div class="leg"><span class="ic" style="background:#FDF1F6"><svg viewBox="0 0 44 40" width="22" height="22"><path d="M8 30 q0 4 4 4 h18 q4 0 4-4 v-8 q0-7-8-8 h-10 q-8 1-8 8 z" fill="#FFF0F5"></path><path d="M22 12 q-6 2-8 9 q5-3 9-3 z" fill="#7FCBAA"></path></svg></span>Chú pony của em</div>' +
+      '<div class="leg"><span class="ic" style="background:#F0E4FA;color:#7B4FA8">?</span>Cổng phép thuật — đi vào để trả lời</div>' +
+      '<div class="leg"><span class="ic" style="background:#D8F0E4;color:#0E7C6B">♥</span>Cổng đã mở, pony đi qua được</div>' +
+      '<div class="leg"><span class="ic" style="background:#FDF1F6;color:#E0568B">❃</span>Viên kẹo — nhặt trên đường đi</div>' +
+      '<div class="leg"><span class="ic" style="background:#FBE6EF;color:#E0AA3A">♛</span>Vương miện — đích đến</div></div>' +
+      '<div class="info"><span class="h">Mẹo</span><span class="tip">Vườn có nhiều lối cụt. Ô màu kem là nơi pony đã đi qua — gặp lối cụt thì quay lại ngã rẽ trước rồi thử hướng khác. Cố nhặt hết kẹo trước khi tới vương miện nhé.</span></div>';
+    $('side').innerHTML = html;
+    const nb = $('btn-next');
+    if (nb) nb.addEventListener('click', () => nb.dataset.act === 'next' ? initLevel(state.li + 1) : initLevel(0));
+    $('side').querySelectorAll('.qopt').forEach(b => b.addEventListener('click', () => answer(b.dataset.o)));
+  }
+  function renderAll() { renderCells(); updatePony(); renderTop(); renderSide(); }
+
+  // ---- Chơi ----
+  function step(r, c, flip) {
+    state.pos = { r, c }; state.flip = flip; state.steps += 1;
+    state.trail[r + '-' + c] = true;
+    if (candyAt(r, c)) state.got[r + '-' + c] = true;
+    state.active = null;
+    if (r === L().goal[0] && c === L().goal[1]) state.won = true;
+    renderAll();
+  }
+  function move(dr, dc, flip) {
+    if (state.won) return;
+    const f = (flip === undefined || flip === 0) ? state.flip : flip;
+    const r = state.pos.r + dr, c = state.pos.c + dc, lv = L();
+    if (r < 0 || c < 0 || r >= lv.rows || c >= lv.cols || lv.map[r][c] === '#') {
+      state.flip = f; state.tone = 'bump'; updatePony();
+      setTimeout(() => { state.tone = 'idle'; updatePony(); }, 280);
+      return;
+    }
+    const gid = gateIdAt(r, c);
+    if (gid && !state.solved[gid]) {
+      state.flip = f; state.active = gid; state.feedback = ''; state.tone = 'idle'; state.picked = null;
+      updatePony(); renderSide();
+      return;
+    }
+    step(r, c, f);
+  }
+  function answer(val) {
+    if (state.active === null || state.picked) return;
+    const q = state.qs[state.active - 1], gate = L().gates[state.active - 1];
+    if (val === q.answer) {
+      state.solved[state.active] = true; state.picked = val; state.tone = 'right';
+      state.feedback = 'Đúng rồi! ' + q.explain + ' Cổng mở ra, pony đi tiếp nhé.';
+      state.pos = { r: gate[0], c: gate[1] }; state.steps += 1;
+      state.trail[gate[0] + '-' + gate[1]] = true;
+      if (candyAt(gate[0], gate[1])) state.got[gate[0] + '-' + gate[1]] = true;
+      if (gate[0] === L().goal[0] && gate[1] === L().goal[1]) state.won = true;
+      renderAll();
+      setTimeout(() => { if (!state.won) { state.active = null; state.picked = null; state.feedback = ''; state.tone = 'idle'; renderAll(); } }, 1500);
+    } else {
+      state.wrong += 1; state.picked = val; state.tone = 'wrong';
+      state.feedback = 'Chưa đúng. ' + q.explain + ' Thử chọn lại nhé.';
+      renderSide();
+      setTimeout(() => { state.picked = null; renderSide(); }, 900);
+    }
+  }
+
+  // ---- Điều khiển ----
+  window.addEventListener('keydown', e => {
+    const m = { ArrowUp: [-1, 0, 0], ArrowDown: [1, 0, 0], ArrowLeft: [0, -1, -1], ArrowRight: [0, 1, 1] }[e.key];
+    if (!m) return;
+    e.preventDefault();
+    move(m[0], m[1], m[2]);
+  });
+  document.querySelectorAll('.padbtn').forEach(b => b.addEventListener('click', () => {
+    const d = b.dataset.dir;
+    if (d === 'up') move(-1, 0, 0); else if (d === 'down') move(1, 0, 0);
+    else if (d === 'left') move(0, -1, -1); else move(0, 1, 1);
+  }));
+  $('btn-restart').addEventListener('click', () => initLevel(state.li));
+
+  initLevel(0);
+</script>
+</body>
+</html>
