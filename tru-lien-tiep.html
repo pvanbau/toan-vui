@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trừ liên tiếp — Toán Vui</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #FFFFFF; color: #09090B; font-family: 'Be Vietnam Pro', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .page { min-height: 100vh; padding: 0 24px 96px; }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+  .col16 { display: flex; flex-direction: column; gap: 16px; }
+
+  .eyebrow { font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: #A1A1AA; }
+  h1.title { margin: 0; font-size: 44px; line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; }
+  .intro { margin: 0; max-width: 680px; font-size: 17px; line-height: 1.65; color: #52525B; text-wrap: pretty; }
+  .intro strong { font-weight: 600; color: #09090B; }
+
+  .tabbar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 0 auto 36px; }
+  .tabs { display: flex; gap: 4px; padding: 4px; background: #F4F4F5; border-radius: 10px; width: fit-content; flex-wrap: wrap; }
+  .tab { padding: 9px 18px; border: none; border-radius: 8px; white-space: nowrap; font-family: inherit; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); background: transparent; color: #71717A; }
+  .tab.on { font-weight: 600; background: #FFFFFF; color: #18181B; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+  .tabhint { font-size: 14px; color: #A1A1AA; }
+
+  .section:not(.on) { display: none !important; }
+
+  .card { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+  .tip { background: #FAFAFA; border: 1px solid #E4E4E7; border-radius: 12px; padding: 22px 24px; display: flex; flex-direction: column; gap: 10px; }
+  .tip h3 { margin: 0; font-size: 17px; font-weight: 600; }
+  .tip p { margin: 0; font-size: 15px; line-height: 1.65; color: #52525B; }
+  .tip strong { font-weight: 600; color: #09090B; }
+
+  .sim-grid { display: grid; grid-template-columns: minmax(0,1.5fr) minmax(0,1fr); gap: 16px; align-items: start; }
+  @media (max-width: 900px) { .sim-grid { grid-template-columns: 1fr; } }
+
+  .story-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .story-head h2 { margin: 0 0 4px; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+  .story-head .sub { font-size: 14px; line-height: 1.55; color: #71717A; max-width: 460px; }
+  .head-actions { display: flex; align-items: center; gap: 8px; }
+
+  .arena { background: #FAFAFA; border: 1px solid #E4E4E7; border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .items { display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 8px; }
+  @media (min-width: 640px) { .items { grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); } }
+  .slot { position: relative; aspect-ratio: 1; display: grid; place-items: center; background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 8px; transition: background 300ms, border-color 300ms; }
+  .slot .thing { font-size: 26px; line-height: 1; transition: transform 520ms cubic-bezier(.2,.8,.2,1), opacity 420ms ease; }
+  @media (min-width: 640px) { .slot .thing { font-size: 29px; } }
+  .slot.g1 { border: 1px dashed #FF6B00; background: #FFF7ED; }
+  .slot.g2 { border: 1px dashed #1660C7; background: #F0F6FF; }
+  .slot.g1 .thing, .slot.g2 .thing { transform: translateY(-34px) scale(.45) rotate(-14deg); opacity: 0; }
+  .slot.pop .thing { animation: pop 320ms ease both; }
+  @keyframes pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; }
+  .lg { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 999px; font-size: 13.5px; color: #52525B; }
+  .lg .sw { width: 12px; height: 12px; border-radius: 999px; flex: none; }
+  .lg b { font-weight: 700; color: #09090B; font-variant-numeric: tabular-nums; }
+
+  .steps { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .btn { font-family: inherit; cursor: pointer; border-radius: 8px; font-weight: 600; transition: all 150ms; }
+  .btn-primary { padding: 0 18px; height: 44px; font-size: 15px; border: 1px solid #18181B; background: #18181B; color: #FFFFFF; }
+  .btn-primary:hover:not(:disabled) { background: #27272A; }
+  .btn-secondary { padding: 0 16px; height: 44px; font-size: 15px; border: 1px solid #E4E4E7; background: #FFFFFF; color: #09090B; }
+  .btn-secondary:hover:not(:disabled) { background: #FAFAFA; }
+  .btn-ghost { padding: 0 12px; height: 32px; font-size: 14px; border: none; background: transparent; color: #52525B; }
+  .btn-ghost:hover { background: #F4F4F5; }
+  .btn-icon { width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #E4E4E7; background: #FFFFFF; color: #09090B; border-radius: 8px; }
+  .btn-icon:hover { background: #FAFAFA; }
+  .btn:disabled { opacity: .45; cursor: default; }
+  .stephint { font-size: 13.5px; color: #A1A1AA; }
+
+  .eqrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #FAFAFA; border: 1px solid #E4E4E7; border-radius: 8px; padding: 12px 14px; opacity: 0; transform: translateY(4px); transition: opacity 260ms ease, transform 260ms ease; }
+  .eqrow.on { opacity: 1; transform: none; }
+  .eqrow .lbl { font-size: 13.5px; color: #71717A; }
+  .eqrow .expr { font-size: 19px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .eqrow .expr .q { color: #A1A1AA; }
+  .eqrow.done { border-color: #18181B; background: #F4F4F5; }
+  .eqrow.o { border-color: #FFD8B4; }
+  .eqrow.b { border-color: #C7DBF7; }
+
+  .panel { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; }
+  .phead { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 24px; border-bottom: 1px solid #E4E4E7; flex-wrap: wrap; }
+  .phead h2 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+  .phead .sub { font-size: 13px; color: #A1A1AA; }
+  .score { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .pbody { padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 16px; }
+
+  .levels { display: flex; gap: 4px; padding: 4px; background: #F4F4F5; border-radius: 10px; width: fit-content; flex-wrap: wrap; }
+  .lvbtn { padding: 7px 14px; border: none; border-radius: 8px; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); background: transparent; color: #71717A; }
+  .lvbtn.on { font-weight: 600; background: #FFFFFF; color: #18181B; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+
+  .qkind { display: inline-flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 999px; background: #F4F4F5; color: #71717A; font-size: 11.5px; font-weight: 600; letter-spacing: .02em; }
+  .askq { font-size: 18px; font-weight: 600; line-height: 1.5; letter-spacing: -0.005em; }
+  .qopts { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+  .opt { text-align: center; padding: 14px 12px; border: 1px solid #E4E4E7; border-radius: 8px; background: #FFFFFF; color: #09090B; font-family: inherit; font-size: 17px; font-weight: 600; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); font-variant-numeric: tabular-nums; }
+  .opt:hover:not(:disabled) { background: #FAFAFA; }
+  .opt.ok { border-color: #18181B; background: #F4F4F5; color: #18181B; }
+  .opt.no { border-color: #D4D4D8; background: #FAFAFA; color: #71717A; text-decoration: line-through; }
+  .opt:disabled { cursor: default; }
+  .opt.shake { animation: shake 300ms; }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+  .qexplain { font-size: 14px; line-height: 1.6; color: #52525B; background: #FAFAFA; border-radius: 8px; padding: 12px 14px; }
+  .qexplain b { color: #09090B; }
+  .askfoot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+  .ways-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .wcard { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .wcard h3 { margin: 0; font-size: 16.5px; font-weight: 600; line-height: 1.45; }
+  .wcard .wq { font-size: 15px; line-height: 1.6; color: #52525B; }
+  .wcard .wmath { background: #FAFAFA; border-radius: 8px; padding: 12px 14px; font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  .qbody { padding: 8px 24px 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 4px 28px; }
+  .q { padding: 18px 0; border-bottom: 1px solid #F4F4F5; display: flex; flex-direction: column; gap: 12px; }
+  .qtext { display: flex; gap: 12px; align-items: flex-start; line-height: 1.55; }
+  .qnum { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; background: #F4F4F5; color: #71717A; font-size: 13px; font-weight: 600; }
+  .qlabel { font-size: 16px; font-weight: 500; }
+  .qopts.small .opt { padding: 11px 10px; font-size: 15.5px; }
+  .closing { margin: 20px 0 0; grid-column: 1/-1; font-size: 14px; color: #A1A1AA; }
+
+  .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+  .field label { display: block; font-size: 13.5px; font-weight: 500; margin-bottom: 6px; }
+  .field input { width: 100%; height: 42px; padding: 0 12px; border: 1px solid #E4E4E7; border-radius: 8px; background: #FFFFFF; color: #09090B; font-family: inherit; font-size: 15px; }
+  .field input:focus { outline: 2px solid #18181B; outline-offset: 1px; }
+  .help { margin: 0; font-size: 13.5px; line-height: 1.6; color: #71717A; }
+  .picker { display: flex; flex-wrap: wrap; gap: 8px; }
+  .emoji { width: 46px; height: 46px; font-size: 22px; border: 1px solid #E4E4E7; border-radius: 8px; background: #FFFFFF; cursor: pointer; transition: all 150ms; }
+  .emoji:hover { background: #FAFAFA; }
+  .emoji.on { border-color: #18181B; background: #F4F4F5; }
+  .err { font-size: 14px; line-height: 1.6; color: #B42318; background: #FEF3F2; border: 1px solid #FEE4E2; border-radius: 8px; padding: 12px 14px; }
+
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .spark { position: fixed; pointer-events: none; font-size: 20px; z-index: 999; animation: fly 900ms ease-out forwards; }
+  @keyframes fly { from { opacity: 1; transform: translate(0,0) scale(.6); } to { opacity: 0; transform: translate(var(--dx), -120px) scale(1.25); } }
+
+  @media (max-width: 640px) { h1.title { font-size: 34px; } .page { padding: 0 16px 80px; } .pbody, .phead { padding-left: 18px; padding-right: 18px; } .qbody { padding-left: 18px; padding-right: 18px; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+</style>
+<link rel="icon" type="image/jpeg" href="logo-teacher-b.jpg">
+</head>
+<body>
+<a href="index.html" id="tv-home" aria-label="Về trang chủ" style="position:fixed;top:14px;left:14px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:1px solid #E4E4E7;border-radius:999px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#18181B;font:500 14px/1 'Be Vietnam Pro',system-ui,sans-serif;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Trang chủ</a>
+
+<div class="page">
+  <div class="wrap col16" style="padding:64px 0 36px">
+    <span class="eyebrow">Mẫu giáo</span>
+    <h1 class="title">Trừ liên tiếp</h1>
+    <p class="intro">Một câu chuyện, hai lần bớt. Cửa hàng có 20 cái bánh, buổi chiều bán 12 cái, buổi tối bán 5 cái. Từ đúng câu chuyện đó có thể hỏi <strong>nhiều cách</strong>: còn lại bao nhiêu, đã bán tổng cộng bao nhiêu, sau buổi chiều còn bao nhiêu, hay ngược lại — biết còn lại rồi thì buổi tối đã bán mấy cái.</p>
+  </div>
+
+  <div class="tabbar wrap">
+    <div class="tabs">
+      <button type="button" class="tab" data-tab="sim">Mô phỏng</button>
+      <button type="button" class="tab" data-tab="ways">Nhiều cách hỏi</button>
+      <button type="button" class="tab" data-tab="quiz">Bài tập</button>
+      <button type="button" class="tab" data-tab="make">Tự tạo bài</button>
+    </div>
+    <span class="tabhint" id="tabhint"></span>
+  </div>
+
+  <div class="section wrap" id="sec-sim"></div>
+  <div class="section wrap col16" id="sec-ways"></div>
+  <div class="section wrap panel" id="sec-quiz"></div>
+  <div class="section wrap col16" id="sec-make"></div>
+</div>
+
+<p class="sr" role="status" aria-live="polite" id="live"></p>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+  const low = s => s.charAt(0).toLowerCase() + s.slice(1);
+
+  const ORANGE = '#FF6B00', BLUE = '#1660C7', INK = '#18181B';
+
+  const HINTS = {
+    sim: 'Bấm bớt từng lần, trả lời câu hỏi giữa chừng rồi mới bớt tiếp',
+    ways: 'Cùng một câu chuyện — tám cách hỏi khác nhau',
+    quiz: '16 bài, trộn đủ các cách hỏi',
+    make: 'Nhập số của riêng con'
+  };
+
+  /* ================= Câu chuyện ================= */
+  const STORIES = [
+    { emoji:'🍰', place:'Cửa hàng', unit:'cái bánh', total:20, a:12, b:5, l1:'Buổi chiều bán', l2:'Buổi tối bán', sum:'bán', at:'trên khay' },
+    { emoji:'🍎', place:'Giỏ', unit:'quả táo', total:15, a:6, b:4, l1:'Mẹ lấy ra', l2:'Bé ăn', sum:'lấy đi', at:'trong giỏ' },
+    { emoji:'🎈', place:'Bé', unit:'quả bóng bay', total:12, a:3, b:4, l1:'Bay mất', l2:'Cho bạn', sum:'mất đi', at:'trong chùm' },
+    { emoji:'🍬', place:'Lọ', unit:'viên kẹo', total:18, a:7, b:5, l1:'Chia cho bạn', l2:'Bé ăn', sum:'lấy đi', at:'trong lọ' },
+    { emoji:'🐟', place:'Bể', unit:'con cá', total:14, a:5, b:3, l1:'Bán đi', l2:'Cho ông', sum:'cho đi', at:'trong bể' },
+    { emoji:'🚗', place:'Kệ', unit:'chiếc xe', total:16, a:8, b:4, l1:'Buổi sáng bán', l2:'Buổi chiều bán', sum:'bán', at:'trên kệ' },
+    { emoji:'🌸', place:'Vườn', unit:'bông hoa', total:13, a:5, b:3, l1:'Bé hái', l2:'Tặng cô', sum:'hái đi', at:'trong vườn' },
+    { emoji:'🥐', place:'Tủ', unit:'cái bánh mì', total:19, a:9, b:6, l1:'Buổi sáng bán', l2:'Buổi trưa bán', sum:'bán', at:'trong tủ' }
+  ];
+  const EMOJIS = ['🍰','🍎','🎈','🍬','🐟','🚗','🌸','🥐','🐤','⚽','🍓','🐞'];
+
+  function nums(p) {
+    const mid = p.total - p.a, left = mid - p.b, taken = p.a + p.b;
+    return { mid, left, taken };
+  }
+
+  /* ================= Bộ sinh câu hỏi — 8 cách hỏi ================= */
+  function shuffleFixed(arr, seed) {
+    const a = arr.slice(); let s = seed;
+    for (let i = a.length - 1; i > 0; i--) {
+      s = (s * 1103515245 + 12345) % 2147483648;
+      const j = s % (i + 1);
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  function numOpts(ans, near, seed) {
+    const set = new Set([ans]);
+    for (const v of [...near, ans + 1, ans - 1, ans + 2, ans - 2, ans + 3]) {
+      if (set.size >= 4) break;
+      if (v >= 0 && v <= 30 && Number.isInteger(v)) set.add(v);
+    }
+    const opts = shuffleFixed([...set], seed);
+    return { options: opts.map(String), answer: opts.indexOf(ans) };
+  }
+  function textOpts(labels, ansLabel, seed) {
+    const opts = shuffleFixed(labels, seed);
+    return { options: opts, answer: opts.indexOf(ansLabel) };
+  }
+
+  // Mỗi builder trả về { kind, level, text, options, answer, explain }
+  const BUILDERS = {
+    // --- Cơ bản ---
+    left_mid: (p, s) => { const n = nums(p);
+      return { kind:'Còn lại giữa chừng', level:'basic',
+        text:`${p.place} có ${p.total} ${p.unit}. ${p.l1} ${p.a} ${p.unit}. Bây giờ còn lại bao nhiêu ${p.unit}?`,
+        ...numOpts(n.mid, [p.total - p.b, n.taken, p.a], s),
+        explain:`Bớt một lần: ${p.total} − ${p.a} = ${n.mid}. Còn ${n.mid} ${p.unit}.` }; },
+
+    left_end: (p, s) => { const n = nums(p);
+      return { kind:'Còn lại cuối cùng', level:'basic',
+        text:`${p.place} có ${p.total} ${p.unit}. ${p.l1} ${p.a} ${p.unit}, ${low(p.l2)} ${p.b} ${p.unit}. Còn lại bao nhiêu ${p.unit}?`,
+        ...numOpts(n.left, [n.mid, p.total - p.b, n.taken], s),
+        explain:`Bớt hai lần: ${p.total} − ${p.a} = ${n.mid}, rồi ${n.mid} − ${p.b} = ${n.left}.` }; },
+
+    sum_taken: (p, s) => { const n = nums(p);
+      return { kind:'Tổng đã bớt', level:'basic',
+        text:`${p.l1} ${p.a} ${p.unit}, ${low(p.l2)} ${p.b} ${p.unit}. Cả hai lần đã ${p.sum} tổng cộng bao nhiêu ${p.unit}?`,
+        ...numOpts(n.taken, [n.left, n.mid, p.total], s),
+        explain:`Gộp hai lần bớt: ${p.a} + ${p.b} = ${n.taken} ${p.unit}.` }; },
+
+    which_more: (p, s) => {
+      const A = `${p.l1} nhiều hơn`, B = `${p.l2} nhiều hơn`, C = 'Hai lần bằng nhau';
+      return { kind:'So sánh hai lần', level:'basic',
+        text:`${p.l1} ${p.a} ${p.unit}, ${low(p.l2)} ${p.b} ${p.unit}. Lần nào bớt nhiều hơn?`,
+        ...textOpts([A, B, C], p.a > p.b ? A : (p.b > p.a ? B : C), s),
+        explain:`${p.a} và ${p.b}: ${p.a > p.b ? p.a + ' lớn hơn ' + p.b : (p.b > p.a ? p.b + ' lớn hơn ' + p.a : 'hai số bằng nhau')}.` };
+    },
+
+    // --- Suy luận ---
+    back_a: (p, s) => { const n = nums(p);
+      return { kind:'Hỏi ngược lần 1', level:'hard',
+        text:`${p.place} có ${p.total} ${p.unit}. Sau ${low(p.l1)} thì còn ${n.mid} ${p.unit}. Vậy ${low(p.l1)} bao nhiêu ${p.unit}?`,
+        ...numOpts(p.a, [n.mid, p.b, n.left], s),
+        explain:`Lấy lúc đầu trừ số còn lại: ${p.total} − ${n.mid} = ${p.a}.` }; },
+
+    back_b: (p, s) => { const n = nums(p);
+      return { kind:'Hỏi ngược lần 2', level:'hard',
+        text:`Sau ${low(p.l1)} còn ${n.mid} ${p.unit}. Đến cuối chỉ còn ${n.left} ${p.unit}. Vậy ${low(p.l2)} bao nhiêu ${p.unit}?`,
+        ...numOpts(p.b, [n.left, p.a, n.mid], s),
+        explain:`${n.mid} − ${n.left} = ${p.b}. ${p.l2} ${p.b} ${p.unit}.` }; },
+
+    compare: (p, s) => { const n = nums(p);
+      const A = 'Số còn lại nhiều hơn', B = `Số đã ${p.sum} nhiều hơn`, C = 'Bằng nhau';
+      return { kind:'So sánh còn – bớt', level:'hard',
+        text:`${p.place} còn ${n.left} ${p.unit}, đã ${p.sum} ${n.taken} ${p.unit}. Bên nào nhiều hơn?`,
+        ...textOpts([A, B, C], n.left > n.taken ? A : (n.taken > n.left ? B : C), s),
+        explain:`So ${n.left} với ${n.taken}: ${n.left > n.taken ? n.left + ' lớn hơn ' + n.taken : (n.taken > n.left ? n.taken + ' lớn hơn ' + n.left : 'hai số bằng nhau')}.` };
+    },
+
+    plus_more: (p, s) => { const n = nums(p);
+      const k = n.left >= 2 ? 2 : 1;
+      return { kind:'Bớt thêm lần nữa', level:'hard',
+        text:`Còn ${n.left} ${p.unit}. Nếu ${low(p.l2)} thêm ${k} ${p.unit} nữa thì còn lại bao nhiêu ${p.unit}?`,
+        ...numOpts(n.left - k, [n.left, n.left + k, n.mid], s),
+        explain:`Bớt lần thứ ba: ${n.left} − ${k} = ${n.left - k}.` }; },
+
+    diff: (p, s) => { const n = nums(p);
+      const big = Math.max(n.left, n.taken), small = Math.min(n.left, n.taken);
+      const who = n.taken >= n.left ? `Số đã ${p.sum}` : 'Số còn lại';
+      return { kind:'Hơn kém bao nhiêu', level:'hard',
+        text:`${p.place} còn ${n.left} ${p.unit}, đã ${p.sum} ${n.taken} ${p.unit}. ${who} nhiều hơn bao nhiêu ${p.unit}?`,
+        ...numOpts(big - small, [big, small, big + small], s),
+        explain:`${big} − ${small} = ${big - small} ${p.unit}.` }; }
+  };
+
+  const BASIC_END = ['left_end', 'sum_taken', 'which_more'];
+  const HARD_END  = ['back_b', 'compare', 'plus_more', 'diff'];
+
+  function buildAskSet(p, level, seed) {
+    // 1 câu hỏi giữa chừng (sau lần bớt 1) + các câu sau khi bớt xong
+    let midKey, endKeys;
+    if (level === 'basic') { midKey = 'left_mid'; endKeys = BASIC_END; }
+    else if (level === 'hard') { midKey = 'back_a'; endKeys = shuffleFixed(HARD_END, seed).slice(0, 3); }
+    else { midKey = seed % 2 ? 'left_mid' : 'back_a';
+           endKeys = shuffleFixed(['left_end', 'sum_taken', 'compare', 'plus_more', 'which_more'], seed).slice(0, 3); }
+    return {
+      mid: BUILDERS[midKey](p, seed + 7),
+      end: endKeys.map((k, i) => BUILDERS[k](p, seed + 13 * (i + 1)))
+    };
+  }
+
+  /* ================= Trạng thái ================= */
+  const state = {
+    tab: 'sim',
+    si: 0,              // chỉ số câu chuyện
+    story: STORIES[0],
+    custom: null,
+    level: 'basic',
+    phase: 'start',     // start | mid | end | done
+    asks: null,
+    qi: 0,              // vị trí trong danh sách câu hỏi hiện tại
+    tries: 0,
+    right: 0,
+    total: 0,
+    busy: false,
+    quizLevel: 'mix',
+    picked: {}
+  };
+
+  /* ================= Tabs ================= */
+  function renderTabs() {
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.tab === state.tab));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('on'));
+    $('sec-' + state.tab).classList.add('on');
+    $('tabhint').textContent = HINTS[state.tab];
+  }
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => {
+    state.tab = b.dataset.tab; renderTabs();
+    if (state.tab === 'quiz') renderQuiz();
+  }));
+
+  /* ================= MÔ PHỎNG ================= */
+  function renderSim() {
+    const p = state.story, n = nums(p);
+    $('sec-sim').innerHTML = `
+      <div class="sim-grid">
+        <div class="card">
+          <div class="story-head">
+            <div>
+              <h2 id="sim-title"></h2>
+              <div class="sub" id="sim-sub"></div>
+            </div>
+            <div class="head-actions">
+              <button type="button" class="btn btn-icon" id="sim-speak" title="Đọc đề cho con nghe" aria-label="Đọc đề">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+              </button>
+              <button type="button" class="btn btn-ghost" id="sim-next">Bài khác</button>
+            </div>
+          </div>
+
+          <div class="arena">
+            <div class="items" id="sim-items" aria-hidden="true"></div>
+            <div class="legend" id="sim-legend"></div>
+          </div>
+
+          <div class="steps">
+            <button type="button" class="btn btn-primary" id="sim-step"></button>
+            <button type="button" class="btn btn-secondary" id="sim-reset">Làm lại</button>
+            <span class="stephint" id="sim-stephint"></span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div class="eqrow" id="eq0"><span class="lbl">Lúc đầu</span><span class="expr" id="eq0x">${p.total}</span></div>
+            <div class="eqrow o" id="eq1"><span class="lbl" id="eq1l"></span><span class="expr" id="eq1x"></span></div>
+            <div class="eqrow b" id="eq2"><span class="lbl" id="eq2l"></span><span class="expr" id="eq2x"></span></div>
+          </div>
+        </div>
+
+        <div class="panel" id="ask-panel">
+          <div class="phead">
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <h2>Câu hỏi</h2>
+              <span class="sub" id="ask-count"></span>
+            </div>
+            <span class="score" id="ask-score"></span>
+          </div>
+          <div class="pbody">
+            <div class="levels" id="sim-levels">
+              <button type="button" class="lvbtn" data-lv="basic">Cơ bản</button>
+              <button type="button" class="lvbtn" data-lv="hard">Suy luận</button>
+              <button type="button" class="lvbtn" data-lv="mix">Trộn cả hai</button>
+            </div>
+            <div id="ask-body"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip" style="margin-top:16px">
+        <h3>Điều cần nhớ</h3>
+        <p>Bớt hai lần thì làm lần lượt: bớt lần một xong mới bớt tiếp lần hai — <strong>${p.total} − ${p.a} = ${n.mid}</strong>, rồi <strong>${n.mid} − ${p.b} = ${n.left}</strong>. Muốn biết đã bớt tất cả bao nhiêu thì cộng hai lần bớt lại: <strong>${p.a} + ${p.b} = ${n.taken}</strong>. Số còn lại cộng số đã bớt luôn bằng số lúc đầu: ${n.left} + ${n.taken} = ${p.total}.</p>
+      </div>`;
+
+    $('sim-step').addEventListener('click', doStep);
+    $('sim-reset').addEventListener('click', () => resetStory());
+    $('sim-next').addEventListener('click', () => {
+      state.custom = null;
+      state.si = (state.si + 1) % STORIES.length;
+      state.story = STORIES[state.si];
+      renderSim();
+    });
+    $('sim-speak').addEventListener('click', speak);
+    $('sec-sim').querySelectorAll('.lvbtn').forEach(b => b.addEventListener('click', () => {
+      state.level = b.dataset.lv;
+      $('sec-sim').querySelectorAll('.lvbtn').forEach(x => x.classList.toggle('on', x.dataset.lv === state.level));
+      resetStory();
+    }));
+    $('sec-sim').querySelectorAll('.lvbtn').forEach(x => x.classList.toggle('on', x.dataset.lv === state.level));
+    resetStory();
+  }
+
+  function resetStory() {
+    const p = state.story, n = nums(p);
+    state.phase = 'start'; state.qi = 0; state.tries = 0;
+    state.right = 0; state.busy = false;
+    state.asks = buildAskSet(p, state.level, (p.total * 31 + p.a * 7 + p.b) % 9973);
+    state.total = 1 + state.asks.end.length;
+
+    $('sim-title').textContent = `${p.place} có ${p.total} ${p.unit}`;
+    $('sim-sub').textContent = `${p.l1} ${p.a} ${p.unit}, ${low(p.l2)} ${p.b} ${p.unit}.`;
+
+    const box = $('sim-items');
+    box.innerHTML = '';
+    for (let i = 0; i < p.total; i++) {
+      const d = document.createElement('div');
+      d.className = 'slot pop';
+      d.style.animationDelay = (i * 16) + 'ms';
+      d.innerHTML = `<span class="thing">${p.emoji}</span>`;
+      box.appendChild(d);
+    }
+
+    $('eq0x').textContent = p.total;
+    $('eq1l').textContent = p.l1;
+    $('eq2l').textContent = p.l2;
+    $('eq1x').innerHTML = `${p.total} − ${p.a} = <span class="q">?</span>`;
+    $('eq2x').innerHTML = `<span class="q">?</span> − ${p.b} = <span class="q">?</span>`;
+    ['eq0','eq1','eq2'].forEach(id => $(id).classList.remove('on','done'));
+    $('eq0').classList.add('on');
+
+    const btn = $('sim-step');
+    btn.disabled = false;
+    btn.textContent = `${p.l1} ${p.a} ${p.unit}`;
+    $('sim-stephint').textContent = '';
+
+    drawLegend();
+    $('ask-body').innerHTML = `<p class="help">Bấm <strong>${esc(p.l1)} ${p.a} ${esc(p.unit)}</strong> ở bên cạnh để bắt đầu.</p>`;
+    updateAskHead();
+    say(`${p.place} có ${p.total} ${p.unit}.`);
+  }
+
+  function drawLegend() {
+    const p = state.story, n = nums(p);
+    const g1 = state.phase === 'start' ? 0 : p.a;
+    const g2 = (state.phase === 'end' || state.phase === 'done') ? p.b : 0;
+    $('sim-legend').innerHTML = `
+      <span class="lg"><span class="sw" style="background:${ORANGE}"></span>${esc(p.l1)} <b>${g1}</b></span>
+      <span class="lg"><span class="sw" style="background:${BLUE}"></span>${esc(p.l2)} <b>${g2}</b></span>
+      <span class="lg"><span class="sw" style="background:${INK}"></span>Còn lại ${esc(p.at)} <b>${p.total - g1 - g2}</b></span>`;
+  }
+
+  function doStep() {
+    if (state.busy) return;
+    const p = state.story, n = nums(p);
+    const slots = $('sim-items').children;
+    state.busy = true;
+    $('sim-step').disabled = true;
+
+    const run = (from, count, cls, after) => {
+      for (let i = 0; i < count; i++) {
+        const el = slots[from + i];
+        if (el) setTimeout(() => { el.classList.remove('pop'); el.classList.add(cls); drawLegendPartial(cls); }, i * 65);
+      }
+      setTimeout(after, count * 65 + 420);
+    };
+
+    if (state.phase === 'start') {
+      run(0, p.a, 'g1', () => {
+        state.phase = 'mid';
+        drawLegend();
+        $('eq1x').innerHTML = `${p.total} − ${p.a} = <b>${n.mid}</b>`;
+        $('eq1').classList.add('on','done');
+        $('sim-step').textContent = `${p.l2} ${p.b} ${p.unit}`;
+        $('sim-stephint').textContent = 'Trả lời câu hỏi bên cạnh rồi mới bớt tiếp';
+        state.busy = false;
+        say(`${p.l1} ${p.a} ${p.unit}. Còn ${n.mid} ${p.unit}.`);
+        askShow(state.asks.mid);
+      });
+    } else if (state.phase === 'mid') {
+      run(p.a, p.b, 'g2', () => {
+        state.phase = 'end';
+        drawLegend();
+        $('eq2x').innerHTML = `${n.mid} − ${p.b} = <b>${n.left}</b>`;
+        $('eq2').classList.add('on','done');
+        $('sim-step').textContent = 'Đã bớt xong';
+        $('sim-step').disabled = true;
+        $('sim-stephint').textContent = '';
+        state.busy = false;
+        say(`${p.l2} ${p.b} ${p.unit}. Còn ${n.left} ${p.unit}.`);
+        state.qi = 0;
+        askShow(state.asks.end[0]);
+      });
+    }
+  }
+  function drawLegendPartial(cls) {
+    const p = state.story;
+    const g1 = $('sim-items').querySelectorAll('.g1').length;
+    const g2 = $('sim-items').querySelectorAll('.g2').length;
+    const b = $('sim-legend').querySelectorAll('b');
+    if (b.length === 3) { b[0].textContent = g1; b[1].textContent = g2; b[2].textContent = p.total - g1 - g2; }
+  }
+
+  function updateAskHead() {
+    const done = state.phase === 'done';
+    const idx = state.phase === 'mid' ? 1 : (state.phase === 'start' ? 0 : state.qi + 2);
+    $('ask-count').textContent = state.phase === 'start'
+      ? `${state.total} câu hỏi cho câu chuyện này`
+      : (done ? `Đã trả lời hết ${state.total} câu` : `Câu ${Math.min(idx, state.total)}/${state.total}`);
+    $('ask-score').textContent = `Đúng ${state.right}/${state.total}`;
+  }
+
+  function askShow(q) {
+    state.tries = 0;
+    updateAskHead();
+    $('ask-body').innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span class="qkind">${esc(q.kind)}</span>
+        <div class="askq">${esc(q.text)}</div>
+        <div class="qopts" id="ask-opts">
+          ${q.options.map((o, i) => `<button type="button" class="opt" data-i="${i}">${esc(o)}</button>`).join('')}
+        </div>
+        <div id="ask-feed"></div>
+      </div>`;
+    $('ask-opts').querySelectorAll('.opt').forEach(btn => btn.addEventListener('click', e => pick(q, +btn.dataset.i, btn, e)));
+    say(q.text);
+  }
+
+  function pick(q, i, btn, evt) {
+    const opts = [...$('ask-opts').querySelectorAll('.opt')];
+    if (opts.some(o => o.disabled)) return;
+
+    if (i !== q.answer) {
+      state.tries++;
+      btn.classList.add('no','shake');
+      btn.disabled = true;
+      setTimeout(() => btn.classList.remove('shake'), 320);
+      if (state.tries === 1) {
+        $('ask-feed').innerHTML = `<div class="qexplain">Chưa đúng. Đếm lại các ô ${esc(state.story.at)} — ô viền cam là ${esc(low(state.story.l1))}, ô viền xanh là ${esc(low(state.story.l2))}.</div>`;
+      } else {
+        opts.forEach(o => o.disabled = true);
+        opts[q.answer].classList.add('ok');
+        $('ask-feed').innerHTML = `<div class="qexplain"><b>Đáp án: ${esc(q.options[q.answer])}.</b> ${esc(q.explain)}</div>`;
+        nextButton();
+      }
+      return;
+    }
+
+    btn.classList.add('ok');
+    opts.forEach(o => o.disabled = true);
+    if (state.tries === 0) state.right++;
+    $('ask-feed').innerHTML = `<div class="qexplain"><b>Đúng rồi.</b> ${esc(q.explain)}</div>`;
+    if (state.tries === 0) sparkle(evt);
+    updateAskHead();
+    nextButton();
+  }
+
+  function nextButton() {
+    const p = state.story;
+    const foot = document.createElement('div');
+    foot.className = 'askfoot';
+    foot.style.marginTop = '12px';
+
+    if (state.phase === 'mid') {
+      foot.innerHTML = `<span class="help">Bấm <strong>${esc(p.l2)} ${p.b} ${esc(p.unit)}</strong> ở bên cạnh để bớt tiếp.</span>`;
+      $('sim-step').disabled = false;
+      $('sim-stephint').textContent = '';
+    } else if (state.qi < state.asks.end.length - 1) {
+      foot.innerHTML = `<button type="button" class="btn btn-primary" id="ask-next">Câu tiếp</button>`;
+    } else {
+      state.phase = 'done';
+      updateAskHead();
+      foot.innerHTML = `
+        <span class="help">Xong câu chuyện này — đúng <strong>${state.right}/${state.total}</strong> câu.</span>
+        <span style="display:flex;gap:8px"><button type="button" class="btn btn-secondary" id="ask-again">Làm lại</button><button type="button" class="btn btn-primary" id="ask-new">Bài khác</button></span>`;
+    }
+    $('ask-body').appendChild(foot);
+
+    const nx = $('ask-next');
+    if (nx) nx.addEventListener('click', () => { state.qi++; askShow(state.asks.end[state.qi]); });
+    const ag = $('ask-again'); if (ag) ag.addEventListener('click', () => resetStory());
+    const nw = $('ask-new'); if (nw) nw.addEventListener('click', () => {
+      state.custom = null;
+      state.si = (state.si + 1) % STORIES.length;
+      state.story = STORIES[state.si];
+      renderSim();
+    });
+  }
+
+  function say(m) { $('live').textContent = m; }
+
+  function speak() {
+    const p = state.story, n = nums(p);
+    const text = `${p.place} có ${p.total} ${p.unit}. ${p.l1} ${p.a} ${p.unit}. ${p.l2} ${p.b} ${p.unit}. Hỏi còn lại bao nhiêu ${p.unit}?`;
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'vi-VN'; u.rate = .85;
+    speechSynthesis.speak(u);
+  }
+
+  function sparkle(evt) {
+    const x = evt ? evt.clientX : innerWidth / 2, y = evt ? evt.clientY : innerHeight / 2;
+    for (let i = 0; i < 8; i++) {
+      const s = document.createElement('span');
+      s.className = 'spark';
+      s.textContent = i % 2 ? '⭐' : '✨';
+      s.style.left = x + 'px'; s.style.top = y + 'px';
+      s.style.setProperty('--dx', (Math.random() * 140 - 70).toFixed(0) + 'px');
+      s.style.animationDelay = (i * 28) + 'ms';
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 1050);
+    }
+  }
+
+  /* ================= NHIỀU CÁCH HỎI ================= */
+  function renderWays() {
+    const p = STORIES[0], n = nums(p);
+    const order = ['left_mid','left_end','sum_taken','which_more','back_a','back_b','compare','plus_more','diff'];
+    const cards = order.map((k, i) => {
+      const q = BUILDERS[k](p, 100 + i * 17);
+      return `<div class="wcard">
+        <span class="qkind">${esc(q.kind)}${q.level === 'hard' ? ' · suy luận' : ''}</span>
+        <h3>${esc(q.text)}</h3>
+        <div class="wmath">${esc(q.options[q.answer])}</div>
+        <div class="wq">${esc(q.explain)}</div>
+      </div>`;
+    }).join('');
+    $('sec-ways').innerHTML = `
+      <div class="tip">
+        <h3>Một câu chuyện, chín cách hỏi</h3>
+        <p>Tất cả thẻ dưới đây dùng đúng một câu chuyện: <strong>${p.place} có ${p.total} ${p.unit}, ${low(p.l1)} ${p.a} ${p.unit}, ${low(p.l2)} ${p.b} ${p.unit}</strong>. Con nhớ số thôi thì chỉ trả lời được một câu; hiểu câu chuyện thì trả lời được cả chín. Bốn cách đầu là cơ bản, năm cách sau cần suy luận — hỏi ngược, so sánh, bớt thêm.</p>
+      </div>
+      <div class="ways-grid">${cards}</div>
+      <div class="tip">
+        <h3>Mẹo hỏi con ở nhà</h3>
+        <p>Sau khi con trả lời xong, hỏi thêm <strong>“sao con biết?”</strong>. Nếu con giải thích được bằng đồ vật thật — bánh, kẹo, đồ chơi trên bàn — là con đã hiểu chứ không đoán. Có thể đổi một số trong câu chuyện rồi hỏi lại đúng câu đó, xem con có tính lại hay đọc thuộc đáp án cũ.</p>
+      </div>`;
+  }
+
+  /* ================= BÀI TẬP ================= */
+  function buildQuiz(level) {
+    const items = [];
+    STORIES.forEach((p, si) => {
+      const keys = level === 'basic' ? ['left_mid','left_end','sum_taken','which_more']
+                 : level === 'hard' ? ['back_a','back_b','compare','plus_more','diff']
+                 : ['left_end','sum_taken','back_b','compare','left_mid','plus_more','which_more','diff'];
+      keys.forEach((k, ki) => items.push(BUILDERS[k](p, si * 101 + ki * 29 + 5)));
+    });
+    return shuffleFixed(items, 20260804).slice(0, 16);
+  }
+
+  function renderQuiz() {
+    const QUIZ = buildQuiz(state.quizLevel);
+    state.quiz = QUIZ;
+    const body = QUIZ.map((q, qi) => `
+      <div class="q" id="q-${qi}">
+        <div class="qtext"><span class="qnum">${qi + 1}</span><span class="qlabel">${esc(q.text)}</span></div>
+        <div class="qopts small">${q.options.map((o, oi) => `<button type="button" class="opt" data-qi="${qi}" data-oi="${oi}">${esc(o)}</button>`).join('')}</div>
+        <div class="qexplain" style="display:none">${esc(q.explain)}</div>
+      </div>`).join('');
+
+    $('sec-quiz').innerHTML = `
+      <div class="phead">
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <h2>Bài tập trừ liên tiếp</h2>
+          <span class="sub">${QUIZ.length} bài — trộn đủ các cách hỏi, bấm vào đáp án con chọn</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <div class="levels" id="quiz-levels">
+            <button type="button" class="lvbtn" data-lv="basic">Cơ bản</button>
+            <button type="button" class="lvbtn" data-lv="hard">Suy luận</button>
+            <button type="button" class="lvbtn" data-lv="mix">Trộn</button>
+          </div>
+          <span class="score" id="quiz-score"></span>
+          <button type="button" class="btn btn-ghost" id="quiz-reset">Làm lại</button>
+        </div>
+      </div>
+      <div class="qbody">${body}<p class="closing" id="quiz-closing"></p></div>`;
+
+    $('sec-quiz').querySelectorAll('#quiz-levels .lvbtn').forEach(b => {
+      b.classList.toggle('on', b.dataset.lv === state.quizLevel);
+      b.addEventListener('click', () => { state.quizLevel = b.dataset.lv; state.picked = {}; renderQuiz(); });
+    });
+    $('sec-quiz').querySelectorAll('.qbody .opt').forEach(btn => btn.addEventListener('click', () => {
+      const qi = +btn.dataset.qi, oi = +btn.dataset.oi;
+      if (state.picked[qi] !== undefined) return;
+      state.picked[qi] = oi;
+      paintQuestion(qi); updateQuizHead();
+    }));
+    $('quiz-reset').addEventListener('click', () => { state.picked = {}; renderQuiz(); });
+    QUIZ.forEach((q, qi) => paintQuestion(qi));
+    updateQuizHead();
+  }
+
+  function paintQuestion(qi) {
+    const q = state.quiz[qi], picked = state.picked[qi];
+    const el = $('q-' + qi);
+    el.querySelectorAll('.opt').forEach((btn, oi) => {
+      btn.classList.remove('ok','no');
+      btn.disabled = picked !== undefined;
+      if (picked === undefined) return;
+      if (oi === q.answer) btn.classList.add('ok');
+      else if (oi === picked) btn.classList.add('no');
+      else btn.style.color = '#A1A1AA';
+    });
+    el.querySelector('.qexplain').style.display = picked !== undefined ? 'block' : 'none';
+  }
+
+  function updateQuizHead() {
+    const QUIZ = state.quiz;
+    const done = Object.keys(state.picked).length;
+    const right = Object.keys(state.picked).filter(k => state.picked[k] === QUIZ[k].answer).length;
+    $('quiz-score').textContent = `Đúng ${right}/${QUIZ.length}`;
+    $('quiz-closing').textContent = done === QUIZ.length
+      ? (right === QUIZ.length ? 'Tuyệt vời, con làm đúng hết!' : 'Xem lại tab Mô phỏng và Nhiều cách hỏi rồi thử lại nhé.')
+      : `Đã làm ${done}/${QUIZ.length} bài. Làm hết để xem kết quả.`;
+  }
+
+  /* ================= TỰ TẠO BÀI ================= */
+  let pickedEmoji = '🍰';
+  function renderMake() {
+    $('sec-make').innerHTML = `
+      <div class="card" style="max-width:720px">
+        <div>
+          <h2 style="margin:0 0 4px;font-size:19px;font-weight:600;letter-spacing:-0.01em">Tự tạo bài cho con</h2>
+          <span class="sub" style="font-size:14px;color:#71717A">Đổi đồ vật và số cho giống đồ trong nhà — con dễ hình dung hơn</span>
+        </div>
+        <div>
+          <label style="display:block;font-size:13.5px;font-weight:500;margin-bottom:8px">Đồ vật</label>
+          <div class="picker" id="picker">${EMOJIS.map(e => `<button type="button" class="emoji${e === pickedEmoji ? ' on' : ''}" data-e="${e}" aria-label="Chọn ${e}">${e}</button>`).join('')}</div>
+        </div>
+        <div class="fields">
+          <div class="field"><label for="f-total">Lúc đầu có</label><input id="f-total" type="number" min="2" max="24" value="20" inputmode="numeric"></div>
+          <div class="field"><label for="f-a">Bớt lần 1</label><input id="f-a" type="number" min="1" max="23" value="12" inputmode="numeric"></div>
+          <div class="field"><label for="f-b">Bớt lần 2</label><input id="f-b" type="number" min="1" max="23" value="5" inputmode="numeric"></div>
+        </div>
+        <p class="help">Nhiều nhất 24 đồ vật để con còn đếm được bằng mắt. Hai lần bớt cộng lại không được nhiều hơn số lúc đầu.</p>
+        <div class="fields">
+          <div class="field"><label for="f-place">Nơi chứa</label><input id="f-place" type="text" value="Cửa hàng" maxlength="24"></div>
+          <div class="field"><label for="f-unit">Tên đồ vật</label><input id="f-unit" type="text" value="cái bánh" maxlength="24"></div>
+          <div class="field"><label for="f-at">Nói là "ở đâu"</label><input id="f-at" type="text" value="trên khay" maxlength="24"></div>
+        </div>
+        <div class="fields">
+          <div class="field"><label for="f-l1">Lần bớt 1 gọi là</label><input id="f-l1" type="text" value="Buổi chiều bán" maxlength="28"></div>
+          <div class="field"><label for="f-l2">Lần bớt 2 gọi là</label><input id="f-l2" type="text" value="Buổi tối bán" maxlength="28"></div>
+          <div class="field"><label for="f-sum">Gộp hai lần gọi là</label><input id="f-sum" type="text" value="bán" maxlength="20"></div>
+        </div>
+        <div id="make-err"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" class="btn btn-primary" id="make-go">Tạo bài</button>
+          <button type="button" class="btn btn-secondary" id="make-back">Về bài có sẵn</button>
+        </div>
+      </div>
+      <div class="tip" style="max-width:720px">
+        <h3>Gợi ý đặt đề</h3>
+        <p>Lần bớt nên là hai việc khác nhau và có thứ tự rõ ràng — <strong>buổi sáng bán</strong> rồi <strong>buổi chiều bán</strong>, <strong>mẹ lấy ra</strong> rồi <strong>bé ăn</strong>. Có thứ tự thì mới hỏi được “sau lần một còn bao nhiêu”, đó là chỗ luyện trí quan trọng nhất của bài này.</p>
+      </div>`;
+
+    $('picker').querySelectorAll('.emoji').forEach(b => b.addEventListener('click', () => {
+      pickedEmoji = b.dataset.e;
+      $('picker').querySelectorAll('.emoji').forEach(x => x.classList.toggle('on', x === b));
+    }));
+    $('make-back').addEventListener('click', () => {
+      state.custom = null; state.story = STORIES[state.si];
+      renderSim(); state.tab = 'sim'; renderTabs();
+    });
+    $('make-go').addEventListener('click', () => {
+      const total = parseInt($('f-total').value, 10), a = parseInt($('f-a').value, 10), b = parseInt($('f-b').value, 10);
+      const bad = m => $('make-err').innerHTML = `<div class="err">${esc(m)}</div>`;
+      if (![total, a, b].every(v => Number.isFinite(v) && v > 0)) return bad('Nhập số lớn hơn 0 ở cả ba ô.');
+      if (total > 24) return bad('Số lúc đầu nhiều nhất là 24 để con còn đếm được.');
+      if (a + b > total) return bad(`Hai lần bớt cộng lại là ${a + b}, nhiều hơn ${total} lúc đầu. Giảm một lần bớt đi.`);
+      if (total - a - b < 1) return bad('Để lại ít nhất 1 đồ vật thì câu hỏi mới có ý nghĩa với con.');
+      $('make-err').innerHTML = '';
+      const p = {
+        emoji: pickedEmoji,
+        place: $('f-place').value.trim() || 'Cửa hàng',
+        unit: $('f-unit').value.trim() || 'cái bánh',
+        at: $('f-at').value.trim() || 'trên khay',
+        total, a, b,
+        l1: $('f-l1').value.trim() || 'Bớt lần 1',
+        l2: $('f-l2').value.trim() || 'Bớt lần 2',
+        sum: $('f-sum').value.trim() || 'bớt'
+      };
+      state.custom = p; state.story = p;
+      renderSim(); state.tab = 'sim'; renderTabs();
+    });
+  }
+
+  /* ================= Khởi động ================= */
+  renderSim();
+  renderWays();
+  renderMake();
+  renderTabs();
+</script>
+</body>
+</html>
