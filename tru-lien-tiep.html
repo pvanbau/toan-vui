@@ -178,7 +178,7 @@
     sim: 'Bấm bớt từng lần, trả lời câu hỏi giữa chừng rồi bớt tiếp',
     ways: 'Cùng một câu chuyện — tám cách hỏi khác nhau',
     quiz: '16 bài, trộn đủ các cách hỏi',
-    make: 'Nhập số của riêng con'
+    make: 'Copy prompt cho AI, dán JSON trả về để tạo một loạt bài'
   };
 
   /* ================= Câu chuyện ================= */
@@ -310,6 +310,7 @@
     tab: 'sim',
     si: 0,              // chỉ số câu chuyện
     story: STORIES[0],
+    pool: STORIES,      // bộ câu chuyện đang dùng (mặc định hoặc do JSON tạo)
     custom: null,
     level: 'basic',
     phase: 'start',     // start | mid | end | done
@@ -399,9 +400,10 @@
     $('sim-step').addEventListener('click', doStep);
     $('sim-reset').addEventListener('click', () => resetStory());
     $('sim-next').addEventListener('click', () => {
-      state.custom = null;
-      state.si = (state.si + 1) % STORIES.length;
-      state.story = STORIES[state.si];
+      const pool = state.pool || STORIES;
+      state.si = (state.si + 1) % pool.length;
+      state.story = pool[state.si];
+      state.custom = pool === STORIES ? null : state.story;
       renderSim();
     });
     $('sim-speak').addEventListener('click', speak);
@@ -598,9 +600,10 @@
     if (nx) nx.addEventListener('click', () => { state.qi++; askShow(state.asks.end[state.qi]); });
     const ag = $('ask-again'); if (ag) ag.addEventListener('click', () => resetStory());
     const nw = $('ask-new'); if (nw) nw.addEventListener('click', () => {
-      state.custom = null;
-      state.si = (state.si + 1) % STORIES.length;
-      state.story = STORIES[state.si];
+      const pool = state.pool || STORIES;
+      state.si = (state.si + 1) % pool.length;
+      state.story = pool[state.si];
+      state.custom = pool === STORIES ? null : state.story;
       renderSim();
     });
   }
@@ -736,72 +739,148 @@
   }
 
   /* ================= TỰ TẠO BÀI ================= */
-  let pickedEmoji = '🍰';
+  // Kho icon dùng cho JSON — "emoji" trong mỗi câu chuyện chọn một trong các icon này.
+  const ICONS = [
+    {e:'🍰',n:'bánh kem'},{e:'🍎',n:'táo'},{e:'🍓',n:'dâu'},{e:'🍬',n:'kẹo'},{e:'🍪',n:'bánh quy'},
+    {e:'🥐',n:'bánh sừng bò'},{e:'🍌',n:'chuối'},{e:'🍊',n:'cam'},{e:'🍇',n:'nho'},{e:'🧁',n:'cupcake'},
+    {e:'🍩',n:'bánh donut'},{e:'🍭',n:'kẹo mút'},{e:'🐟',n:'cá'},{e:'🐤',n:'gà con'},{e:'🐞',n:'bọ rùa'},
+    {e:'🐬',n:'cá heo'},{e:'🐝',n:'ong'},{e:'🦋',n:'bướm'},{e:'🐢',n:'rùa'},{e:'🐰',n:'thỏ'},
+    {e:'🎈',n:'bóng bay'},{e:'⚽',n:'bóng đá'},{e:'🚗',n:'xe'},{e:'🧸',n:'gấu bông'},{e:'✏️',n:'bút chì'},
+    {e:'📚',n:'sách'},{e:'🎁',n:'hộp quà'},{e:'⭐',n:'ngôi sao'},{e:'🌸',n:'hoa'},{e:'🌻',n:'hướng dương'},{e:'🌈',n:'cầu vồng'}
+  ];
+  const ICON_LINE = ICONS.map(x => x.e).join(' ');
+
+  // Prompt sẵn để đưa cho AI (ChatGPT, Claude...). Không dùng dấu ` để khỏi vỡ chuỗi.
+  const PROMPT_TT = [
+    'Bạn là trợ lý tạo bài tập toán "trừ liên tiếp" cho bé mẫu giáo (5 tuổi) người Việt.',
+    'Hãy tạo 6 câu chuyện, mỗi câu chuyện có một đồ vật, một tổng số lúc đầu, và HAI lần bớt liên tiếp.',
+    '',
+    'QUY TẮC SỐ (bắt buộc):',
+    '- total (số lúc đầu): từ 6 đến 24, để bé đếm được bằng mắt.',
+    '- a (bớt lần 1) và b (bớt lần 2): số nguyên, đều lớn hơn hoặc bằng 1.',
+    '- a + b PHẢI nhỏ hơn total, để còn lại ít nhất 1. Ví dụ total 20 thì a + b nhiều nhất là 19.',
+    '- Ưu tiên số quen thuộc, kết quả không quá rối.',
+    '',
+    'NỘI DUNG:',
+    '- Mỗi câu chuyện một bối cảnh khác nhau (cửa hàng, giỏ, vườn, bể cá, hộp đồ chơi...).',
+    '- Hai lần bớt là hai việc CÓ THỨ TỰ rõ ràng (buổi sáng bán rồi buổi chiều bán; mẹ lấy ra rồi bé ăn...).',
+    '- Tiếng Việt đơn giản, dễ thương, đúng chính tả.',
+    '',
+    'CHỌN ICON cho "emoji" — chép đúng MỘT ký tự trong danh sách sau:',
+    ICON_LINE,
+    '',
+    'CÁC TRƯỜNG của mỗi câu chuyện:',
+    '- emoji: một icon ở trên',
+    '- place: nơi chứa, viết hoa chữ đầu (VD Cửa hàng, Giỏ, Vườn)',
+    '- unit: tên đồ vật kèm loại từ (VD cái bánh, quả táo, con cá)',
+    '- at: cụm chỉ nơi để đọc cho tự nhiên (VD trên khay, trong giỏ, trong vườn)',
+    '- total, a, b: các số theo quy tắc trên',
+    '- l1: tên lần bớt 1, viết hoa chữ đầu (VD Buổi chiều bán, Mẹ lấy ra)',
+    '- l2: tên lần bớt 2, viết hoa chữ đầu (VD Buổi tối bán, Bé ăn)',
+    '- sum: động từ gộp hai lần, viết thường (VD bán, lấy đi, ăn)',
+    '',
+    'CHỈ trả về JSON đúng cấu trúc dưới đây, KHÔNG thêm lời giải thích, KHÔNG bọc trong khối code:',
+    '{',
+    '  "stories": [',
+    '    {',
+    '      "emoji": "🍰",',
+    '      "place": "Cửa hàng",',
+    '      "unit": "cái bánh",',
+    '      "at": "trên khay",',
+    '      "total": 20,',
+    '      "a": 12,',
+    '      "b": 5,',
+    '      "l1": "Buổi chiều bán",',
+    '      "l2": "Buổi tối bán",',
+    '      "sum": "bán"',
+    '    }',
+    '  ]',
+    '}'
+  ].join('\n');
+
+  const SAMPLE_JSON = JSON.stringify({
+    stories: [
+      { emoji:'🍎', place:'Giỏ', unit:'quả táo', at:'trong giỏ', total:15, a:6, b:4, l1:'Mẹ lấy ra', l2:'Bé ăn', sum:'lấy đi' },
+      { emoji:'🐟', place:'Bể', unit:'con cá', at:'trong bể', total:14, a:5, b:3, l1:'Bán đi', l2:'Cho ông', sum:'cho đi' },
+      { emoji:'🎈', place:'Chùm', unit:'quả bóng', at:'trên tay', total:12, a:3, b:4, l1:'Bay mất', l2:'Cho bạn', sum:'mất đi' }
+    ]
+  }, null, 2);
+
+  // Đọc + kiểm tra JSON, trả về mảng câu chuyện đã chuẩn hoá; ném lỗi có mô tả nếu sai.
+  function parseStories(text) {
+    if (!text || !text.trim()) throw new Error('Chưa có JSON. Dán kết quả từ AI vào ô bên dưới, hoặc bấm "Xem JSON mẫu".');
+    let data;
+    try { data = JSON.parse(text); }
+    catch (e) { throw new Error('JSON chưa đúng định dạng — kiểm tra lại dấu ngoặc { } và dấu phẩy.'); }
+    const arr = Array.isArray(data) ? data
+      : (data && Array.isArray(data.stories) ? data.stories
+      : (data && data.emoji ? [data] : null));
+    if (!arr || !arr.length) throw new Error('Không tìm thấy câu chuyện nào. Cần một mảng "stories" có ít nhất 1 mục.');
+    const str = (v, d) => (typeof v === 'string' && v.trim()) ? v.trim() : d;
+    return arr.map((s, i) => {
+      const w = `Câu chuyện ${i + 1}: `;
+      const total = parseInt(s && s.total, 10), a = parseInt(s && s.a, 10), b = parseInt(s && s.b, 10);
+      if (![total, a, b].every(v => Number.isFinite(v) && v > 0)) throw new Error(w + 'total, a, b phải là số lớn hơn 0.');
+      if (total > 24) throw new Error(w + 'total nhiều nhất là 24 để bé còn đếm được.');
+      if (a + b > total) throw new Error(w + `a + b (${a + b}) không được lớn hơn total (${total}).`);
+      if (total - a - b < 1) throw new Error(w + 'phải còn lại ít nhất 1 (total − a − b ≥ 1).');
+      return {
+        emoji: str(s.emoji, '🍰'), place: str(s.place, 'Cửa hàng'), unit: str(s.unit, 'cái bánh'),
+        at: str(s.at, 'trên khay'), total, a, b,
+        l1: str(s.l1, 'Bớt lần 1'), l2: str(s.l2, 'Bớt lần 2'), sum: str(s.sum, 'bớt')
+      };
+    });
+  }
+
   function renderMake() {
     $('sec-make').innerHTML = `
-      <div class="card" style="max-width:720px">
+      <div class="card" style="max-width:760px">
         <div>
-          <h2 style="margin:0 0 4px;font-size:19px;font-weight:600;letter-spacing:-0.01em">Tự tạo bài cho con</h2>
-          <span class="sub" style="font-size:14px;color:#71717A">Đổi đồ vật và số cho giống đồ trong nhà — con dễ hình dung hơn</span>
+          <h2 style="margin:0 0 4px;font-size:19px;font-weight:600;letter-spacing:-0.01em">Tạo bài bằng JSON</h2>
+          <span class="sub" style="font-size:14px;color:#71717A">Copy prompt đưa cho AI (ChatGPT, Claude…), AI trả về JSON, dán vào đây để tạo một loạt bài.</span>
         </div>
         <div>
-          <label style="display:block;font-size:13.5px;font-weight:500;margin-bottom:8px">Đồ vật</label>
-          <div class="picker" id="picker">${EMOJIS.map(e => `<button type="button" class="emoji${e === pickedEmoji ? ' on' : ''}" data-e="${e}" aria-label="Chọn ${e}">${e}</button>`).join('')}</div>
+          <label style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13.5px;font-weight:500;margin-bottom:8px">
+            <span>Bước 1 — Copy prompt đưa cho AI</span>
+            <button type="button" class="btn btn-secondary" id="copy-prompt" style="height:32px;padding:0 12px;font-size:13.5px">Copy prompt</button>
+          </label>
+          <textarea id="prompt-box" readonly rows="6" style="width:100%;font-family:inherit;font-size:12.5px;line-height:1.55;color:#52525B;background:#FAFAFA;border:1px solid #E4E4E7;border-radius:10px;padding:12px;resize:vertical">${esc(PROMPT_TT)}</textarea>
         </div>
-        <div class="fields">
-          <div class="field"><label for="f-total">Lúc đầu có</label><input id="f-total" type="number" min="2" max="24" value="20" inputmode="numeric"></div>
-          <div class="field"><label for="f-a">Bớt lần 1</label><input id="f-a" type="number" min="1" max="23" value="12" inputmode="numeric"></div>
-          <div class="field"><label for="f-b">Bớt lần 2</label><input id="f-b" type="number" min="1" max="23" value="5" inputmode="numeric"></div>
-        </div>
-        <p class="help">Nhiều nhất 24 đồ vật để con còn đếm được bằng mắt. Hai lần bớt cộng lại không được nhiều hơn số lúc đầu.</p>
-        <div class="fields">
-          <div class="field"><label for="f-place">Nơi chứa</label><input id="f-place" type="text" value="Cửa hàng" maxlength="24"></div>
-          <div class="field"><label for="f-unit">Tên đồ vật</label><input id="f-unit" type="text" value="cái bánh" maxlength="24"></div>
-          <div class="field"><label for="f-at">Nói là "ở đâu"</label><input id="f-at" type="text" value="trên khay" maxlength="24"></div>
-        </div>
-        <div class="fields">
-          <div class="field"><label for="f-l1">Lần bớt 1 gọi là</label><input id="f-l1" type="text" value="Buổi chiều bán" maxlength="28"></div>
-          <div class="field"><label for="f-l2">Lần bớt 2 gọi là</label><input id="f-l2" type="text" value="Buổi tối bán" maxlength="28"></div>
-          <div class="field"><label for="f-sum">Gộp hai lần gọi là</label><input id="f-sum" type="text" value="bán" maxlength="20"></div>
+        <div>
+          <label for="json-box" style="display:block;font-size:13.5px;font-weight:500;margin-bottom:8px">Bước 2 — Dán JSON kết quả rồi bấm Tạo bài</label>
+          <textarea id="json-box" rows="10" placeholder="Dán JSON vào đây…" spellcheck="false" style="width:100%;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:13px;line-height:1.5;color:#09090B;background:#FFFFFF;border:1px solid #E4E4E7;border-radius:10px;padding:12px;resize:vertical"></textarea>
         </div>
         <div id="make-err"></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button type="button" class="btn btn-primary" id="make-go">Tạo bài</button>
+          <button type="button" class="btn btn-secondary" id="fill-sample">Xem JSON mẫu</button>
           <button type="button" class="btn btn-secondary" id="make-back">Về bài có sẵn</button>
         </div>
       </div>
-      <div class="tip" style="max-width:720px">
-        <h3>Gợi ý đặt đề</h3>
-        <p>Lần bớt nên là hai việc khác nhau và có thứ tự rõ ràng — <strong>buổi sáng bán</strong> rồi <strong>buổi chiều bán</strong>, <strong>mẹ lấy ra</strong> rồi <strong>bé ăn</strong>. Có thứ tự thì mới hỏi được “sau lần một còn bao nhiêu”, đó là chỗ luyện trí quan trọng nhất của bài này.</p>
+      <div class="tip" style="max-width:760px">
+        <h3>Kho icon dùng được</h3>
+        <p style="font-size:22px;line-height:1.9;letter-spacing:3px;margin:2px 0 4px">${ICON_LINE}</p>
+        <p>Trong JSON, đặt <strong>"emoji"</strong> bằng một icon ở trên. Mỗi câu chuyện cần: <strong>total ≤ 24</strong>, <strong>a ≥ 1</strong>, <strong>b ≥ 1</strong>, và <strong>a + b &lt; total</strong> (còn lại ít nhất 1). Có thể tạo nhiều câu chuyện một lúc — bấm <strong>Bài khác</strong> để lật qua từng đề.</p>
       </div>`;
 
-    $('picker').querySelectorAll('.emoji').forEach(b => b.addEventListener('click', () => {
-      pickedEmoji = b.dataset.e;
-      $('picker').querySelectorAll('.emoji').forEach(x => x.classList.toggle('on', x === b));
-    }));
+    $('copy-prompt').addEventListener('click', () => {
+      const btn = $('copy-prompt'), old = btn.textContent;
+      const done = () => { btn.textContent = 'Đã copy ✓'; setTimeout(() => btn.textContent = old, 1400); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(PROMPT_TT).then(done).catch(() => { $('prompt-box').select(); try { document.execCommand('copy'); done(); } catch (e) {} });
+      } else { $('prompt-box').select(); try { document.execCommand('copy'); done(); } catch (e) {} }
+    });
+    $('fill-sample').addEventListener('click', () => { $('json-box').value = SAMPLE_JSON; $('make-err').innerHTML = ''; $('json-box').focus(); });
     $('make-back').addEventListener('click', () => {
-      state.custom = null; state.story = STORIES[state.si];
+      state.pool = STORIES; state.custom = null; state.si = 0; state.story = STORIES[0];
       renderSim(); state.tab = 'sim'; renderTabs();
     });
     $('make-go').addEventListener('click', () => {
-      const total = parseInt($('f-total').value, 10), a = parseInt($('f-a').value, 10), b = parseInt($('f-b').value, 10);
-      const bad = m => $('make-err').innerHTML = `<div class="err">${esc(m)}</div>`;
-      if (![total, a, b].every(v => Number.isFinite(v) && v > 0)) return bad('Nhập số lớn hơn 0 ở cả ba ô.');
-      if (total > 24) return bad('Số lúc đầu nhiều nhất là 24 để con còn đếm được.');
-      if (a + b > total) return bad(`Hai lần bớt cộng lại là ${a + b}, nhiều hơn ${total} lúc đầu. Giảm một lần bớt đi.`);
-      if (total - a - b < 1) return bad('Để lại ít nhất 1 đồ vật thì câu hỏi mới có ý nghĩa với con.');
+      let stories;
+      try { stories = parseStories($('json-box').value); }
+      catch (e) { $('make-err').innerHTML = `<div class="err">${esc(e.message)}</div>`; return; }
       $('make-err').innerHTML = '';
-      const p = {
-        emoji: pickedEmoji,
-        place: $('f-place').value.trim() || 'Cửa hàng',
-        unit: $('f-unit').value.trim() || 'cái bánh',
-        at: $('f-at').value.trim() || 'trên khay',
-        total, a, b,
-        l1: $('f-l1').value.trim() || 'Bớt lần 1',
-        l2: $('f-l2').value.trim() || 'Bớt lần 2',
-        sum: $('f-sum').value.trim() || 'bớt'
-      };
-      state.custom = p; state.story = p;
+      state.pool = stories; state.si = 0; state.story = stories[0]; state.custom = stories[0];
       renderSim(); state.tab = 'sim'; renderTabs();
     });
   }
