@@ -175,7 +175,7 @@
   const ORANGE = '#FF6B00', BLUE = '#1660C7', INK = '#18181B';
 
   const HINTS = {
-    sim: 'Bấm bớt từng lần, trả lời câu hỏi giữa chừng rồi mới bớt tiếp',
+    sim: 'Bấm bớt từng lần, trả lời câu hỏi giữa chừng rồi bớt tiếp',
     ways: 'Cùng một câu chuyện — tám cách hỏi khác nhau',
     quiz: '16 bài, trộn đủ các cách hỏi',
     make: 'Nhập số của riêng con'
@@ -418,6 +418,7 @@
     const p = state.story, n = nums(p);
     state.phase = 'start'; state.qi = 0; state.tries = 0;
     state.right = 0; state.busy = false;
+    state.midAnswered = false; state.midSkipped = false;
     state.asks = buildAskSet(p, state.level, (p.total * 31 + p.a * 7 + p.b) % 9973);
     state.total = 1 + state.asks.end.length;
 
@@ -485,12 +486,14 @@
         $('eq1x').innerHTML = `${p.total} − ${p.a} = <b>${n.mid}</b>`;
         $('eq1').classList.add('on','done');
         $('sim-step').textContent = `${p.l2} ${p.b} ${p.unit}`;
-        $('sim-stephint').textContent = 'Trả lời câu hỏi bên cạnh rồi mới bớt tiếp';
+        $('sim-step').disabled = false;
+        $('sim-stephint').textContent = 'Trả lời câu hỏi bên cạnh, hoặc bấm bớt tiếp luôn';
         state.busy = false;
         say(`${p.l1} ${p.a} ${p.unit}. Còn ${n.mid} ${p.unit}.`);
         askShow(state.asks.mid);
       });
     } else if (state.phase === 'mid') {
+      if (!state.midAnswered) { state.midSkipped = true; state.total -= 1; }
       run(p.a, p.b, 'g2', () => {
         state.phase = 'end';
         drawLegend();
@@ -516,7 +519,8 @@
 
   function updateAskHead() {
     const done = state.phase === 'done';
-    const idx = state.phase === 'mid' ? 1 : (state.phase === 'start' ? 0 : state.qi + 2);
+    const endBase = state.midSkipped ? 1 : 2;
+    const idx = state.phase === 'mid' ? 1 : (state.phase === 'start' ? 0 : state.qi + endBase);
     $('ask-count').textContent = state.phase === 'start'
       ? `${state.total} câu hỏi cho câu chuyện này`
       : (done ? `Đã trả lời hết ${state.total} câu` : `Câu ${Math.min(idx, state.total)}/${state.total}`);
@@ -575,6 +579,7 @@
     foot.style.marginTop = '12px';
 
     if (state.phase === 'mid') {
+      state.midAnswered = true;
       foot.innerHTML = `<span class="help">Bấm <strong>${esc(p.l2)} ${p.b} ${esc(p.unit)}</strong> ở bên cạnh để bớt tiếp.</span>`;
       $('sim-step').disabled = false;
       $('sim-stephint').textContent = '';
