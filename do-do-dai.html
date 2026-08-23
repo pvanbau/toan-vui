@@ -8,13 +8,97 @@
 <link rel="apple-touch-icon" href="logo-teacher-b.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; }
-  body { margin: 0; background: #F8F9FA; color: #0D1B2A; font-family: 'Be Vietnam Pro', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-  a { color: #1660C7; text-decoration: none; }
-  a:hover { color: #FF6B00; }
+  :root {
+    --radius: 0.625rem;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --success: #16A34A;
+    --success-fg: #15803D;
+    --success-bg: rgba(34,197,94,.12);
+    --radius-md: calc(var(--radius) - 2px);
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: oklch(0.145 0 0);
+      --foreground: oklch(0.985 0 0);
+      --card: oklch(0.205 0 0);
+      --card-foreground: oklch(0.985 0 0);
+      --primary: oklch(0.985 0 0);
+      --primary-foreground: oklch(0.205 0 0);
+      --secondary: oklch(0.269 0 0);
+      --secondary-foreground: oklch(0.985 0 0);
+      --muted: oklch(0.269 0 0);
+      --muted-foreground: oklch(0.708 0 0);
+      --accent: oklch(0.269 0 0);
+      --accent-foreground: oklch(0.985 0 0);
+      --destructive: oklch(0.704 0.191 22.216);
+      --border: oklch(1 0 0 / 10%);
+      --input: oklch(1 0 0 / 15%);
+      --ring: oklch(0.556 0 0);
+      --success: #4ADE80;
+      --success-fg: #4ADE80;
+      --success-bg: rgba(74,222,128,.15);
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; background: var(--background); color: var(--foreground); font-family: Geist, 'Be Vietnam Pro', Inter, ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
   #app { min-height: 100vh; padding: 0 24px 96px; }
+  a { color: inherit; text-decoration: none; }
+
+  .wrap { max-width: 1200px; margin: 0 auto; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+  .panel { background: var(--muted); border-radius: var(--radius); }
+  .h2 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+  .h3 { margin: 0; font-size: 17px; font-weight: 600; }
+  .sub { font-size: 14px; color: var(--muted-foreground); }
+  .mut { color: var(--muted-foreground); }
+  .ink strong { font-weight: 600; color: var(--foreground); }
+
+  .btn { font-family: inherit; cursor: pointer; border-radius: var(--radius-md); transition: all 150ms cubic-bezier(.4,0,.2,1); border: 1px solid transparent; }
+  .btn-primary { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); font-weight: 600; }
+  .btn-primary:hover { opacity: .9; }
+  .btn-ghost { background: var(--card); color: var(--muted-foreground); border-color: var(--border); font-weight: 500; }
+  .btn-ghost:hover { background: var(--accent); color: var(--accent-foreground); }
+
+  .tabs { display: flex; gap: 4px; padding: 4px; background: var(--muted); border-radius: var(--radius); width: fit-content; flex-wrap: wrap; }
+  .tab { padding: 9px 16px; border: none; border-radius: var(--radius-md); white-space: nowrap; font-family: inherit; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); background: transparent; color: var(--muted-foreground); }
+  .tab.on { background: var(--card); color: var(--foreground); font-weight: 600; box-shadow: var(--shadow-xs); }
+
+  .chip { padding: 9px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--card); color: var(--foreground); font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); }
+  .chip:hover:not(.on) { background: var(--accent); }
+  .chip.on { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); font-weight: 600; }
+
+  .numbadge { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 999px; background: var(--primary); color: var(--primary-foreground); font-size: 13px; font-weight: 600; }
+  .qnum { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; background: var(--secondary); color: var(--secondary-foreground); font-size: 13px; font-weight: 600; }
+
+  .opt { text-align: left; padding: 11px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--card); color: var(--foreground); font-family: inherit; font-size: 15px; font-weight: 500; line-height: 1.4; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); }
+  .opt:hover:not([disabled]) { background: var(--accent); }
+  .opt[disabled] { cursor: default; }
+  .opt.ok { background: var(--success-bg); border-color: var(--success); color: var(--success-fg); font-weight: 600; }
+  .opt.no { background: var(--muted); border-color: var(--destructive); color: var(--destructive); text-decoration: line-through; }
+  .opt.dim { color: var(--muted-foreground); }
+
+  input[type=range] { accent-color: var(--primary); }
+
   @keyframes handDrop { 0% { opacity: 0; transform: translate(-16px,-26px) rotate(-14deg); } 60% { opacity: 1; transform: translate(0,4px) rotate(2deg); } 100% { opacity: 1; transform: translate(0,0) rotate(0deg); } }
   @keyframes badgePop { 0% { transform: scale(0); } 65% { transform: scale(1.25); } 100% { transform: scale(1); } }
   @keyframes ghostBlink { 0%,100% { opacity: .3; } 50% { opacity: .85; } }
@@ -26,14 +110,13 @@
 </head>
 <body>
 
-<a href="index.html" id="tv-home" aria-label="Về trang chủ" style="position:fixed;top:14px;left:14px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:1px solid #E4E4E7;border-radius:999px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#18181B;font:500 14px/1 'Be Vietnam Pro',system-ui,sans-serif;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Trang chủ</a>
+<a href="index.html" id="tv-home" aria-label="Về trang chủ" style="position:fixed;top:14px;left:14px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--foreground);font:500 14px/1 Geist,'Be Vietnam Pro',system-ui,sans-serif;text-decoration:none;box-shadow:var(--shadow-sm)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Trang chủ</a>
 
 <div id="app"></div>
 
 <script>
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
-  const ACCENT = '#FF6B00';
 
   const OBJECTS = [
     { key: 'desk',  name: 'Mặt bàn học',  hands: 5, width: 100 },
@@ -144,25 +227,19 @@
 
   function headerHTML() {
     return `
-      <div style="max-width:1200px;margin:0 auto;padding:56px 0 28px;display:flex;flex-direction:column;gap:14px">
-        <span style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#FF6B00">Toán lớp 1</span>
+      <div class="wrap" style="padding:56px 0 28px;display:flex;flex-direction:column;gap:14px">
+        <span style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-foreground)">Toán lớp 1</span>
         <h1 style="margin:0;font-size:42px;line-height:1.12;font-weight:700;letter-spacing:-0.02em">Bài giảng: Đo độ dài</h1>
-        <p style="margin:0;max-width:700px;font-size:16px;line-height:1.65;color:#4B5563;text-wrap:pretty">Đầu tiên em đo bằng <strong style="font-weight:600;color:#0D1B2A">gang tay</strong> — cái có ngay trên người mình. Sau đó em học dùng <strong style="font-weight:600;color:#0D1B2A">thước có vạch xăng-ti-mét (cm)</strong> để ai đo cũng ra cùng một số.</p>
+        <p class="ink" style="margin:0;max-width:700px;font-size:16px;line-height:1.65;color:var(--muted-foreground);text-wrap:pretty">Đầu tiên em đo bằng <strong>gang tay</strong> — cái có ngay trên người mình. Sau đó em học dùng <strong>thước có vạch xăng-ti-mét (cm)</strong> để ai đo cũng ra cùng một số.</p>
       </div>`;
   }
 
   function tabbarHTML() {
-    const btns = TABS.map(t => {
-      const on = state.tab === t.k;
-      const st = 'padding:9px 16px;border:none;border-radius:6px;white-space:nowrap;font-family:inherit;font-size:15px;font-weight:' +
-        (on ? '600' : '500') + ';cursor:pointer;transition:all 150ms cubic-bezier(.4,0,.2,1);background:' +
-        (on ? ACCENT : 'transparent') + ';color:' + (on ? '#FFFFFF' : '#4B5563');
-      return `<button type="button" data-tab="${t.k}" style="${st}">${t.label}</button>`;
-    }).join('');
+    const btns = TABS.map(t => `<button type="button" class="tab${state.tab === t.k ? ' on' : ''}" data-tab="${t.k}">${t.label}</button>`).join('');
     return `
-      <div style="max-width:1200px;margin:0 auto 28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-        <div style="display:flex;gap:4px;padding:4px;background:#FFFFFF;border:1px solid #E5E7EB;border-radius:8px;width:fit-content;flex-wrap:wrap">${btns}</div>
-        <span style="font-size:14px;color:#6B7280">${esc(HINTS[state.tab])}</span>
+      <div class="wrap" style="margin-bottom:28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div class="tabs">${btns}</div>
+        <span class="sub">${esc(HINTS[state.tab])}</span>
       </div>`;
   }
 
@@ -172,27 +249,22 @@
     const placed = state.placed;
     const span = o.width / o.hands;
 
-    const objBtns = OBJECTS.map(x => {
-      const on = x.key === state.obj;
-      const st = 'padding:9px 14px;border:1px solid ' + (on ? ACCENT : '#E5E7EB') + ';border-radius:6px;background:' +
-        (on ? ACCENT : '#FFFFFF') + ';color:' + (on ? '#FFFFFF' : '#0D1B2A') +
-        ';font-family:inherit;font-size:14px;font-weight:' + (on ? '600' : '500') + ';cursor:pointer;transition:all 150ms cubic-bezier(.4,0,.2,1)';
-      return `<button type="button" data-obj="${x.key}" style="${st}">${esc(x.name)}</button>`;
-    }).join('');
+    const objBtns = OBJECTS.map(x =>
+      `<button type="button" class="chip${x.key === state.obj ? ' on' : ''}" data-obj="${x.key}">${esc(x.name)}</button>`).join('');
 
     let spans = '';
     for (let i = 0; i < placed; i++) {
       const isLast = i === placed - 1;
       const wrapStyle = 'position:absolute;top:58px;left:' + (i * span) + '%;width:' + span + '%;display:flex;flex-direction:column;align-items:center;gap:2px;' +
-        'border-left:2px dashed #9CA3AF;border-right:2px dashed #9CA3AF;transition:left 200ms cubic-bezier(.4,0,.2,1);' +
+        'border-left:2px dashed var(--muted-foreground);border-right:2px dashed var(--muted-foreground);transition:left 200ms cubic-bezier(.4,0,.2,1);' +
         (isLast ? 'animation:handDrop 420ms cubic-bezier(.4,0,.2,1);' : '');
-      const badgeStyle = 'display:grid;place-items:center;width:22px;height:22px;border-radius:999px;background:' + ACCENT +
-        ';color:#FFFFFF;font-size:12px;font-weight:600' + (isLast ? ';animation:badgePop 300ms cubic-bezier(.4,0,.2,1) 300ms both' : '');
+      const badgeStyle = 'display:grid;place-items:center;width:22px;height:22px;border-radius:999px;background:var(--primary);color:var(--primary-foreground);font-size:12px;font-weight:600' +
+        (isLast ? ';animation:badgePop 300ms cubic-bezier(.4,0,.2,1) 300ms both' : '');
       spans += `<span style="${wrapStyle}">${HAND_SVG}<span style="${badgeStyle}">${i + 1}</span></span>`;
     }
 
     const ghost = placed < o.hands
-      ? '<span style="position:absolute;top:58px;left:' + (placed * span) + '%;width:' + span + '%;height:66px;border:2px dashed #D1D5DB;border-radius:6px;background:rgba(255,255,255,.75);display:block;animation:ghostBlink 1600ms ease-in-out infinite;transition:left 200ms cubic-bezier(.4,0,.2,1)"></span>'
+      ? '<span style="position:absolute;top:58px;left:' + (placed * span) + '%;width:' + span + '%;height:66px;border:2px dashed var(--muted-foreground);border-radius:var(--radius-md);display:block;animation:ghostBlink 1600ms ease-in-out infinite;transition:left 200ms cubic-bezier(.4,0,.2,1)"></span>'
       : '';
 
     const addLabel = placed === 0 ? 'Đặt gang tay đầu tiên' : 'Đặt thêm 1 gang';
@@ -203,19 +275,17 @@
         ? 'Đã đặt ' + placed + ' gang, vẫn còn chỗ trống — em đặt tiếp nhé.'
         : o.name + ' dài đúng ' + o.hands + ' gang tay của em.');
 
-    const actBtn = 'padding:10px 16px;border:1px solid ' + ACCENT + ';border-radius:6px;background:' + ACCENT +
-      ';color:#FFFFFF;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all 150ms cubic-bezier(.4,0,.2,1)';
-    const ghostBtn = 'padding:10px 16px;border:1px solid #E5E7EB;border-radius:6px;background:#FFFFFF;color:#4B5563;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:all 150ms cubic-bezier(.4,0,.2,1)';
+    const step = (n, html) => `<div style="display:flex;gap:12px;align-items:flex-start"><span class="numbadge">${n}</span><span class="ink" style="font-size:15px;line-height:1.55">${html}</span></div>`;
 
     return `
       <div style="display:flex;flex-direction:column;gap:16px">
-        <div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+        <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:20px">
           <div style="display:flex;flex-direction:column;gap:4px">
-            <h2 style="margin:0;font-size:19px;font-weight:600">Gang tay là gì?</h2>
-            <span style="font-size:14px;color:#6B7280">Khoảng cách từ đầu ngón cái đến đầu ngón giữa khi em xoè bàn tay ra</span>
+            <h2 class="h2">Gang tay là gì?</h2>
+            <span class="sub">Khoảng cách từ đầu ngón cái đến đầu ngón giữa khi em xoè bàn tay ra</span>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px">
-            <div style="background:#FFF7F0;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:12px;align-items:center">
+            <div class="panel" style="padding:20px;display:flex;flex-direction:column;gap:12px;align-items:center">
               <svg viewBox="0 0 260 180" width="100%" style="max-width:260px;display:block">
                 <path d="M14 100 H246 v16 H14 z" fill="#C89A6B"></path>
                 <path d="M14 116 H246 v12 l-232 6 z" fill="#A97B4F"></path>
@@ -232,48 +302,48 @@
                 <g fill="none" stroke="#E0A97C" stroke-width="3" stroke-linecap="round">
                   <path d="M112 84 q26 8 44 4"></path><path d="M108 102 q28 9 48 4"></path>
                 </g>
-                <g stroke="#0D1B2A" stroke-width="2.5" stroke-linecap="round">
+                <g style="stroke:var(--foreground)" stroke-width="2.5" stroke-linecap="round">
                   <path d="M26 160 H206"></path><path d="M26 152 V168 M206 152 V168"></path>
                 </g>
-                <text x="72" y="150" font-size="14" font-weight="600" fill="#0D1B2A" font-family="Be Vietnam Pro, sans-serif">1 gang tay</text>
+                <text x="72" y="150" font-size="14" font-weight="600" style="fill:var(--foreground)" font-family="Geist, Be Vietnam Pro, sans-serif">1 gang tay</text>
               </svg>
-              <span style="font-size:14px;line-height:1.6;color:#4B5563;text-align:center">Xoè bàn tay đặt lên mép bàn, ngón cái sát mép trái, rồi đếm: một gang, hai gang…</span>
+              <span class="mut" style="font-size:14px;line-height:1.6;text-align:center">Xoè bàn tay đặt lên mép bàn, ngón cái sát mép trái, rồi đếm: một gang, hai gang…</span>
             </div>
-            <div style="background:#FFF7F0;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:14px">
-              <span style="font-size:14px;font-weight:600;color:#4B5563">Ba bước đo</span>
+            <div class="panel" style="padding:20px;display:flex;flex-direction:column;gap:14px">
+              <span class="mut" style="font-size:14px;font-weight:600">Ba bước đo</span>
               <div style="display:flex;flex-direction:column;gap:12px">
-                <div style="display:flex;gap:12px;align-items:flex-start"><span style="flex:none;display:grid;place-items:center;width:24px;height:24px;border-radius:999px;background:#FF6B00;color:#FFFFFF;font-size:13px;font-weight:600">1</span><span style="font-size:15px;line-height:1.55;color:#0D1B2A">Đặt gang tay đầu tiên <strong style="font-weight:600">sát đúng mép trái</strong> của vật.</span></div>
-                <div style="display:flex;gap:12px;align-items:flex-start"><span style="flex:none;display:grid;place-items:center;width:24px;height:24px;border-radius:999px;background:#FF6B00;color:#FFFFFF;font-size:13px;font-weight:600">2</span><span style="font-size:15px;line-height:1.55;color:#0D1B2A">Gang tiếp theo đặt <strong style="font-weight:600">nối liền, không chồng lên nhau, không để hở</strong>.</span></div>
-                <div style="display:flex;gap:12px;align-items:flex-start"><span style="flex:none;display:grid;place-items:center;width:24px;height:24px;border-radius:999px;background:#FF6B00;color:#FFFFFF;font-size:13px;font-weight:600">3</span><span style="font-size:15px;line-height:1.55;color:#0D1B2A">Đếm số gang đã dùng — đó là độ dài của vật.</span></div>
+                ${step(1, 'Đặt gang tay đầu tiên <strong style="font-weight:600">sát đúng mép trái</strong> của vật.')}
+                ${step(2, 'Gang tiếp theo đặt <strong style="font-weight:600">nối liền, không chồng lên nhau, không để hở</strong>.')}
+                ${step(3, 'Đếm số gang đã dùng — đó là độ dài của vật.')}
               </div>
             </div>
           </div>
         </div>
 
-        <div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:18px;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+        <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:18px">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
             <div style="display:flex;flex-direction:column;gap:4px">
-              <h2 style="margin:0;font-size:19px;font-weight:600">Mô phỏng: em thử đo</h2>
-              <span style="font-size:14px;color:#6B7280">Chọn đồ vật, rồi đặt từng gang tay lên vật</span>
+              <h2 class="h2">Mô phỏng: em thử đo</h2>
+              <span class="sub">Chọn đồ vật, rồi đặt từng gang tay lên vật</span>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">${objBtns}</div>
           </div>
-          <div style="background:#FFF7F0;border-radius:8px;padding:24px 20px;display:flex;flex-direction:column;gap:18px">
+          <div class="panel" style="padding:24px 20px;display:flex;flex-direction:column;gap:18px">
             <div style="position:relative;width:100%;height:158px">
-              <div style="position:absolute;left:0;top:0;height:42px;width:${o.width}%;border-radius:6px;background:${ACCENT};display:grid;place-items:center;transition:width 200ms cubic-bezier(.4,0,.2,1)"><span style="font-size:14px;font-weight:600;color:#FFFFFF">${esc(o.name)}</span></div>
-              <span style="position:absolute;left:0;top:0;width:2px;height:140px;background:#9CA3AF;display:block"></span>
-              <span style="position:absolute;left:${o.width}%;top:0;width:2px;height:140px;background:#9CA3AF;display:block;transition:left 200ms cubic-bezier(.4,0,.2,1)"></span>
+              <div style="position:absolute;left:0;top:0;height:42px;width:${o.width}%;border-radius:var(--radius-md);background:var(--primary);display:grid;place-items:center;transition:width 200ms cubic-bezier(.4,0,.2,1)"><span style="font-size:14px;font-weight:600;color:var(--primary-foreground)">${esc(o.name)}</span></div>
+              <span style="position:absolute;left:0;top:0;width:2px;height:140px;background:var(--muted-foreground);display:block"></span>
+              <span style="position:absolute;left:${o.width}%;top:0;width:2px;height:140px;background:var(--muted-foreground);display:block;transition:left 200ms cubic-bezier(.4,0,.2,1)"></span>
               ${spans}
               ${ghost}
             </div>
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-              <button type="button" id="add-hand" style="${actBtn}">${addLabel}</button>
-              <button type="button" id="auto-hand" style="${ghostBtn}">${autoLabel}</button>
-              <button type="button" id="reset-hand" style="${ghostBtn}">Đo lại</button>
-              <span style="font-size:15px;color:#4B5563">Đếm được: <strong style="font-weight:600;color:#0D1B2A">${placed} gang</strong></span>
+              <button type="button" class="btn btn-primary" style="padding:10px 16px;font-size:14px" id="add-hand">${addLabel}</button>
+              <button type="button" class="btn btn-ghost" style="padding:10px 16px;font-size:14px" id="auto-hand">${autoLabel}</button>
+              <button type="button" class="btn btn-ghost" style="padding:10px 16px;font-size:14px" id="reset-hand">Đo lại</button>
+              <span class="mut" style="font-size:15px">Đếm được: <strong style="font-weight:600;color:var(--foreground)">${placed} gang</strong></span>
             </div>
           </div>
-          <span style="font-size:15px;line-height:1.65;color:#4B5563">${esc(note)}</span>
+          <span class="mut" style="font-size:15px;line-height:1.65">${esc(note)}</span>
         </div>
       </div>`;
   }
@@ -304,7 +374,7 @@
   function whyHTML() {
     const rows = COMPARE.map(c => {
       let blocks = '';
-      for (let i = 0; i < c.blocks; i++) blocks += `<span style="height:26px;width:${c.unit}px;border-radius:4px;background:${ACCENT};display:block"></span>`;
+      for (let i = 0; i < c.blocks; i++) blocks += `<span style="height:26px;width:${c.unit}px;border-radius:4px;background:var(--primary);display:block"></span>`;
       return `
         <div style="display:grid;grid-template-columns:120px minmax(0,1fr) 96px;gap:14px;align-items:center">
           <span style="font-size:15px;font-weight:500">${esc(c.who)}</span>
@@ -313,15 +383,15 @@
         </div>`;
     }).join('');
     return `
-      <div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+      <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:20px">
         <div style="display:flex;flex-direction:column;gap:4px">
-          <h2 style="margin:0;font-size:19px;font-weight:600">Cùng một cái bàn, ba người đo ra ba số</h2>
-          <span style="font-size:14px;color:#6B7280">Vì gang tay mỗi người một khác</span>
+          <h2 class="h2">Cùng một cái bàn, ba người đo ra ba số</h2>
+          <span class="sub">Vì gang tay mỗi người một khác</span>
         </div>
         <div style="display:flex;flex-direction:column;gap:14px">${rows}</div>
-        <div style="background:#FFF7F0;border-radius:8px;padding:18px 20px;display:flex;flex-direction:column;gap:8px">
+        <div class="panel" style="padding:18px 20px;display:flex;flex-direction:column;gap:8px">
           <span style="font-size:16px;font-weight:600">Vậy nên cần một đơn vị chung</span>
-          <span style="font-size:15px;line-height:1.65;color:#4B5563">Gang tay của bố dài hơn nên đếm ra ít gang; gang tay của em ngắn hơn nên đếm ra nhiều gang. Cái bàn không đổi, chỉ có gang tay là khác nhau. Vì thế người ta dùng <strong style="font-weight:600;color:#0D1B2A">xăng-ti-mét (cm)</strong> — vạch trên thước lúc nào cũng bằng nhau, ai đo cũng ra cùng một số.</span>
+          <span class="mut ink" style="font-size:15px;line-height:1.65">Gang tay của bố dài hơn nên đếm ra ít gang; gang tay của em ngắn hơn nên đếm ra nhiều gang. Cái bàn không đổi, chỉ có gang tay là khác nhau. Vì thế người ta dùng <strong>xăng-ti-mét (cm)</strong> — vạch trên thước lúc nào cũng bằng nhau, ai đo cũng ra cùng một số.</span>
         </div>
       </div>`;
   }
@@ -333,54 +403,53 @@
       { k: 1, label: '1. Đặt lệch (sai)' },
       { k: 2, label: '2. Đặt đúng vạch 0' },
       { k: 3, label: '3. Đọc vạch cuối' }
-    ].map(s => `<button type="button" id="rstep-${s.k}" data-step="${s.k}" style="padding:9px 14px;border:1px solid #E5E7EB;border-radius:6px;background:#FFFFFF;color:#0D1B2A;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:all 150ms cubic-bezier(.4,0,.2,1)">${s.label}</button>`).join('');
-    const ghostBtn = 'padding:10px 16px;border:1px solid #E5E7EB;border-radius:6px;background:#FFFFFF;color:#4B5563;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:all 150ms cubic-bezier(.4,0,.2,1)';
+    ].map(s => `<button type="button" class="chip" id="rstep-${s.k}" data-step="${s.k}">${s.label}</button>`).join('');
 
     let ticks = '', labels = '';
     for (let i = 0; i <= maxCm; i++) {
       const major = i % 5 === 0;
-      ticks += `<span style="position:absolute;top:4px;left:${i / maxCm * 100}%;width:2px;margin-left:-1px;height:${major ? '26px' : '15px'};border-radius:1px;background:${major ? '#0D1B2A' : '#9CA3AF'}"></span>`;
-      labels += `<span style="position:absolute;top:34px;left:${i / maxCm * 100}%;transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:600;color:#4B5563">${major ? i : ''}</span>`;
+      ticks += `<span style="position:absolute;top:4px;left:${i / maxCm * 100}%;width:2px;margin-left:-1px;height:${major ? '26px' : '15px'};border-radius:1px;background:${major ? 'var(--foreground)' : 'var(--muted-foreground)'}"></span>`;
+      labels += `<span class="mut" style="position:absolute;top:34px;left:${i / maxCm * 100}%;transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:600">${major ? i : ''}</span>`;
     }
 
     const card = (title, rows) => `
-      <div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)">
-        <h3 style="margin:0;font-size:17px;font-weight:600">${title}</h3>
-        <div style="display:flex;flex-direction:column;gap:10px;font-size:15px;line-height:1.55">${rows}</div>
+      <div class="card" style="padding:20px;display:flex;flex-direction:column;gap:12px">
+        <h3 class="h3">${title}</h3>
+        <div class="ink" style="display:flex;flex-direction:column;gap:10px;font-size:15px;line-height:1.55">${rows}</div>
       </div>`;
 
     return `
       <div style="display:flex;flex-direction:column;gap:16px">
-        <div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+        <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:20px">
           <div style="display:flex;flex-direction:column;gap:4px">
-            <h2 style="margin:0;font-size:19px;font-weight:600">Mô phỏng: đo bằng thước</h2>
-            <span style="font-size:14px;color:#6B7280">Bấm từng bước để xem cách đặt thước và cách đọc số. Viết tắt của xăng-ti-mét là <strong style="font-weight:600;color:#0D1B2A">cm</strong>.</span>
+            <h2 class="h2">Mô phỏng: đo bằng thước</h2>
+            <span class="sub ink">Bấm từng bước để xem cách đặt thước và cách đọc số. Viết tắt của xăng-ti-mét là <strong>cm</strong>.</span>
           </div>
-          <div style="background:#FFF7F0;border-radius:8px;padding:24px 20px;display:flex;flex-direction:column;gap:20px">
-            <div style="display:flex;gap:8px;flex-wrap:wrap">${stepBtns}<button type="button" id="auto-ruler" style="${ghostBtn}">Chạy cả 3 bước</button></div>
+          <div class="panel" style="padding:24px 20px;display:flex;flex-direction:column;gap:20px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">${stepBtns}<button type="button" class="btn btn-ghost" style="padding:9px 14px;font-size:14px" id="auto-ruler">Chạy cả 3 bước</button></div>
             <div style="display:flex;flex-direction:column;gap:8px;padding:0 14px">
               <div style="position:relative;height:34px">
-                <div id="pencil-bar" style="position:absolute;top:6px;height:22px;border-radius:4px;display:grid;place-items:center;background:${ACCENT};left:0;width:40%;transition:left 220ms cubic-bezier(.4,0,.2,1),width 150ms cubic-bezier(.4,0,.2,1)"><span style="font-size:12px;font-weight:600;color:#FFFFFF">bút chì</span></div>
+                <div id="pencil-bar" style="position:absolute;top:6px;height:22px;border-radius:4px;display:grid;place-items:center;background:var(--primary);left:0;width:40%;transition:left 220ms cubic-bezier(.4,0,.2,1),width 150ms cubic-bezier(.4,0,.2,1)"><span style="font-size:12px;font-weight:600;color:var(--primary-foreground)">bút chì</span></div>
                 <span id="start-mark" style="position:absolute;top:0;width:2px;height:34px;display:block;transition:left 220ms cubic-bezier(.4,0,.2,1)"></span>
                 <span id="end-mark" style="position:absolute;top:0;width:2px;height:34px;display:block;transition:left 220ms cubic-bezier(.4,0,.2,1)"></span>
               </div>
-              <div style="position:relative;height:74px;border:1px solid #E5E7EB;border-radius:8px;background:#FFFFFF">
-                <span id="hl" style="display:none;position:absolute;top:1px;bottom:1px;border-radius:6px;background:rgba(34,197,94,.14)"></span>
+              <div style="position:relative;height:74px;border:1px solid var(--border);border-radius:var(--radius);background:var(--card)">
+                <span id="hl" style="display:none;position:absolute;top:1px;bottom:1px;border-radius:var(--radius-md);background:var(--success-bg)"></span>
                 ${ticks}${labels}
               </div>
             </div>
-            <div id="readout" style="font-size:15px;line-height:1.65;border-radius:6px;padding:14px 16px;background:#FFFFFF;border:1px solid #E5E7EB;color:#4B5563"></div>
+            <div id="readout" style="font-size:15px;line-height:1.65;border-radius:var(--radius-md);padding:14px 16px;background:var(--card);border:1px solid var(--border);color:var(--muted-foreground)"></div>
             <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-              <span style="font-size:14px;font-weight:500;color:#4B5563">Đổi độ dài bút chì</span>
-              <input id="len-slider" type="range" min="2" max="18" step="1" value="${state.pencil}" style="flex:1;min-width:200px;accent-color:#FF6B00;cursor:pointer">
+              <span class="mut" style="font-size:14px;font-weight:500">Đổi độ dài bút chì</span>
+              <input id="len-slider" type="range" min="2" max="18" step="1" value="${state.pencil}" style="flex:1;min-width:200px;cursor:pointer">
               <span id="pencil-label" style="font-size:20px;font-weight:700;font-variant-numeric:tabular-nums">${state.pencil} cm</span>
             </div>
           </div>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px">
           ${card('Ba điều phải nhớ', '<span>Đặt mép vật đúng vạch <strong style="font-weight:600">0</strong>, không đặt ở vạch 1.</span><span>Đặt thước <strong style="font-weight:600">sát và thẳng</strong> theo vật, không để lệch.</span><span>Đọc số ở <strong style="font-weight:600">vạch cuối</strong> của vật rồi viết kèm chữ <strong style="font-weight:600">cm</strong>.</span>')}
-          ${card('Cách viết và cách đọc', '<span>Viết: <strong style="font-weight:600;color:#0D1B2A">7 cm</strong> — đọc: "bảy xăng-ti-mét".</span><span>Giữa số và chữ cm có một khoảng trắng.</span><span>Đo xong luôn nói kèm đơn vị: "cái bút dài 7 cm", không nói "cái bút dài 7".</span>')}
-          ${card('Khoảng bao nhiêu cm?', '<span>Cục gôm: khoảng <strong style="font-weight:600;color:#0D1B2A">3 cm</strong></span><span>Ngón tay em: khoảng <strong style="font-weight:600;color:#0D1B2A">5 cm</strong></span><span>Bút chì mới: khoảng <strong style="font-weight:600;color:#0D1B2A">17 cm</strong></span><span>Quyển vở: khoảng <strong style="font-weight:600;color:#0D1B2A">25 cm</strong></span>')}
+          ${card('Cách viết và cách đọc', '<span>Viết: <strong style="font-weight:600">7 cm</strong> — đọc: "bảy xăng-ti-mét".</span><span>Giữa số và chữ cm có một khoảng trắng.</span><span>Đo xong luôn nói kèm đơn vị: "cái bút dài 7 cm", không nói "cái bút dài 7".</span>')}
+          ${card('Khoảng bao nhiêu cm?', '<span>Cục gôm: khoảng <strong style="font-weight:600">3 cm</strong></span><span>Ngón tay em: khoảng <strong style="font-weight:600">5 cm</strong></span><span>Bút chì mới: khoảng <strong style="font-weight:600">17 cm</strong></span><span>Quyển vở: khoảng <strong style="font-weight:600">25 cm</strong></span>')}
         </div>
       </div>`;
   }
@@ -390,13 +459,7 @@
     const step = state.step, pencil = state.pencil;
     const offset = step === 1 ? 2 : 0;
 
-    [1, 2, 3].forEach(k => {
-      const on = step === k, el = $('rstep-' + k);
-      el.style.background = on ? ACCENT : '#FFFFFF';
-      el.style.color = on ? '#FFFFFF' : '#0D1B2A';
-      el.style.borderColor = on ? ACCENT : '#E5E7EB';
-      el.style.fontWeight = on ? '600' : '500';
-    });
+    [1, 2, 3].forEach(k => $('rstep-' + k).classList.toggle('on', step === k));
 
     const bar = $('pencil-bar');
     bar.style.left = (offset / maxCm * 100) + '%';
@@ -404,12 +467,12 @@
 
     const sm = $('start-mark');
     sm.style.left = (offset / maxCm * 100) + '%';
-    sm.style.background = offset === 0 ? '#22C55E' : '#EF4444';
+    sm.style.background = offset === 0 ? 'var(--success)' : 'var(--destructive)';
     sm.style.animation = offset === 0 ? 'markPing 1400ms ease-out infinite' : 'nudge 500ms cubic-bezier(.4,0,.2,1) 2';
 
     const em = $('end-mark');
     em.style.left = ((offset + pencil) / maxCm * 100) + '%';
-    em.style.background = step === 3 ? '#22C55E' : '#9CA3AF';
+    em.style.background = step === 3 ? 'var(--success)' : 'var(--muted-foreground)';
     em.style.animation = step === 3 ? 'markPing 1400ms ease-out infinite' : 'none';
 
     const hl = $('hl');
@@ -427,8 +490,8 @@
         : 'Bút chì bắt đầu ở vạch 0 và kết thúc ở vạch ' + pencil + ', nên bút chì dài ' + pencil + ' cm.');
     const ro = $('readout');
     ro.textContent = text;
-    ro.style.borderColor = offset === 0 ? '#E5E7EB' : '#EF4444';
-    ro.style.color = offset === 0 ? '#4B5563' : '#B91C1C';
+    ro.style.borderColor = offset === 0 ? 'var(--border)' : 'var(--destructive)';
+    ro.style.color = offset === 0 ? 'var(--muted-foreground)' : 'var(--destructive)';
     ro.style.animation = 'none'; void ro.offsetWidth; ro.style.animation = 'fadeUp 260ms cubic-bezier(.4,0,.2,1)';
 
     $('pencil-label').textContent = pencil + ' cm';
@@ -451,18 +514,16 @@
   }
 
   /* ---------------- TAB 4: BÀI TẬP ---------------- */
-  function optStyle(qi, oi) {
+  function optClass(qi, oi) {
     const p = state.picked[qi];
     const correct = QUIZ[qi].answer === oi;
-    let bg = '#FFFFFF', bd = '#E5E7EB', fg = '#0D1B2A', fw = '500', extra = '';
+    let c = 'opt';
     if (p !== undefined) {
-      if (correct) { bg = 'rgba(34,197,94,.1)'; bd = '#22C55E'; fg = '#15803D'; fw = '600'; }
-      else if (p === oi) { bg = '#F8F9FA'; bd = '#EF4444'; fg = '#B91C1C'; extra = 'text-decoration:line-through;'; }
-      else { fg = '#9CA3AF'; }
+      if (correct) c += ' ok';
+      else if (p === oi) c += ' no';
+      else c += ' dim';
     }
-    return 'text-align:left;padding:11px 12px;border:1px solid ' + bd + ';border-radius:6px;background:' + bg +
-      ';color:' + fg + ';font-family:inherit;font-size:15px;font-weight:' + fw + ';line-height:1.4' +
-      ';cursor:' + (p === undefined ? 'pointer' : 'default') + ';transition:all 150ms cubic-bezier(.4,0,.2,1);' + extra;
+    return c;
   }
 
   function quizHTML() {
@@ -473,13 +534,15 @@
       : 'Đã làm ' + answered + '/' + QUIZ.length + ' bài. Làm hết để xem kết quả.';
 
     const questions = QUIZ.map((q, qi) => {
-      const opts = q.options.map((label, oi) => `<button type="button" data-qi="${qi}" data-oi="${oi}" style="${optStyle(qi, oi)}">${esc(label)}</button>`).join('');
-      const explain = state.picked[qi] !== undefined
-        ? `<div style="font-size:14px;line-height:1.6;color:#4B5563;background:#F8F9FA;border-radius:6px;padding:12px 14px">${esc(q.explain)}</div>` : '';
+      const done = state.picked[qi] !== undefined;
+      const opts = q.options.map((label, oi) =>
+        `<button type="button" class="${optClass(qi, oi)}" data-qi="${qi}" data-oi="${oi}"${done ? ' disabled' : ''}>${esc(label)}</button>`).join('');
+      const explain = done
+        ? `<div class="mut" style="font-size:14px;line-height:1.6;background:var(--muted);border-radius:var(--radius-md);padding:12px 14px">${esc(q.explain)}</div>` : '';
       return `
-        <div style="padding:18px 0;border-bottom:1px solid #F3F4F6;display:flex;flex-direction:column;gap:12px">
+        <div style="padding:18px 0;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:12px">
           <div style="display:flex;align-items:center;gap:12px;line-height:1.5">
-            <span style="flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:999px;background:#FFF0E2;color:#C2560B;font-size:13px;font-weight:600">${qi + 1}</span>
+            <span class="qnum">${qi + 1}</span>
             <span style="font-size:16px;font-weight:600">${esc(q.text)}</span>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px">${opts}</div>
@@ -488,20 +551,20 @@
     }).join('');
 
     return `
-      <div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 24px;border-bottom:1px solid #E5E7EB;flex-wrap:wrap">
+      <div class="card" style="overflow:hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 24px;border-bottom:1px solid var(--border);flex-wrap:wrap">
           <div style="display:flex;flex-direction:column;gap:2px">
-            <h2 style="margin:0;font-size:19px;font-weight:600">Bài tập</h2>
-            <span style="font-size:13px;color:#6B7280">${QUIZ.length} bài — gang tay và xăng-ti-mét</span>
+            <h2 class="h2">Bài tập</h2>
+            <span class="sub">${QUIZ.length} bài — gang tay và xăng-ti-mét</span>
           </div>
           <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
             <span style="font-size:14px;font-weight:600">Đúng ${score}/${QUIZ.length}</span>
-            <button type="button" id="quiz-reset" style="padding:0 16px;height:32px;border:1px solid #E5E7EB;border-radius:6px;background:#FFFFFF;color:#4B5563;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer">Làm lại</button>
+            <button type="button" class="btn btn-ghost" style="padding:0 16px;height:32px;font-size:14px" id="quiz-reset">Làm lại</button>
           </div>
         </div>
         <div style="padding:8px 24px 24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:4px 28px">
           ${questions}
-          <p style="margin:20px 0 0;grid-column:1/-1;font-size:14px;color:#6B7280">${esc(closing)}</p>
+          <p class="mut" style="margin:20px 0 0;grid-column:1/-1;font-size:14px">${esc(closing)}</p>
         </div>
       </div>`;
   }
@@ -519,7 +582,7 @@
 
   /* ---------------- Render chính ---------------- */
   function render() {
-    $('app').innerHTML = headerHTML() + tabbarHTML() + '<div id="tab-content" style="max-width:1200px;margin:0 auto"></div>';
+    $('app').innerHTML = headerHTML() + tabbarHTML() + '<div id="tab-content" class="wrap"></div>';
     document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => setTab(b.dataset.tab));
     const c = $('tab-content');
     if (state.tab === 'hand') { c.innerHTML = handHTML(); bindHand(); }
