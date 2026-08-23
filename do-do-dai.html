@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Đo độ dài — Toán Vui</title>
+<link rel="icon" type="image/jpeg" href="logo-teacher-b.jpg">
+<link rel="apple-touch-icon" href="logo-teacher-b.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #F8F9FA; color: #0D1B2A; font-family: 'Be Vietnam Pro', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: #1660C7; text-decoration: none; }
+  a:hover { color: #FF6B00; }
+  #app { min-height: 100vh; padding: 0 24px 96px; }
+  @keyframes handDrop { 0% { opacity: 0; transform: translate(-16px,-26px) rotate(-14deg); } 60% { opacity: 1; transform: translate(0,4px) rotate(2deg); } 100% { opacity: 1; transform: translate(0,0) rotate(0deg); } }
+  @keyframes badgePop { 0% { transform: scale(0); } 65% { transform: scale(1.25); } 100% { transform: scale(1); } }
+  @keyframes ghostBlink { 0%,100% { opacity: .3; } 50% { opacity: .85; } }
+  @keyframes sweepIn { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+  @keyframes markPing { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,.45); } 100% { box-shadow: 0 0 0 12px rgba(34,197,94,0); } }
+  @keyframes nudge { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<a href="index.html" id="tv-home" aria-label="Về trang chủ" style="position:fixed;top:14px;left:14px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:1px solid #E4E4E7;border-radius:999px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#18181B;font:500 14px/1 'Be Vietnam Pro',system-ui,sans-serif;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Trang chủ</a>
+
+<div id="app"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+  const ACCENT = '#FF6B00';
+
+  const OBJECTS = [
+    { key: 'desk',  name: 'Mặt bàn học',  hands: 5, width: 100 },
+    { key: 'book',  name: 'Quyển sách',   hands: 2, width: 44 },
+    { key: 'board', name: 'Cái bảng con', hands: 3, width: 64 }
+  ];
+
+  const COMPARE = [
+    { who: 'Em',        blocks: 5, unit: 20, result: '5 gang' },
+    { who: 'Bạn Mai',   blocks: 4, unit: 25, result: '4 gang' },
+    { who: 'Bố của em', blocks: 3, unit: 33, result: '3 gang' }
+  ];
+
+  function shuffle(a, seed) {
+    const out = a.slice();
+    for (let i = out.length - 1; i > 0; i--) {
+      seed = (seed * 9301 + 49297) % 233280;
+      const j = Math.floor(seed / 233280 * (i + 1));
+      [out[i], out[j]] = [out[j], out[i]];
+    }
+    return out;
+  }
+  function mc(text, correct, wrongs, explain, seed) {
+    const uniq = [String(correct)];
+    wrongs.map(String).forEach(w => { if (!uniq.includes(w)) uniq.push(w); });
+    const options = shuffle(uniq, seed);
+    return { text, options, answer: options.indexOf(String(correct)), explain };
+  }
+
+  const QUIZ = [
+    mc('Gang tay là khoảng cách nào trên bàn tay?', 'Từ ngón cái đến ngón giữa khi xoè tay',
+      ['Từ khuỷu tay đến bàn tay', 'Bề rộng một ngón tay'],
+      'Gang tay là khoảng từ đầu ngón cái đến đầu ngón giữa khi xoè bàn tay.', 11),
+    mc('Khi đo bằng gang tay, các gang phải đặt thế nào?', 'Nối liền nhau, không chồng, không hở',
+      ['Cách nhau một chút', 'Chồng lên nhau cho chắc'],
+      'Nếu để hở hoặc chồng lên nhau thì đếm ra số gang sai.', 12),
+    mc('Vì sao ba người đo cùng cái bàn lại ra ba số khác nhau?', 'Vì gang tay mỗi người dài ngắn khác nhau',
+      ['Vì cái bàn tự dài ra', 'Vì có người đếm sai'],
+      'Cái bàn không đổi; gang tay mỗi người một khác nên số gang khác nhau.', 13),
+    mc('Muốn ai đo cũng ra cùng một số thì dùng gì?', 'Thước có vạch xăng-ti-mét',
+      ['Gang tay của bố', 'Bước chân'],
+      'Vạch cm trên mọi cái thước đều bằng nhau nên kết quả giống nhau.', 14),
+    mc('Xăng-ti-mét viết tắt là gì?', 'cm', ['km', 'kg'],
+      'Xăng-ti-mét viết tắt là cm. Còn kg là đơn vị đo cân nặng.', 15),
+    mc('Khi đo, mép vật phải đặt đúng vạch nào của thước?', 'Vạch 0', ['Vạch 1', 'Vạch cuối cùng'],
+      'Luôn đặt mép vật đúng vạch 0, nếu đặt ở vạch 1 thì kết quả bị sai.', 16),
+    mc('Bút chì bắt đầu ở vạch 0, kết thúc ở vạch 8. Bút chì dài bao nhiêu?', '8 cm', ['7 cm', '9 cm'],
+      'Từ vạch 0 đến vạch 8 là 8 cm.', 17),
+    mc('Cái kẹo bắt đầu ở vạch 0, kết thúc ở vạch 3. Cái kẹo dài bao nhiêu?', '3 cm', ['0 cm', '4 cm'],
+      'Từ vạch 0 đến vạch 3 là 3 cm.', 18),
+    mc('Cách viết nào đúng?', '9 cm', ['9 gang cm', 'cm 9'],
+      'Viết số trước, đơn vị sau: 9 cm — đọc "chín xăng-ti-mét".', 19),
+    mc('Băng giấy A dài 6 cm, băng giấy B dài 9 cm. Băng nào dài hơn?', 'Băng B', ['Băng A', 'Bằng nhau'],
+      '9 > 6 nên băng giấy B dài hơn.', 20),
+    mc('Bút dài 12 cm, thước dài 20 cm. Thước dài hơn bút mấy xăng-ti-mét?', '8 cm', ['6 cm', '32 cm'],
+      '20 − 12 = 8, nên thước dài hơn bút 8 cm.', 21),
+    mc('Một quyển vở thường dài khoảng bao nhiêu?', '25 cm', ['2 cm', '200 cm'],
+      'Quyển vở dài khoảng 25 cm. 2 cm thì bé bằng cục gôm.', 22),
+    mc('Đoạn thẳng AB dài 4 cm, đoạn CD dài 4 cm. So sánh hai đoạn?', 'AB = CD', ['AB > CD', 'AB < CD'],
+      'Cùng 4 cm nên hai đoạn thẳng bằng nhau.', 23),
+    mc('Đo xong em phải nói thế nào cho đủ?', 'Cái bút dài 7 cm', ['Cái bút dài 7', 'Cái bút dài cm'],
+      'Luôn nói kèm đơn vị: "dài 7 cm".', 24),
+    mc('Đo bằng gang tay được 3 gang, dùng thước được 60 cm. Hai cách đo cùng đo cái gì?', 'Cùng một vật, chỉ khác đơn vị',
+      ['Hai vật khác nhau', 'Một cách đo bị sai'],
+      'Cùng một vật; gang tay và cm là hai đơn vị khác nhau nên số đếm khác nhau.', 25),
+    mc('Băng giấy dài 5 cm, cắt bỏ 2 cm thì còn lại mấy xăng-ti-mét?', '3 cm', ['2 cm', '7 cm'],
+      '5 − 2 = 3, còn lại 3 cm.', 26)
+  ];
+
+  const HINTS = {
+    hand: 'Đo bằng cái có trên người mình',
+    why: 'Cùng một vật mà ra nhiều số khác nhau',
+    ruler: 'Đơn vị chung: xăng-ti-mét (cm)',
+    quiz: QUIZ.length + ' bài tập'
+  };
+
+  const TABS = [
+    { k: 'hand',  label: '1. Đo bằng gang tay' },
+    { k: 'why',   label: '2. Vì sao cần thước' },
+    { k: 'ruler', label: '3. Đo bằng thước cm' },
+    { k: 'quiz',  label: 'Bài tập' }
+  ];
+
+  const state = { tab: 'hand', obj: 'desk', placed: 0, pencil: 8, step: 2, picked: {}, timer: null, rtimer: null };
+
+  function clearTimers() {
+    if (state.timer) { clearInterval(state.timer); state.timer = null; }
+    if (state.rtimer) { clearInterval(state.rtimer); state.rtimer = null; }
+  }
+  function setTab(t) { clearTimers(); state.tab = t; render(); }
+
+  const HAND_SVG = `
+    <svg viewBox="0 0 200 150" width="100%" height="66" preserveAspectRatio="none" style="display:block">
+      <g fill="none" stroke="#8B5A2B" stroke-linecap="round" stroke-width="30">
+        <path d="M74 74 L20 70"></path><path d="M96 56 L120 12"></path><path d="M112 52 L148 16"></path>
+        <path d="M126 58 L164 30"></path><path d="M132 70 L172 52"></path><path d="M92 96 L104 142"></path>
+      </g>
+      <path d="M68 40 h56 a24 24 0 0 1 24 24 v26 a24 24 0 0 1 -24 24 h-56 a24 24 0 0 1 -24 -24 v-26 a24 24 0 0 1 24 -24 z" fill="#8B5A2B"></path>
+      <g fill="none" stroke="#F6C9A0" stroke-linecap="round" stroke-width="24">
+        <path d="M74 74 L20 70"></path><path d="M96 56 L120 12"></path><path d="M112 52 L148 16"></path>
+        <path d="M126 58 L164 30"></path><path d="M132 70 L172 52"></path><path d="M92 96 L104 142"></path>
+      </g>
+      <path d="M71 43 h50 a21 21 0 0 1 21 21 v26 a21 21 0 0 1 -21 21 h-50 a21 21 0 0 1 -21 -21 v-26 a21 21 0 0 1 21 -21 z" fill="#F6C9A0"></path>
+      <g fill="none" stroke="#E0A97C" stroke-width="3" stroke-linecap="round">
+        <path d="M86 62 q22 7 38 4"></path><path d="M82 80 q24 8 42 4"></path>
+      </g>
+    </svg>`;
+
+  function headerHTML() {
+    return `
+      <div style="max-width:1200px;margin:0 auto;padding:56px 0 28px;display:flex;flex-direction:column;gap:14px">
+        <span style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#FF6B00">Toán lớp 1</span>
+        <h1 style="margin:0;font-size:42px;line-height:1.12;font-weight:700;letter-spacing:-0.02em">Bài giảng: Đo độ dài</h1>
+        <p style="margin:0;max-width:700px;font-size:16px;line-height:1.65;color:#4B5563;text-wrap:pretty">Đầu tiên em đo bằng <strong style="font-weight:600;color:#0D1B2A">gang tay</strong> — cái có ngay trên người mình. Sau đó em học dùng <strong style="font-weight:600;color:#0D1B2A">thước có vạch xăng-ti-mét (cm)</strong> để ai đo cũng ra cùng một số.</p>
+      </div>`;
+  }
+
+  function tabbarHTML() {
+    const btns = TABS.map(t => {
+      const on = state.tab === t.k;
+      const st = 'padding:9px 16px;border:none;border-radius:6px;white-space:nowrap;font-family:inherit;font-size:15px;font-weight:' +
+        (on ? '600' : '500') + ';cursor:pointer;transition:all 150ms cubic-bezier(.4,0,.2,1);background:' +
+        (on ? ACCENT : 'transparent') + ';color:' + (on ? '#FFFFFF' : '#4B5563');
+      return `<button type="button" data-tab="${t.k}" style="${st}">${t.label}</button>`;
+    }).join('');
+    return `
+      <div style="max-width:1200px;margin:0 auto 28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div style="display:flex;gap:4px;padding:4px;background:#FFFFFF;border:1px solid #E5E7EB;border-radius:8px;width:fit-content;flex-wrap:wrap">${btns}</div>
+        <span style="font-size:14px;color:#6B7280">${esc(HINTS[state.tab])}</span>
+      </div>`;
+  }
+
+  /* ---------------- TAB 1: GANG TAY ---------------- */
+  function handHTML() {
+    const o = OBJECTS.find(x => x.key === state.obj);
+    const placed = state.placed;
+    const span = o.width / o.hands;
+
+    const objBtns = OBJECTS.map(x => {
+      const on = x.key === state.obj;
+      const st = 'padding:9px 14px;border:1px solid ' + (on ? ACCENT : '#E5E7EB') + ';border-radius:6px;background:' +
+        (on ? ACCENT : '#FFFFFF') + ';color:' + (on ? '#FFFFFF' : '#0D1B2A') +
+        ';font-family:inherit;font-size:14px;font-weight:' + (on ? '600' : '500') + ';cursor:pointer;transition:all 150ms cubic-bezier(.4,0,.2,1)';
+      return `<button type="button" data-obj="${x.key}" style="${st}">${esc(x.name)}</button>`;
+    }).join('');
+
+    let spans = '';
+    for (let i = 0; i < placed; i++) {
+      const isLast = i === placed - 1;
+      const wrapStyle = 'position:absolute;top:58px;left:' + (i * span) + '%;width:' + span + '%;display:flex;flex-direction:column;align-items:center;gap:2px;' +
+        'border-left:2px dashed #9CA3AF;border-right:2px dashed #9CA3AF;transition:left 200ms cubic-bezier(.4,0,.2,1);' +
+        (isLast ? 'animation:handDrop 420ms cubic-bezier(.4,0,.2,1);' : '');
+      const badgeStyle = 'display:grid;place-items:center;width:22px;height:22px;border-radius:999px;background:' + ACCENT +
+        ';color:#FFFFFF;font-size:12px;font-weight:600' + (isLast ? ';animation:badgePop 300ms cubic-bezier(.4,0,.2,1) 300ms both' : '');
+      spans += `<span style="${wrapStyle}">${HAND_SVG}<span style="${badgeStyle}">${i + 1}</span></span>`;
+    }
+
+    const ghost = placed < o.hands
+      ? '<span style="position:absolute;top:58px;left:' + (placed * span) + '%;width:' + span + '%;height:66px;border:2px dashed #D1D5DB;border-radius:6px;background:rgba(255,255,255,.75);display:block;animation:ghostBlink 1600ms ease-in-out infinite;transition:left 200ms cubic-bezier(.4,0,.2,1)"></span>'
+      : '';
+
+    const addLabel = placed === 0 ? 'Đặt gang tay đầu tiên' : 'Đặt thêm 1 gang';
+    const autoLabel = state.timer ? 'Đang đo…' : 'Đo tự động';
+    const note = placed === 0
+      ? 'Bấm "Đặt gang tay đầu tiên" và đếm cùng em: một gang, hai gang…'
+      : (placed < o.hands
+        ? 'Đã đặt ' + placed + ' gang, vẫn còn chỗ trống — em đặt tiếp nhé.'
+        : o.name + ' dài đúng ' + o.hands + ' gang tay của em.');
+
+    const actBtn = 'padding:10px 16px;border:1px solid ' + ACCENT + ';border-radius:6px;background:' + ACCENT +
+      ';color:#FFFFFF;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all 150ms cubic-bezier(.4,0,.2,1)';
+    const ghostBtn = 'padding:10px 16px;border:1px solid #E5E7EB;border-radius:6px;background:#FFFFFF;color:#4B5563;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:all 150ms cubic-bezier(.4,0,.2,1)';
+
+    return `
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <h2 style="margin:0;font-size:19px;font-weight:600">Gang tay là gì?</h2>
+            <span style="font-size:14px;color:#6B7280">Khoảng cách từ đầu ngón cái đến đầu ngón giữa khi em xoè bàn tay ra</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px">
+            <div style="background:#FFF7F0;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:12px;align-items:center">
+              <svg viewBox="0 0 260 180" width="100%" style="max-width:260px;display:block">
+                <path d="M14 100 H246 v16 H14 z" fill="#C89A6B"></path>
+                <path d="M14 116 H246 v12 l-232 6 z" fill="#A97B4F"></path>
+                <g fill="none" stroke="#8B5A2B" stroke-linecap="round" stroke-width="30">
+                  <path d="M100 96 L26 92"></path><path d="M124 78 L152 20"></path><path d="M142 74 L182 26"></path>
+                  <path d="M156 80 L198 44"></path><path d="M162 90 L206 70"></path><path d="M118 118 L132 168"></path>
+                </g>
+                <path d="M92 60 h74 a26 26 0 0 1 26 26 v28 a26 26 0 0 1 -26 26 h-74 a26 26 0 0 1 -26 -26 v-28 a26 26 0 0 1 26 -26 z" fill="#8B5A2B"></path>
+                <g fill="none" stroke="#F6C9A0" stroke-linecap="round" stroke-width="24">
+                  <path d="M100 96 L26 92"></path><path d="M124 78 L152 20"></path><path d="M142 74 L182 26"></path>
+                  <path d="M156 80 L198 44"></path><path d="M162 90 L206 70"></path><path d="M118 118 L132 168"></path>
+                </g>
+                <path d="M95 63 h68 a23 23 0 0 1 23 23 v28 a23 23 0 0 1 -23 23 h-68 a23 23 0 0 1 -23 -23 v-28 a23 23 0 0 1 23 -23 z" fill="#F6C9A0"></path>
+                <g fill="none" stroke="#E0A97C" stroke-width="3" stroke-linecap="round">
+                  <path d="M112 84 q26 8 44 4"></path><path d="M108 102 q28 9 48 4"></path>
+                </g>
+                <g stroke="#0D1B2A" stroke-width="2.5" stroke-linecap="round">
+                  <path d="M26 160 H206"></path><path d="M26 152 V168 M206 152 V168"></path>
+                </g>
+                <text x="72" y="150" font-size="14" font-weight="600" fill="#0D1B2A" font-family="Be Vietnam Pro, sans-serif">1 gang tay</text>
+              </svg>
+              <span style="font-size:14px;line-height:1.6;color:#4B5563;text-align:center">Xoè bàn tay đặt lên mép bàn, ngón cái sát mép trái, rồi đếm: một gang, hai gang…</span>
+            </div>
+            <div style="background:#FFF7F0;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:14px">
+              <span style="font-size:14px;font-weight:600;color:#4B5563">Ba bước đo</span>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;gap:12px;align-items:flex-start"><span style="flex:none;display:grid;place-items:center;width:24px;height:24px;border-radius:999px;background:#FF6B00;color:#FFFFFF;font-size:13px;font-weight:600">1</span><span style="font-size:15px;line-height:1.55;color:#0D1B2A">Đặt gang tay đầu tiên <strong style="font-weight:600">sát đúng mép trái</strong> của vật.</span></div>
+                <div style="display:flex;gap:12px;align-items:flex-start"><span style="flex:none;display:grid;place-items:center;width:24px;height:24px;border-radius:999px;background:#FF6B00;color:#FFFFFF;font-size:13px;font-weight:600">2</span><span style="font-size:15px;line-height:1.55;color:#0D1B2A">Gang tiếp theo đặt <strong style="font-weight:600">nối liền, không chồng lên nhau, không để hở</strong>.</span></div>
+                <div style="display:flex;gap:12px;align-items:flex-start"><span style="flex:none;display:grid;place-items:center;width:24px;height:24px;border-radius:999px;background:#FF6B00;color:#FFFFFF;font-size:13px;font-weight:600">3</span><span style="font-size:15px;line-height:1.55;color:#0D1B2A">Đếm số gang đã dùng — đó là độ dài của vật.</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:18px;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <h2 style="margin:0;font-size:19px;font-weight:600">Mô phỏng: em thử đo</h2>
+              <span style="font-size:14px;color:#6B7280">Chọn đồ vật, rồi đặt từng gang tay lên vật</span>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">${objBtns}</div>
+          </div>
+          <div style="background:#FFF7F0;border-radius:8px;padding:24px 20px;display:flex;flex-direction:column;gap:18px">
+            <div style="position:relative;width:100%;height:158px">
+              <div style="position:absolute;left:0;top:0;height:42px;width:${o.width}%;border-radius:6px;background:${ACCENT};display:grid;place-items:center;transition:width 200ms cubic-bezier(.4,0,.2,1)"><span style="font-size:14px;font-weight:600;color:#FFFFFF">${esc(o.name)}</span></div>
+              <span style="position:absolute;left:0;top:0;width:2px;height:140px;background:#9CA3AF;display:block"></span>
+              <span style="position:absolute;left:${o.width}%;top:0;width:2px;height:140px;background:#9CA3AF;display:block;transition:left 200ms cubic-bezier(.4,0,.2,1)"></span>
+              ${spans}
+              ${ghost}
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <button type="button" id="add-hand" style="${actBtn}">${addLabel}</button>
+              <button type="button" id="auto-hand" style="${ghostBtn}">${autoLabel}</button>
+              <button type="button" id="reset-hand" style="${ghostBtn}">Đo lại</button>
+              <span style="font-size:15px;color:#4B5563">Đếm được: <strong style="font-weight:600;color:#0D1B2A">${placed} gang</strong></span>
+            </div>
+          </div>
+          <span style="font-size:15px;line-height:1.65;color:#4B5563">${esc(note)}</span>
+        </div>
+      </div>`;
+  }
+
+  function updateHand() { $('tab-content').innerHTML = handHTML(); bindHand(); }
+  function bindHand() {
+    document.querySelectorAll('[data-obj]').forEach(b => b.onclick = () => {
+      if (state.timer) { clearInterval(state.timer); state.timer = null; }
+      state.obj = b.dataset.obj; state.placed = 0; updateHand();
+    });
+    const o = OBJECTS.find(x => x.key === state.obj);
+    $('add-hand').onclick = () => { state.placed = Math.min(state.placed + 1, o.hands); updateHand(); };
+    $('reset-hand').onclick = () => { if (state.timer) { clearInterval(state.timer); state.timer = null; } state.placed = 0; updateHand(); };
+    $('auto-hand').onclick = () => {
+      if (state.timer) return;
+      state.placed = 0;
+      const total = OBJECTS.find(x => x.key === state.obj).hands;
+      let n = 0;
+      state.timer = setInterval(() => {
+        n += 1; state.placed = n; updateHand();
+        if (n >= total) { clearInterval(state.timer); state.timer = null; updateHand(); }
+      }, 700);
+      updateHand();
+    };
+  }
+
+  /* ---------------- TAB 2: VÌ SAO CẦN THƯỚC ---------------- */
+  function whyHTML() {
+    const rows = COMPARE.map(c => {
+      let blocks = '';
+      for (let i = 0; i < c.blocks; i++) blocks += `<span style="height:26px;width:${c.unit}px;border-radius:4px;background:${ACCENT};display:block"></span>`;
+      return `
+        <div style="display:grid;grid-template-columns:120px minmax(0,1fr) 96px;gap:14px;align-items:center">
+          <span style="font-size:15px;font-weight:500">${esc(c.who)}</span>
+          <div style="display:flex;gap:3px;align-items:center">${blocks}</div>
+          <span style="font-size:15px;font-weight:600;text-align:right">${esc(c.result)}</span>
+        </div>`;
+    }).join('');
+    return `
+      <div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <h2 style="margin:0;font-size:19px;font-weight:600">Cùng một cái bàn, ba người đo ra ba số</h2>
+          <span style="font-size:14px;color:#6B7280">Vì gang tay mỗi người một khác</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">${rows}</div>
+        <div style="background:#FFF7F0;border-radius:8px;padding:18px 20px;display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:16px;font-weight:600">Vậy nên cần một đơn vị chung</span>
+          <span style="font-size:15px;line-height:1.65;color:#4B5563">Gang tay của bố dài hơn nên đếm ra ít gang; gang tay của em ngắn hơn nên đếm ra nhiều gang. Cái bàn không đổi, chỉ có gang tay là khác nhau. Vì thế người ta dùng <strong style="font-weight:600;color:#0D1B2A">xăng-ti-mét (cm)</strong> — vạch trên thước lúc nào cũng bằng nhau, ai đo cũng ra cùng một số.</span>
+        </div>
+      </div>`;
+  }
+
+  /* ---------------- TAB 3: THƯỚC CM ---------------- */
+  function rulerHTML() {
+    const maxCm = 20;
+    const stepBtns = [
+      { k: 1, label: '1. Đặt lệch (sai)' },
+      { k: 2, label: '2. Đặt đúng vạch 0' },
+      { k: 3, label: '3. Đọc vạch cuối' }
+    ].map(s => `<button type="button" id="rstep-${s.k}" data-step="${s.k}" style="padding:9px 14px;border:1px solid #E5E7EB;border-radius:6px;background:#FFFFFF;color:#0D1B2A;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:all 150ms cubic-bezier(.4,0,.2,1)">${s.label}</button>`).join('');
+    const ghostBtn = 'padding:10px 16px;border:1px solid #E5E7EB;border-radius:6px;background:#FFFFFF;color:#4B5563;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:all 150ms cubic-bezier(.4,0,.2,1)';
+
+    let ticks = '', labels = '';
+    for (let i = 0; i <= maxCm; i++) {
+      const major = i % 5 === 0;
+      ticks += `<span style="position:absolute;top:4px;left:${i / maxCm * 100}%;width:2px;margin-left:-1px;height:${major ? '26px' : '15px'};border-radius:1px;background:${major ? '#0D1B2A' : '#9CA3AF'}"></span>`;
+      labels += `<span style="position:absolute;top:34px;left:${i / maxCm * 100}%;transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:600;color:#4B5563">${major ? i : ''}</span>`;
+    }
+
+    const card = (title, rows) => `
+      <div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+        <h3 style="margin:0;font-size:17px;font-weight:600">${title}</h3>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:15px;line-height:1.55">${rows}</div>
+      </div>`;
+
+    return `
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <h2 style="margin:0;font-size:19px;font-weight:600">Mô phỏng: đo bằng thước</h2>
+            <span style="font-size:14px;color:#6B7280">Bấm từng bước để xem cách đặt thước và cách đọc số. Viết tắt của xăng-ti-mét là <strong style="font-weight:600;color:#0D1B2A">cm</strong>.</span>
+          </div>
+          <div style="background:#FFF7F0;border-radius:8px;padding:24px 20px;display:flex;flex-direction:column;gap:20px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">${stepBtns}<button type="button" id="auto-ruler" style="${ghostBtn}">Chạy cả 3 bước</button></div>
+            <div style="display:flex;flex-direction:column;gap:8px;padding:0 14px">
+              <div style="position:relative;height:34px">
+                <div id="pencil-bar" style="position:absolute;top:6px;height:22px;border-radius:4px;display:grid;place-items:center;background:${ACCENT};left:0;width:40%;transition:left 220ms cubic-bezier(.4,0,.2,1),width 150ms cubic-bezier(.4,0,.2,1)"><span style="font-size:12px;font-weight:600;color:#FFFFFF">bút chì</span></div>
+                <span id="start-mark" style="position:absolute;top:0;width:2px;height:34px;display:block;transition:left 220ms cubic-bezier(.4,0,.2,1)"></span>
+                <span id="end-mark" style="position:absolute;top:0;width:2px;height:34px;display:block;transition:left 220ms cubic-bezier(.4,0,.2,1)"></span>
+              </div>
+              <div style="position:relative;height:74px;border:1px solid #E5E7EB;border-radius:8px;background:#FFFFFF">
+                <span id="hl" style="display:none;position:absolute;top:1px;bottom:1px;border-radius:6px;background:rgba(34,197,94,.14)"></span>
+                ${ticks}${labels}
+              </div>
+            </div>
+            <div id="readout" style="font-size:15px;line-height:1.65;border-radius:6px;padding:14px 16px;background:#FFFFFF;border:1px solid #E5E7EB;color:#4B5563"></div>
+            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+              <span style="font-size:14px;font-weight:500;color:#4B5563">Đổi độ dài bút chì</span>
+              <input id="len-slider" type="range" min="2" max="18" step="1" value="${state.pencil}" style="flex:1;min-width:200px;accent-color:#FF6B00;cursor:pointer">
+              <span id="pencil-label" style="font-size:20px;font-weight:700;font-variant-numeric:tabular-nums">${state.pencil} cm</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px">
+          ${card('Ba điều phải nhớ', '<span>Đặt mép vật đúng vạch <strong style="font-weight:600">0</strong>, không đặt ở vạch 1.</span><span>Đặt thước <strong style="font-weight:600">sát và thẳng</strong> theo vật, không để lệch.</span><span>Đọc số ở <strong style="font-weight:600">vạch cuối</strong> của vật rồi viết kèm chữ <strong style="font-weight:600">cm</strong>.</span>')}
+          ${card('Cách viết và cách đọc', '<span>Viết: <strong style="font-weight:600;color:#0D1B2A">7 cm</strong> — đọc: "bảy xăng-ti-mét".</span><span>Giữa số và chữ cm có một khoảng trắng.</span><span>Đo xong luôn nói kèm đơn vị: "cái bút dài 7 cm", không nói "cái bút dài 7".</span>')}
+          ${card('Khoảng bao nhiêu cm?', '<span>Cục gôm: khoảng <strong style="font-weight:600;color:#0D1B2A">3 cm</strong></span><span>Ngón tay em: khoảng <strong style="font-weight:600;color:#0D1B2A">5 cm</strong></span><span>Bút chì mới: khoảng <strong style="font-weight:600;color:#0D1B2A">17 cm</strong></span><span>Quyển vở: khoảng <strong style="font-weight:600;color:#0D1B2A">25 cm</strong></span>')}
+        </div>
+      </div>`;
+  }
+
+  function updateRuler() {
+    const maxCm = 20;
+    const step = state.step, pencil = state.pencil;
+    const offset = step === 1 ? 2 : 0;
+
+    [1, 2, 3].forEach(k => {
+      const on = step === k, el = $('rstep-' + k);
+      el.style.background = on ? ACCENT : '#FFFFFF';
+      el.style.color = on ? '#FFFFFF' : '#0D1B2A';
+      el.style.borderColor = on ? ACCENT : '#E5E7EB';
+      el.style.fontWeight = on ? '600' : '500';
+    });
+
+    const bar = $('pencil-bar');
+    bar.style.left = (offset / maxCm * 100) + '%';
+    bar.style.width = (pencil / maxCm * 100) + '%';
+
+    const sm = $('start-mark');
+    sm.style.left = (offset / maxCm * 100) + '%';
+    sm.style.background = offset === 0 ? '#22C55E' : '#EF4444';
+    sm.style.animation = offset === 0 ? 'markPing 1400ms ease-out infinite' : 'nudge 500ms cubic-bezier(.4,0,.2,1) 2';
+
+    const em = $('end-mark');
+    em.style.left = ((offset + pencil) / maxCm * 100) + '%';
+    em.style.background = step === 3 ? '#22C55E' : '#9CA3AF';
+    em.style.animation = step === 3 ? 'markPing 1400ms ease-out infinite' : 'none';
+
+    const hl = $('hl');
+    if (step === 3) {
+      hl.style.display = 'block';
+      hl.style.left = (offset / maxCm * 100) + '%';
+      hl.style.width = (pencil / maxCm * 100) + '%';
+      hl.style.animation = 'sweepIn 600ms cubic-bezier(.4,0,.2,1)';
+    } else { hl.style.display = 'none'; }
+
+    const text = offset !== 0
+      ? 'Mép bút chì đang ở vạch ' + offset + ', không phải vạch 0. Đọc kiểu này sẽ ra ' + (offset + pencil) + ' cm — sai mất ' + offset + ' cm. Hãy bấm bước 2 để đặt lại cho đúng.'
+      : (step < 3
+        ? 'Đã đặt đúng: mép bút chì trùng vạch 0. Giờ bấm bước 3 để nhìn xem đầu kia dừng ở vạch nào.'
+        : 'Bút chì bắt đầu ở vạch 0 và kết thúc ở vạch ' + pencil + ', nên bút chì dài ' + pencil + ' cm.');
+    const ro = $('readout');
+    ro.textContent = text;
+    ro.style.borderColor = offset === 0 ? '#E5E7EB' : '#EF4444';
+    ro.style.color = offset === 0 ? '#4B5563' : '#B91C1C';
+    ro.style.animation = 'none'; void ro.offsetWidth; ro.style.animation = 'fadeUp 260ms cubic-bezier(.4,0,.2,1)';
+
+    $('pencil-label').textContent = pencil + ' cm';
+  }
+
+  function bindRuler() {
+    document.querySelectorAll('[data-step]').forEach(b => b.onclick = () => { state.step = +b.dataset.step; updateRuler(); });
+    $('auto-ruler').onclick = () => {
+      if (state.rtimer) return;
+      state.step = 1; updateRuler();
+      let k = 1;
+      state.rtimer = setInterval(() => {
+        k += 1; state.step = k; updateRuler();
+        if (k >= 3) { clearInterval(state.rtimer); state.rtimer = null; }
+      }, 1400);
+    };
+    const sl = $('len-slider');
+    const onLen = e => { state.pencil = Number(e.target.value); updateRuler(); };
+    sl.oninput = onLen; sl.onchange = onLen;
+  }
+
+  /* ---------------- TAB 4: BÀI TẬP ---------------- */
+  function optStyle(qi, oi) {
+    const p = state.picked[qi];
+    const correct = QUIZ[qi].answer === oi;
+    let bg = '#FFFFFF', bd = '#E5E7EB', fg = '#0D1B2A', fw = '500', extra = '';
+    if (p !== undefined) {
+      if (correct) { bg = 'rgba(34,197,94,.1)'; bd = '#22C55E'; fg = '#15803D'; fw = '600'; }
+      else if (p === oi) { bg = '#F8F9FA'; bd = '#EF4444'; fg = '#B91C1C'; extra = 'text-decoration:line-through;'; }
+      else { fg = '#9CA3AF'; }
+    }
+    return 'text-align:left;padding:11px 12px;border:1px solid ' + bd + ';border-radius:6px;background:' + bg +
+      ';color:' + fg + ';font-family:inherit;font-size:15px;font-weight:' + fw + ';line-height:1.4' +
+      ';cursor:' + (p === undefined ? 'pointer' : 'default') + ';transition:all 150ms cubic-bezier(.4,0,.2,1);' + extra;
+  }
+
+  function quizHTML() {
+    const score = Object.keys(state.picked).filter(k => state.picked[k] === QUIZ[k].answer).length;
+    const answered = Object.keys(state.picked).length;
+    const closing = answered === QUIZ.length
+      ? (score === QUIZ.length ? 'Tuyệt vời, em làm đúng hết!' : 'Xem lại phần Đo bằng thước cm rồi thử lại nhé.')
+      : 'Đã làm ' + answered + '/' + QUIZ.length + ' bài. Làm hết để xem kết quả.';
+
+    const questions = QUIZ.map((q, qi) => {
+      const opts = q.options.map((label, oi) => `<button type="button" data-qi="${qi}" data-oi="${oi}" style="${optStyle(qi, oi)}">${esc(label)}</button>`).join('');
+      const explain = state.picked[qi] !== undefined
+        ? `<div style="font-size:14px;line-height:1.6;color:#4B5563;background:#F8F9FA;border-radius:6px;padding:12px 14px">${esc(q.explain)}</div>` : '';
+      return `
+        <div style="padding:18px 0;border-bottom:1px solid #F3F4F6;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:12px;line-height:1.5">
+            <span style="flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:999px;background:#FFF0E2;color:#C2560B;font-size:13px;font-weight:600">${qi + 1}</span>
+            <span style="font-size:16px;font-weight:600">${esc(q.text)}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px">${opts}</div>
+          ${explain}
+        </div>`;
+    }).join('');
+
+    return `
+      <div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 24px;border-bottom:1px solid #E5E7EB;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <h2 style="margin:0;font-size:19px;font-weight:600">Bài tập</h2>
+            <span style="font-size:13px;color:#6B7280">${QUIZ.length} bài — gang tay và xăng-ti-mét</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <span style="font-size:14px;font-weight:600">Đúng ${score}/${QUIZ.length}</span>
+            <button type="button" id="quiz-reset" style="padding:0 16px;height:32px;border:1px solid #E5E7EB;border-radius:6px;background:#FFFFFF;color:#4B5563;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer">Làm lại</button>
+          </div>
+        </div>
+        <div style="padding:8px 24px 24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:4px 28px">
+          ${questions}
+          <p style="margin:20px 0 0;grid-column:1/-1;font-size:14px;color:#6B7280">${esc(closing)}</p>
+        </div>
+      </div>`;
+  }
+
+  function updateQuiz() { $('tab-content').innerHTML = quizHTML(); bindQuiz(); }
+  function bindQuiz() {
+    document.querySelectorAll('[data-qi]').forEach(b => b.onclick = () => {
+      const qi = +b.dataset.qi, oi = +b.dataset.oi;
+      if (state.picked[qi] !== undefined) return;
+      state.picked = { ...state.picked, [qi]: oi };
+      updateQuiz();
+    });
+    $('quiz-reset').onclick = () => { state.picked = {}; updateQuiz(); };
+  }
+
+  /* ---------------- Render chính ---------------- */
+  function render() {
+    $('app').innerHTML = headerHTML() + tabbarHTML() + '<div id="tab-content" style="max-width:1200px;margin:0 auto"></div>';
+    document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => setTab(b.dataset.tab));
+    const c = $('tab-content');
+    if (state.tab === 'hand') { c.innerHTML = handHTML(); bindHand(); }
+    else if (state.tab === 'why') { c.innerHTML = whyHTML(); }
+    else if (state.tab === 'ruler') { c.innerHTML = rulerHTML(); bindRuler(); updateRuler(); }
+    else { c.innerHTML = quizHTML(); bindQuiz(); }
+  }
+
+  render();
+</script>
+</body>
+</html>
