@@ -7,117 +7,119 @@
 <link rel="icon" type="image/jpeg" href="logo-teacher-b.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
 <style>
+  :root{ --radius:0.625rem; --background:oklch(1 0 0); --foreground:oklch(0.145 0 0); --card:oklch(1 0 0); --card-foreground:oklch(0.145 0 0); --primary:oklch(0.205 0 0); --primary-foreground:oklch(0.985 0 0); --secondary:oklch(0.97 0 0); --secondary-foreground:oklch(0.205 0 0); --muted:oklch(0.97 0 0); --muted-foreground:oklch(0.556 0 0); --accent:oklch(0.97 0 0); --accent-foreground:oklch(0.205 0 0); --destructive:oklch(0.577 0.245 27.325); --border:oklch(0.922 0 0); --input:oklch(0.922 0 0); --ring:oklch(0.708 0 0); --success:#16A34A; --success-fg:#15803D; --success-bg:rgba(34,197,94,.12); --radius-md:calc(var(--radius) - 2px); --shadow-xs:0 1px 2px 0 rgb(0 0 0 / 0.05); --shadow-sm:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
+  @media (prefers-color-scheme: dark){ :root{ --background:oklch(0.145 0 0); --foreground:oklch(0.985 0 0); --card:oklch(0.205 0 0); --card-foreground:oklch(0.985 0 0); --primary:oklch(0.985 0 0); --primary-foreground:oklch(0.205 0 0); --secondary:oklch(0.269 0 0); --secondary-foreground:oklch(0.985 0 0); --muted:oklch(0.269 0 0); --muted-foreground:oklch(0.708 0 0); --accent:oklch(0.269 0 0); --accent-foreground:oklch(0.985 0 0); --destructive:oklch(0.704 0.191 22.216); --border:oklch(1 0 0 / 10%); --input:oklch(1 0 0 / 15%); --ring:oklch(0.556 0 0); --success:#4ADE80; --success-fg:#4ADE80; --success-bg:rgba(74,222,128,.15); } }
   * { box-sizing: border-box; }
-  body { margin: 0; background: #FFFFFF; color: #09090B; font-family: 'Be Vietnam Pro', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; background: var(--background); color: var(--foreground); font-family: Geist, 'Be Vietnam Pro', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
   .page { min-height: 100vh; padding: 0 24px 96px; }
   .wrap { max-width: 1120px; margin: 0 auto; }
   .col16 { display: flex; flex-direction: column; gap: 16px; }
 
-  .eyebrow { font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: #A1A1AA; }
+  .eyebrow { font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-foreground); }
   h1.title { margin: 0; font-size: 44px; line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; }
-  .intro { margin: 0; max-width: 680px; font-size: 17px; line-height: 1.65; color: #52525B; text-wrap: pretty; }
-  .intro strong { font-weight: 600; color: #09090B; }
+  .intro { margin: 0; max-width: 680px; font-size: 17px; line-height: 1.65; color: var(--muted-foreground); text-wrap: pretty; }
+  .intro strong { font-weight: 600; color: var(--foreground); }
 
   .tabbar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 0 auto 36px; }
-  .tabs { display: flex; gap: 4px; padding: 4px; background: #F4F4F5; border-radius: 10px; width: fit-content; }
-  .tab { padding: 9px 18px; border: none; border-radius: 8px; white-space: nowrap; font-family: inherit; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); background: transparent; color: #71717A; }
-  .tab.on { font-weight: 600; background: #FFFFFF; color: #18181B; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
-  .tabhint { font-size: 14px; color: #A1A1AA; }
+  .tabs { display: flex; gap: 4px; padding: 4px; background: var(--muted); border-radius: 10px; width: fit-content; }
+  .tab { padding: 9px 18px; border: none; border-radius: 8px; white-space: nowrap; font-family: inherit; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); background: transparent; color: var(--muted-foreground); }
+  .tab.on { font-weight: 600; background: var(--card); color: var(--foreground); box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+  .tabhint { font-size: 14px; color: var(--muted-foreground); }
 
   .section:not(.on) { display: none !important; }
 
   /* Khám phá — bảng */
   .escroll { overflow-x: auto; }
-  .etable { min-width: 600px; border: 1px solid #E4E4E7; border-radius: 12px; overflow: hidden; }
+  .etable { min-width: 600px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
   .ehead, .erow { display: grid; grid-template-columns: minmax(0,1fr) 84px 84px 96px minmax(150px,180px); align-items: center; }
-  .ehead { background: #FAFAFA; border-bottom: 1px solid #E4E4E7; }
-  .ehead span { padding: 14px 10px; font-size: 14px; font-weight: 600; color: #52525B; text-align: center; }
+  .ehead { background: var(--muted); border-bottom: 1px solid var(--border); }
+  .ehead span { padding: 14px 10px; font-size: 14px; font-weight: 600; color: var(--muted-foreground); text-align: center; }
   .ehead .first, .ehead .last { padding: 14px 18px; text-align: left; }
-  .erow { border-bottom: 1px solid #F4F4F5; }
+  .erow { border-bottom: 1px solid var(--muted); }
   .cell-fig { padding: 16px 18px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-  .ebag { display: grid; grid-template-columns: repeat(5,8px); gap: 3px; padding: 5px; border: 1px solid #D4D4D8; border-radius: 5px; background: #FAFAFA; }
-  .ebag .d { width: 8px; height: 8px; border-radius: 999px; background: #18181B; display: block; }
+  .ebag { display: grid; grid-template-columns: repeat(5,8px); gap: 3px; padding: 5px; border: 1px solid var(--border); border-radius: 5px; background: var(--muted); }
+  .ebag .d { width: 8px; height: 8px; border-radius: 999px; background: var(--foreground); display: block; }
   .eloose { display: flex; gap: 4px; padding-left: 4px; }
-  .eloose .d { width: 8px; height: 8px; border-radius: 999px; background: #A1A1AA; display: block; }
+  .eloose .d { width: 8px; height: 8px; border-radius: 999px; background: var(--muted-foreground); display: block; }
   .ecell { padding: 16px 10px; text-align: center; font-weight: 700; }
   .ecell.tens, .ecell.units { font-size: 20px; }
   .ecell.num { font-size: 24px; }
-  .ecell.word { padding: 16px 18px; font-size: 16px; text-align: left; color: #09090B; }
+  .ecell.word { padding: 16px 18px; font-size: 16px; text-align: left; color: var(--foreground); }
 
-  .tip { background: #FAFAFA; border: 1px solid #E4E4E7; border-radius: 12px; padding: 22px 24px; display: flex; flex-direction: column; gap: 10px; }
+  .tip { background: var(--muted); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; display: flex; flex-direction: column; gap: 10px; }
   .tip h3 { margin: 0; font-size: 17px; font-weight: 600; }
-  .tip p { margin: 0; font-size: 15px; line-height: 1.65; color: #52525B; }
-  .tip strong { font-weight: 600; color: #09090B; }
+  .tip p { margin: 0; font-size: 15px; line-height: 1.65; color: var(--muted-foreground); }
+  .tip strong { font-weight: 600; color: var(--foreground); }
 
   /* Tự lập số */
-  .panel { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; padding: 22px 24px; display: flex; flex-direction: column; gap: 20px; }
+  .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; display: flex; flex-direction: column; gap: 20px; }
   .panel h2 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
-  .panel .muted { font-size: 14px; color: #71717A; }
-  .panel > p { margin: 0; font-size: 15px; line-height: 1.65; color: #52525B; }
+  .panel .muted { font-size: 14px; color: var(--muted-foreground); }
+  .panel > p { margin: 0; font-size: 15px; line-height: 1.65; color: var(--muted-foreground); }
   .build-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(320px,1fr)); gap: 16px; }
-  .bpanel { border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
-  .bphead { padding: 12px 16px; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #0D1B2A; }
-  .bphead.t { background: #FFF7F0; }
-  .bphead.u { background: #EFF5FD; }
+  .bpanel { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
+  .bphead { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--foreground); }
+  .bphead.t { background: var(--muted); }
+  .bphead.u { background: var(--muted); }
   .bdot { width: 12px; height: 12px; border-radius: 999px; display: block; }
   .bpicks { padding: 16px; display: grid; grid-template-columns: repeat(auto-fill,minmax(52px,1fr)); gap: 8px; }
-  .bview { padding: 16px; border-top: 1px dashed #E5E7EB; background: #FAFAFA; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; min-height: 120px; flex: 1; }
+  .bview { padding: 16px; border-top: 1px dashed var(--border); background: var(--muted); display: flex; flex-wrap: wrap; gap: 10px; align-items: center; min-height: 120px; flex: 1; }
   .bview.u { gap: 8px; align-content: flex-start; align-items: flex-start; }
-  .bbag { display: grid; grid-template-columns: repeat(5,12px); gap: 4px; padding: 7px; border: 1px solid #FFB27A; border-radius: 8px; background: #FFFFFF; }
-  .bbag .d { width: 12px; height: 12px; border-radius: 999px; background: #FF6B00; display: block; }
-  .loosedot { width: 12px; height: 12px; border-radius: 999px; background: #1660C7; display: block; }
-  .bcap { padding: 12px 16px; border-top: 1px solid #E5E7EB; font-size: 14px; color: #4B5563; }
+  .bbag { display: grid; grid-template-columns: repeat(5,12px); gap: 4px; padding: 7px; border: 1px solid var(--primary); border-radius: 8px; background: var(--card); }
+  .bbag .d { width: 12px; height: 12px; border-radius: 999px; background: var(--primary); display: block; }
+  .loosedot { width: 12px; height: 12px; border-radius: 999px; background: var(--primary); display: block; }
+  .bcap { padding: 12px 16px; border-top: 1px solid var(--border); font-size: 14px; color: var(--muted-foreground); }
   .bstats { display: grid; grid-template-columns: repeat(auto-fit,minmax(190px,1fr)); gap: 12px; }
-  .bstat { border: 1px solid #E4E4E7; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 4px; }
-  .bstat .lbl { font-size: 13px; color: #A1A1AA; }
+  .bstat { border: 1px solid var(--border); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 4px; }
+  .bstat .lbl { font-size: 13px; color: var(--muted-foreground); }
   .bstat .big { font-size: 32px; font-weight: 700; line-height: 1.1; }
   .bstat .med { font-size: 20px; font-weight: 600; line-height: 1.4; }
 
   /* Cách đọc */
   .read-cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); gap: 16px; }
-  .rcard { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .rcard { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
   .rcard h3 { margin: 0; font-size: 18px; font-weight: 600; }
-  .rcard p { margin: 0; font-size: 15px; line-height: 1.6; color: #52525B; }
-  .rcard strong { font-weight: 600; color: #09090B; }
-  .rex { display: flex; flex-direction: column; gap: 6px; background: #FAFAFA; border-radius: 8px; padding: 14px 16px; font-size: 15px; line-height: 1.7; }
-  .rex .muted { color: #71717A; }
-  .rgrid-wrap { border: 1px solid #E4E4E7; border-radius: 12px; overflow: hidden; }
-  .rgrid-head { padding: 20px 24px; border-bottom: 1px solid #E4E4E7; display: flex; flex-direction: column; gap: 2px; }
+  .rcard p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--muted-foreground); }
+  .rcard strong { font-weight: 600; color: var(--foreground); }
+  .rex { display: flex; flex-direction: column; gap: 6px; background: var(--muted); border-radius: 8px; padding: 14px 16px; font-size: 15px; line-height: 1.7; }
+  .rex .muted { color: var(--muted-foreground); }
+  .rgrid-wrap { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .rgrid-head { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 2px; }
   .rgrid-head .t1 { font-size: 15px; font-weight: 600; }
-  .rgrid-head .t2 { font-size: 13px; color: #71717A; }
+  .rgrid-head .t2 { font-size: 13px; color: var(--muted-foreground); }
   .rgrid { padding: 20px 24px; display: grid; grid-template-columns: repeat(10,minmax(0,1fr)); gap: 6px; }
-  .rgrid-foot { padding: 20px 24px; border-top: 1px solid #E4E4E7; display: flex; flex-direction: column; gap: 6px; background: #FAFAFA; }
+  .rgrid-foot { padding: 20px 24px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; background: var(--muted); }
   .rgrid-foot .word { font-size: 32px; font-weight: 700; line-height: 1.2; }
-  .rgrid-foot .note { font-size: 15px; color: #52525B; }
+  .rgrid-foot .note { font-size: 15px; color: var(--muted-foreground); }
 
   /* Bài tập */
-  .quizpanel { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; overflow: hidden; }
-  .phead { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 24px; border-bottom: 1px solid #E4E4E7; flex-wrap: wrap; }
+  .quizpanel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .phead { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 24px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
   .phead h2 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
-  .phead .sub { font-size: 13px; color: #A1A1AA; }
+  .phead .sub { font-size: 13px; color: var(--muted-foreground); }
   .score { font-size: 14px; font-weight: 600; }
-  .btn-ghost { padding: 0 12px; height: 32px; font-size: 14px; border: none; background: transparent; color: #52525B; font-family: inherit; font-weight: 600; cursor: pointer; border-radius: 8px; }
-  .btn-ghost:hover { background: #F4F4F5; }
-  .levels { display: flex; gap: 4px; padding: 4px; background: #F4F4F5; border-radius: 10px; }
-  .lvbtn { padding: 7px 14px; border: none; border-radius: 8px; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); background: transparent; color: #71717A; }
-  .lvbtn.on { font-weight: 600; background: #FFFFFF; color: #18181B; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+  .btn-ghost { padding: 0 12px; height: 32px; font-size: 14px; border: none; background: transparent; color: var(--muted-foreground); font-family: inherit; font-weight: 600; cursor: pointer; border-radius: 8px; }
+  .btn-ghost:hover { background: var(--muted); }
+  .levels { display: flex; gap: 4px; padding: 4px; background: var(--muted); border-radius: 10px; }
+  .lvbtn { padding: 7px 14px; border: none; border-radius: 8px; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); background: transparent; color: var(--muted-foreground); }
+  .lvbtn.on { font-weight: 600; background: var(--card); color: var(--foreground); box-shadow: 0 1px 3px rgba(0,0,0,.1); }
   .qbody { padding: 8px 24px 24px; display: grid; grid-template-columns: repeat(auto-fill,minmax(320px,1fr)); gap: 4px 28px; }
-  .q { padding: 18px 0; border-bottom: 1px solid #F4F4F5; display: flex; flex-direction: column; gap: 12px; }
+  .q { padding: 18px 0; border-bottom: 1px solid var(--muted); display: flex; flex-direction: column; gap: 12px; }
   .qtext { display: flex; align-items: center; gap: 12px; line-height: 1.5; }
-  .qnum { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; background: #F4F4F5; color: #71717A; font-size: 13px; font-weight: 600; }
+  .qnum { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; background: var(--muted); color: var(--muted-foreground); font-size: 13px; font-weight: 600; }
   .qlabel { font-size: 17px; font-weight: 600; letter-spacing: .01em; }
   .qopts { display: grid; grid-template-columns: repeat(auto-fit,minmax(96px,1fr)); gap: 8px; }
-  .opt { text-align: center; padding: 12px 10px; border: 1px solid #E4E4E7; border-radius: 8px; background: #FFFFFF; color: #09090B; font-family: inherit; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); }
-  .qexplain { font-size: 14px; line-height: 1.6; color: #52525B; background: #FAFAFA; border-radius: 8px; padding: 12px 14px; }
-  .closing { margin: 20px 0 0; grid-column: 1/-1; font-size: 14px; color: #A1A1AA; }
+  .opt { text-align: center; padding: 12px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); color: var(--foreground); font-family: inherit; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); }
+  .qexplain { font-size: 14px; line-height: 1.6; color: var(--muted-foreground); background: var(--muted); border-radius: 8px; padding: 12px 14px; }
+  .closing { margin: 20px 0 0; grid-column: 1/-1; font-size: 14px; color: var(--muted-foreground); }
 
   @media (max-width: 640px) { h1.title { font-size: 34px; } }
 </style>
 </head>
 <body>
-<a href="index.html" id="tv-home" aria-label="Về trang chủ" style="position:fixed;top:14px;left:14px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:1px solid #E4E4E7;border-radius:999px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#18181B;font:500 14px/1 'Be Vietnam Pro',system-ui,sans-serif;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Trang chủ</a>
+<a href="index.html" id="tv-home" aria-label="Về trang chủ" style="position:fixed;top:14px;left:14px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:1px solid var(--border);border-radius:999px;background:var(--card);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:var(--foreground);font:500 14px/1 'Be Vietnam Pro',system-ui,sans-serif;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Trang chủ</a>
 
 <div class="page">
   <div class="wrap col16" style="padding:64px 0 36px">
@@ -143,7 +145,7 @@
 </div>
 
 <script>
-  const accent = '#18181B';
+  const accent = 'var(--foreground)';
   const ONES = ['không', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
   function say(n) {
     if (n < 10) return ONES[n];
@@ -247,8 +249,8 @@
   const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   function pickBtn(on, small, tone) {
     const c = tone || accent;
-    return 'padding:' + (small ? '9px 0' : '11px 0') + ';border:1px solid ' + (on ? c : '#E5E7EB') +
-      ';border-radius:6px;background:' + (on ? c : '#FFFFFF') + ';color:' + (on ? '#FFFFFF' : '#0D1B2A') +
+    return 'padding:' + (small ? '9px 0' : '11px 0') + ';border:1px solid ' + (on ? c : 'var(--border)') +
+      ';border-radius:6px;background:' + (on ? c : 'var(--card)') + ';color:' + (on ? 'var(--card)' : 'var(--foreground)') +
       ';font-family:inherit;font-size:' + (small ? '14px' : '17px') + ';font-weight:' + (on ? '700' : '500') + ';cursor:pointer;transition:all 150ms';
   }
   const ebag = () => '<span class="ebag">' + '<span class="d"></span>'.repeat(10) + '</span>';
@@ -291,10 +293,10 @@
     const { tens, units } = state, num = tens * 10 + units;
     const tensBtns = Array.from({ length: 9 }, (_, i) => {
       const t = i + 1;
-      return '<button type="button" class="pk-t" data-t="' + t + '" style="' + pickBtn(t === tens, false, '#FF6B00') + '">' + t + '</button>';
+      return '<button type="button" class="pk-t" data-t="' + t + '" style="' + pickBtn(t === tens, false, 'var(--primary)') + '">' + t + '</button>';
     }).join('');
     const unitsBtns = Array.from({ length: 10 }, (_, u) =>
-      '<button type="button" class="pk-u" data-u="' + u + '" style="' + pickBtn(u === units, false, '#1660C7') + '">' + u + '</button>').join('');
+      '<button type="button" class="pk-u" data-u="' + u + '" style="' + pickBtn(u === units, false, 'var(--primary)') + '">' + u + '</button>').join('');
     const tensCap = tens + ' túi = ' + tens + ' chục = ' + tens * 10 + ' quả';
     const unitsCap = units === 0 ? 'Không có quả lẻ = 0 đơn vị' : units + ' quả lẻ = ' + units + ' đơn vị';
     const note = units === 0
@@ -307,20 +309,20 @@
         </div>
         <div class="build-grid">
           <div class="bpanel">
-            <div class="bphead t"><span class="bdot" style="background:#FF6B00"></span>Số chục — mỗi túi 10 quả</div>
+            <div class="bphead t"><span class="bdot" style="background:var(--primary)"></span>Số chục — mỗi túi 10 quả</div>
             <div class="bpicks">${tensBtns}</div>
             <div class="bview">${bbag().repeat(tens)}</div>
             <div class="bcap">${tensCap}</div>
           </div>
           <div class="bpanel">
-            <div class="bphead u"><span class="bdot" style="background:#1660C7"></span>Số đơn vị — quả lẻ</div>
+            <div class="bphead u"><span class="bdot" style="background:var(--primary)"></span>Số đơn vị — quả lẻ</div>
             <div class="bpicks">${unitsBtns}</div>
             <div class="bview u">${'<span class="loosedot"></span>'.repeat(units)}</div>
             <div class="bcap">${unitsCap}</div>
           </div>
         </div>
         <div class="bstats">
-          <div class="bstat"><span class="lbl">Cấu tạo</span><span class="med"><span style="color:#FF6B00">${tens} chục</span> và <span style="color:#1660C7">${units} đơn vị</span></span></div>
+          <div class="bstat"><span class="lbl">Cấu tạo</span><span class="med"><span style="color:var(--primary)">${tens} chục</span> và <span style="color:var(--primary)">${units} đơn vị</span></span></div>
           <div class="bstat"><span class="lbl">Viết số</span><span class="big">${num}</span></div>
           <div class="bstat"><span class="lbl">Đọc số</span><span class="med">${cap(say(num))}</span></div>
         </div>
@@ -374,11 +376,11 @@
   function optStyle(qi, oi) {
     const b = bank(), p = store()[qi];
     const correct = b[qi].answer === oi;
-    let bg = '#FFFFFF', bd = '#E4E4E7', fg = '#09090B', fw = '500', extra = '';
+    let bg = 'var(--card)', bd = 'var(--border)', fg = 'var(--foreground)', fw = '500', extra = '';
     if (p !== undefined) {
-      if (correct) { bg = '#F4F4F5'; bd = accent; fg = accent; fw = '600'; }
-      else if (p === oi) { bg = '#FAFAFA'; bd = '#D4D4D8'; fg = '#71717A'; extra = 'text-decoration:line-through;'; }
-      else { fg = '#A1A1AA'; }
+      if (correct) { bg = 'var(--muted)'; bd = accent; fg = accent; fw = '600'; }
+      else if (p === oi) { bg = 'var(--muted)'; bd = 'var(--border)'; fg = 'var(--muted-foreground)'; extra = 'text-decoration:line-through;'; }
+      else { fg = 'var(--muted-foreground)'; }
     }
     return 'border:1px solid ' + bd + ';background:' + bg + ';color:' + fg + ';font-weight:' + fw + ';cursor:' + (p === undefined ? 'pointer' : 'default') + ';' + extra;
   }

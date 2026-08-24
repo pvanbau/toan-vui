@@ -6,84 +6,86 @@
 <title>Tách số trong phạm vi 10 — Toán Vui</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
 <style>
+  :root{ --radius:0.625rem; --background:oklch(1 0 0); --foreground:oklch(0.145 0 0); --card:oklch(1 0 0); --card-foreground:oklch(0.145 0 0); --primary:oklch(0.205 0 0); --primary-foreground:oklch(0.985 0 0); --secondary:oklch(0.97 0 0); --secondary-foreground:oklch(0.205 0 0); --muted:oklch(0.97 0 0); --muted-foreground:oklch(0.556 0 0); --accent:oklch(0.97 0 0); --accent-foreground:oklch(0.205 0 0); --destructive:oklch(0.577 0.245 27.325); --border:oklch(0.922 0 0); --input:oklch(0.922 0 0); --ring:oklch(0.708 0 0); --success:#16A34A; --success-fg:#15803D; --success-bg:rgba(34,197,94,.12); --radius-md:calc(var(--radius) - 2px); --shadow-xs:0 1px 2px 0 rgb(0 0 0 / 0.05); --shadow-sm:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
+  @media (prefers-color-scheme: dark){ :root{ --background:oklch(0.145 0 0); --foreground:oklch(0.985 0 0); --card:oklch(0.205 0 0); --card-foreground:oklch(0.985 0 0); --primary:oklch(0.985 0 0); --primary-foreground:oklch(0.205 0 0); --secondary:oklch(0.269 0 0); --secondary-foreground:oklch(0.985 0 0); --muted:oklch(0.269 0 0); --muted-foreground:oklch(0.708 0 0); --accent:oklch(0.269 0 0); --accent-foreground:oklch(0.985 0 0); --destructive:oklch(0.704 0.191 22.216); --border:oklch(1 0 0 / 10%); --input:oklch(1 0 0 / 15%); --ring:oklch(0.556 0 0); --success:#4ADE80; --success-fg:#4ADE80; --success-bg:rgba(74,222,128,.15); } }
   * { box-sizing: border-box; }
-  body { margin: 0; background: #FFFFFF; color: #09090B; font-family: 'Be Vietnam Pro', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; background: var(--background); color: var(--foreground); font-family: Geist, 'Be Vietnam Pro', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
   .page { min-height: 100vh; padding: 0 24px 96px; }
   .wrap { max-width: 1120px; margin: 0 auto; }
   .col16 { display: flex; flex-direction: column; gap: 16px; }
 
-  .eyebrow { font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: #A1A1AA; }
+  .eyebrow { font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-foreground); }
   h1.title { margin: 0; font-size: 44px; line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; }
-  .intro { margin: 0; max-width: 660px; font-size: 17px; line-height: 1.65; color: #52525B; text-wrap: pretty; }
+  .intro { margin: 0; max-width: 660px; font-size: 17px; line-height: 1.65; color: var(--muted-foreground); text-wrap: pretty; }
 
   .tabbar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 0 auto 36px; }
-  .tabs { display: flex; gap: 4px; padding: 4px; background: #F4F4F5; border-radius: 10px; width: fit-content; }
-  .tab { padding: 9px 18px; border: none; border-radius: 8px; white-space: nowrap; font-family: inherit; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); background: transparent; color: #71717A; }
-  .tab.on { font-weight: 600; background: #FFFFFF; color: #18181B; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
-  .tabhint { font-size: 14px; color: #A1A1AA; }
+  .tabs { display: flex; gap: 4px; padding: 4px; background: var(--muted); border-radius: 10px; width: fit-content; }
+  .tab { padding: 9px 18px; border: none; border-radius: 8px; white-space: nowrap; font-family: inherit; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); background: transparent; color: var(--muted-foreground); }
+  .tab.on { font-weight: 600; background: var(--card); color: var(--foreground); box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+  .tabhint { font-size: 14px; color: var(--muted-foreground); }
 
   .section:not(.on) { display: none !important; }
 
-  .card { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 22px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 22px; }
   .try-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
   .try-head h2 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
-  .try-head .sub { font-size: 14px; color: #71717A; }
+  .try-head .sub { font-size: 14px; color: var(--muted-foreground); }
   .numsel { display: flex; gap: 8px; flex-wrap: wrap; }
-  .numbtn { min-width: 48px; padding: 10px 0; border: 1px solid #E4E4E7; border-radius: 8px; background: #FFFFFF; color: #09090B; font-family: inherit; font-size: 18px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); }
-  .numbtn.on { border-color: #18181B; background: #F4F4F5; color: #18181B; font-weight: 700; }
+  .numbtn { min-width: 48px; padding: 10px 0; border: 1px solid var(--border); border-radius: 8px; background: var(--card); color: var(--foreground); font-family: inherit; font-size: 18px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); }
+  .numbtn.on { border-color: var(--foreground); background: var(--muted); color: var(--foreground); font-weight: 700; }
 
-  .arena { background: #FAFAFA; border-radius: 10px; padding: 28px 24px; display: flex; flex-direction: column; gap: 24px; align-items: center; }
+  .arena { background: var(--muted); border-radius: 10px; padding: 28px 24px; display: flex; flex-direction: column; gap: 24px; align-items: center; }
   .arena-total { display: flex; align-items: center; gap: 10px; }
-  .arena-total .lbl { font-size: 15px; color: #71717A; }
+  .arena-total .lbl { font-size: 15px; color: var(--muted-foreground); }
   .arena-total .val { font-size: 40px; font-weight: 700; line-height: 1; }
   .dots { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; max-width: 520px; }
-  .slider { width: min(440px,100%); accent-color: #FF6B00; cursor: pointer; }
+  .slider { width: min(440px,100%); accent-color: var(--primary); cursor: pointer; }
   .parts { display: grid; grid-template-columns: 1fr auto 1fr; gap: 18px; align-items: center; width: min(520px,100%); }
-  .partbox { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .partbox .lbl { font-size: 13px; color: #A1A1AA; }
+  .partbox { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .partbox .lbl { font-size: 13px; color: var(--muted-foreground); }
   .partbox .val { font-size: 34px; font-weight: 700; line-height: 1; }
-  .parts .and { font-size: 24px; font-weight: 600; color: #A1A1AA; text-align: center; }
+  .parts .and { font-size: 24px; font-weight: 600; color: var(--muted-foreground); text-align: center; }
   .sumtext { font-size: 19px; font-weight: 600; letter-spacing: .02em; }
-  .trynote { margin: 0; font-size: 15px; line-height: 1.65; color: #52525B; }
+  .trynote { margin: 0; font-size: 15px; line-height: 1.65; color: var(--muted-foreground); }
 
-  .tip { background: #FAFAFA; border: 1px solid #E4E4E7; border-radius: 12px; padding: 22px 24px; display: flex; flex-direction: column; gap: 10px; }
+  .tip { background: var(--muted); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; display: flex; flex-direction: column; gap: 10px; }
   .tip h3 { margin: 0; font-size: 17px; font-weight: 600; }
-  .tip p { margin: 0; font-size: 15px; line-height: 1.65; color: #52525B; }
-  .tip strong { font-weight: 600; color: #09090B; }
+  .tip p { margin: 0; font-size: 15px; line-height: 1.65; color: var(--muted-foreground); }
+  .tip strong { font-weight: 600; color: var(--foreground); }
 
   .table-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(320px,1fr)); gap: 16px; align-items: start; }
-  .tcard { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .tcard { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
   .tcard-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .tcard-head h3 { margin: 0; font-size: 18px; font-weight: 600; }
-  .tcard-head .cnt { font-size: 13px; color: #A1A1AA; }
-  .trow { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; background: #FAFAFA; border-radius: 8px; padding: 10px 14px; }
+  .tcard-head .cnt { font-size: 13px; color: var(--muted-foreground); }
+  .trow { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; background: var(--muted); border-radius: 8px; padding: 10px 14px; }
   .trow .expr { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .trow .rdots { display: flex; gap: 5px; justify-content: flex-end; flex-wrap: wrap; }
 
-  .panel { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; overflow: hidden; }
-  .phead { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 24px; border-bottom: 1px solid #E4E4E7; flex-wrap: wrap; }
+  .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .phead { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 24px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
   .phead h2 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
-  .phead .sub { font-size: 13px; color: #A1A1AA; }
+  .phead .sub { font-size: 13px; color: var(--muted-foreground); }
   .score { font-size: 14px; font-weight: 600; }
-  .btn-ghost { padding: 0 12px; height: 32px; font-size: 14px; border: none; background: transparent; color: #52525B; font-family: inherit; font-weight: 600; cursor: pointer; border-radius: 8px; }
-  .btn-ghost:hover { background: #F4F4F5; }
+  .btn-ghost { padding: 0 12px; height: 32px; font-size: 14px; border: none; background: transparent; color: var(--muted-foreground); font-family: inherit; font-weight: 600; cursor: pointer; border-radius: 8px; }
+  .btn-ghost:hover { background: var(--muted); }
   .qbody { padding: 8px 24px 24px; display: grid; grid-template-columns: repeat(auto-fill,minmax(320px,1fr)); gap: 4px 28px; }
-  .q { padding: 18px 0; border-bottom: 1px solid #F4F4F5; display: flex; flex-direction: column; gap: 12px; }
+  .q { padding: 18px 0; border-bottom: 1px solid var(--muted); display: flex; flex-direction: column; gap: 12px; }
   .qtext { display: flex; gap: 10px; font-size: 16px; font-weight: 500; line-height: 1.5; }
-  .qnum { color: #A1A1AA; }
+  .qnum { color: var(--muted-foreground); }
   .qopts { display: grid; grid-template-columns: repeat(auto-fit,minmax(96px,1fr)); gap: 8px; }
-  .opt { text-align: center; padding: 12px 10px; border: 1px solid #E4E4E7; border-radius: 8px; background: #FFFFFF; color: #09090B; font-family: inherit; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); }
-  .qexplain { font-size: 14px; line-height: 1.6; color: #52525B; background: #FAFAFA; border-radius: 8px; padding: 12px 14px; }
-  .closing { margin: 20px 0 0; grid-column: 1/-1; font-size: 14px; color: #A1A1AA; }
+  .opt { text-align: center; padding: 12px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); color: var(--foreground); font-family: inherit; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); }
+  .qexplain { font-size: 14px; line-height: 1.6; color: var(--muted-foreground); background: var(--muted); border-radius: 8px; padding: 12px 14px; }
+  .closing { margin: 20px 0 0; grid-column: 1/-1; font-size: 14px; color: var(--muted-foreground); }
 
   @media (max-width: 640px) { h1.title { font-size: 34px; } }
 </style>
 <link rel="icon" type="image/jpeg" href="logo-teacher-b.jpg">
 </head>
 <body>
-<a href="index.html" id="tv-home" aria-label="Về trang chủ" style="position:fixed;top:14px;left:14px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:1px solid #E4E4E7;border-radius:999px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#18181B;font:500 14px/1 'Be Vietnam Pro',system-ui,sans-serif;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Trang chủ</a>
+<a href="index.html" id="tv-home" aria-label="Về trang chủ" style="position:fixed;top:14px;left:14px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:1px solid var(--border);border-radius:999px;background:var(--card);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:var(--foreground);font:500 14px/1 'Be Vietnam Pro',system-ui,sans-serif;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Trang chủ</a>
 
 <div class="page">
   <div class="wrap col16" style="padding:64px 0 36px">
@@ -107,13 +109,13 @@
 </div>
 
 <script>
-  const accent = '#18181B';
+  const accent = 'var(--foreground)';
   const showSwapped = true;
 
   const dot = color => 'width:22px;height:22px;border-radius:999px;display:block;background:' + color;
-  const DOT_L = dot('#FF6B00'), DOT_R = dot('#1660C7');
+  const DOT_L = dot('var(--primary)'), DOT_R = dot('var(--primary)');
   const smallDot = color => 'width:13px;height:13px;border-radius:999px;display:block;background:' + color;
-  const SDOT_L = smallDot('#FF6B00'), SDOT_R = smallDot('#1660C7');
+  const SDOT_L = smallDot('var(--primary)'), SDOT_R = smallDot('var(--primary)');
 
   function shuffleFixed(arr, seed) {
     const a = arr.slice();
@@ -209,9 +211,9 @@
           <div class="dots" id="ts-dots"></div>
           <input type="range" min="1" step="1" class="slider" id="ts-slider">
           <div class="parts">
-            <div class="partbox"><span class="lbl">Phần thứ nhất</span><span class="val" id="ts-left" style="color:#FF6B00"></span></div>
+            <div class="partbox"><span class="lbl">Phần thứ nhất</span><span class="val" id="ts-left" style="color:var(--primary)"></span></div>
             <span class="and">và</span>
-            <div class="partbox"><span class="lbl">Phần thứ hai</span><span class="val" id="ts-right" style="color:#1660C7"></span></div>
+            <div class="partbox"><span class="lbl">Phần thứ hai</span><span class="val" id="ts-right" style="color:var(--primary)"></span></div>
           </div>
           <span class="sumtext" id="ts-sum"></span>
         </div>
@@ -269,11 +271,11 @@
   function optStyle(qi, oi) {
     const p = state.picked[qi];
     const correct = QUIZ[qi].answer === oi;
-    let bg = '#FFFFFF', bd = '#E4E4E7', fg = '#09090B', fw = '500', extra = '';
+    let bg = 'var(--card)', bd = 'var(--border)', fg = 'var(--foreground)', fw = '500', extra = '';
     if (p !== undefined) {
-      if (correct) { bg = '#F4F4F5'; bd = accent; fg = accent; fw = '600'; }
-      else if (p === oi) { bg = '#FAFAFA'; bd = '#D4D4D8'; fg = '#71717A'; extra = 'text-decoration:line-through;'; }
-      else { fg = '#A1A1AA'; }
+      if (correct) { bg = 'var(--muted)'; bd = accent; fg = accent; fw = '600'; }
+      else if (p === oi) { bg = 'var(--muted)'; bd = 'var(--border)'; fg = 'var(--muted-foreground)'; extra = 'text-decoration:line-through;'; }
+      else { fg = 'var(--muted-foreground)'; }
     }
     return 'border:1px solid ' + bd + ';background:' + bg + ';color:' + fg + ';font-weight:' + fw + ';cursor:' + (p === undefined ? 'pointer' : 'default') + ';' + extra;
   }
