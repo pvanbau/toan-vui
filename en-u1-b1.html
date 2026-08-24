@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Riddle: What am I? — Unit 1 Bài 1 — Toán Vui</title>
+<link rel="icon" type="image/jpeg" href="logo-teacher-b.jpg">
+<link rel="apple-touch-icon" href="logo-teacher-b.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --radius: 0.625rem;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --border: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --success: #16A34A;
+    --success-fg: #15803D;
+    --success-br: #86EFAC;
+    --success-bg: #F0FDF4;
+    --destructive: #DC2626;
+    --destructive-fg: #B91C1C;
+    --destructive-br: #FCA5A5;
+    --destructive-bg: #FEF2F2;
+    --radius-md: calc(var(--radius) - 2px);
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: oklch(0.145 0 0);
+      --foreground: oklch(0.985 0 0);
+      --card: oklch(0.205 0 0);
+      --card-foreground: oklch(0.985 0 0);
+      --primary: oklch(0.985 0 0);
+      --primary-foreground: oklch(0.205 0 0);
+      --secondary: oklch(0.269 0 0);
+      --secondary-foreground: oklch(0.985 0 0);
+      --muted: oklch(0.269 0 0);
+      --muted-foreground: oklch(0.708 0 0);
+      --accent: oklch(0.269 0 0);
+      --accent-foreground: oklch(0.985 0 0);
+      --border: oklch(1 0 0 / 10%);
+      --ring: oklch(0.556 0 0);
+      --success: #4ADE80;
+      --success-fg: #86EFAC;
+      --success-br: #166534;
+      --success-bg: rgba(34,197,94,.14);
+      --destructive: #F87171;
+      --destructive-fg: #FCA5A5;
+      --destructive-br: #7F1D1D;
+      --destructive-bg: rgba(248,113,113,.14);
+    }
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; background: var(--background); color: var(--foreground); font-family: Geist, 'Be Vietnam Pro', Inter, ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #app { min-height: 100vh; padding: 0 24px 96px; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1200px; margin: 0 auto; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-sm); }
+  .h2 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+  .sub { font-size: 14px; color: var(--muted-foreground); }
+  .tabs { display: flex; gap: 4px; padding: 4px; background: var(--muted); border-radius: var(--radius); width: fit-content; flex-wrap: wrap; }
+  .tab { padding: 8px 14px; border: none; border-radius: var(--radius-md); white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); background: transparent; color: var(--muted-foreground); }
+  .tab.on { background: var(--card); color: var(--foreground); font-weight: 600; box-shadow: var(--shadow-xs); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<a href="tieng-anh.html" id="tv-home" aria-label="Về mục lục" style="position:fixed;top:14px;left:14px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--foreground);font:500 14px/1 Geist,'Be Vietnam Pro',system-ui,sans-serif;text-decoration:none;box-shadow:var(--shadow-sm)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Mục lục</a>
+
+<div id="app"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+  const RATE = 0.85, ACCENT = 'en-US', SHOW_VI = true;
+
+  const GLOSS = {
+    come: ["(v) đến, xuất hiện", "come in + màu sắc/kích cỡ = có (nhiều màu, nhiều cỡ)"],
+    in: ["(prep) trong, bằng", "trong cụm come in many colors"],
+    many: ["(adj) nhiều", "đứng trước danh từ đếm được số nhiều"],
+    different: ["(adj) khác, khác nhau", ""],
+    colors: ["(n) các màu sắc", "số nhiều của color"],
+    some: ["(det) một số", "some of my friends = một số bạn của tôi"],
+    of: ["(prep) của", ""],
+    friends: ["(n) các người bạn", "trong câu đố = các bông hoa khác"],
+    red: ["(adj) màu đỏ", ""],
+    pink: ["(adj) màu hồng", ""],
+    white: ["(adj) màu trắng", ""],
+    beautiful: ["(adj) xinh đẹp", "very beautiful = rất đẹp"],
+    smell: ["(v) có mùi, tỏa mùi", "sau smell là TÍNH TỪ: I smell nice."],
+    nice: ["(adj) dễ chịu, thơm", "smell nice = có mùi thơm"],
+    give: ["(v) tặng, cho", "give me to somebody = tặng tôi cho ai"],
+    love: ["(n) tình yêu; người yêu", "your love = người yêu của bạn"],
+    as: ["(prep) như, như là", "as a present = như một món quà"],
+    present: ["(n) món quà", ""],
+    careful: ["(adj) cẩn thận", "Be careful! = Hãy cẩn thận!"],
+    hurt: ["(v) làm đau", "hurt you = làm bạn đau"],
+    with: ["(prep) với, bằng", "with my thorns = bằng gai của tôi"],
+    thorns: ["(n) những cái gai", "số nhiều của thorn"],
+    am: ["(v) là", "I am / What am I?"],
+    what: ["(wh) cái gì", "What am I? = Tôi là gì?"]
+  };
+  const LINES = [
+    ["I come in many different colors.", "Tôi có nhiều màu sắc khác nhau."],
+    ["Some of my friends are red, pink or white.", "Một số bạn của tôi màu đỏ, hồng hoặc trắng."],
+    ["I am very beautiful.", "Tôi rất đẹp."],
+    ["I smell nice.", "Tôi có mùi thơm."],
+    ["You give me to your love as a present.", "Bạn tặng tôi cho người yêu như một món quà."],
+    ["But be careful!", "Nhưng hãy cẩn thận!"],
+    ["I can hurt you with my thorns.", "Tôi có thể làm bạn đau bằng những chiếc gai của tôi."],
+    ["What am I?", "Tôi là gì?"]
+  ];
+  const VOCAB = [
+    ["come in", "(v)", "tới, xuất hiện (với màu sắc, kích cỡ…)"],
+    ["some of", "(det)", "một số"],
+    ["as", "(prep)", "như, như là"],
+    ["with", "(prep)", "với, bằng"],
+    ["different", "(adj)", "khác, khác nhau"],
+    ["smell", "(v)", "có mùi, tỏa mùi"],
+    ["present", "(n)", "món quà"],
+    ["thorn", "(n)", "gai"],
+    ["love", "(n)", "tình yêu; người yêu"],
+    ["careful", "(adj)", "cẩn thận"],
+    ["hurt", "(v)", "làm đau"]
+  ];
+  const CLUES = [
+    ["Manh mối 1 · màu sắc", "I come in many different colors.", "Tôi có nhiều màu.",
+     "Cả ba đáp án đều nhiều màu → chưa loại được gì. Cầu vồng, hoa hồng, bút chì màu đều nhiều màu."],
+    ["Manh mối 2 · mùi", "I smell nice.", "Tôi có mùi thơm.",
+     "Cầu vồng không có mùi. Bút chì màu cũng không thơm. → Loại ① cầu vồng, ③ bút chì màu."],
+    ["Manh mối 3 · món quà", "You give me to your love as a present.", "Bạn tặng tôi cho người yêu.",
+     "Không ai tặng cầu vồng được. Hoa là món quà tặng người yêu → rất khớp với ② hoa hồng."],
+    ["Manh mối 4 · nguy hiểm", "I can hurt you with my thorns.", "Tôi có thể làm bạn đau bằng gai.",
+     "Chỉ cây có GAI mới làm đau. Hoa hồng có gai → đáp án là ② a rose."]
+  ];
+  const OPTIONS = [
+    ["①", "a rainbow", "cầu vồng", false, "Cầu vồng nhiều màu thật, nhưng nó không có mùi thơm, không tặng được và không có gai."],
+    ["②", "a rose", "hoa hồng", true, "Đúng rồi! Hoa hồng nhiều màu (red, pink, white), thơm (smell nice), là món quà tặng người yêu, và có gai (thorns)."],
+    ["③", "colored pencils", "bút chì màu", false, "Bút chì màu nhiều màu và tặng được, nhưng không thơm và không có gai."]
+  ];
+  const DRILLS = [
+    ["I smell ___ .", ["nice", "nicely"], 0, "Sau smell dùng tính từ: I smell nice."],
+    ["The rose looks ___ .", ["beautiful", "beautifully"], 0, "look + tính từ: looks beautiful."],
+    ["This cake tastes ___ .", ["good", "well"], 0, "taste + tính từ: tastes good."],
+    ["She sings ___ .", ["beautiful", "beautifully"], 1, "sing là động từ thường → dùng trạng từ: sings beautifully."]
+  ];
+  const QUIZ = [
+    ["“thorn” nghĩa là gì?", ["gai", "hoa", "màu sắc"], 0, "thorn (n) = gai."],
+    ["Điền vào chỗ trống: I ___ nice.", ["smell", "smells", "smelling"], 0, "Chủ ngữ I → dùng smell."],
+    ["“as a present” nghĩa là gì?", ["như một món quà", "có mặt ở đây", "vào lúc này"], 0, "as = như; present (n) = món quà."],
+    ["Đáp án của câu đố là bút chì màu — đúng hay sai?", ["Sai", "Đúng"], 0, "Sai. Đáp án là a rose (hoa hồng) vì có mùi thơm và có gai."],
+    ["Câu nào viết đúng?", ["The flower smells nice.", "The flower smells nicely."], 0, "smell + tính từ."]
+  ];
+  const norm = w => w.toLowerCase().replace(/[^a-z]/g, "");
+
+  const HINTS = {
+    read: 'Bấm vào từ để nghe và xem nghĩa',
+    words: '11 từ trong khung Help',
+    clues: 'Suy luận như một thám tử',
+    answer: 'Ba lựa chọn — chỉ một đúng',
+    grammar: 'smell / look / taste + tính từ',
+    quiz: 'Kiểm tra lại cả bài'
+  };
+  const TABS = [
+    { k: 'read', label: '1. Đọc câu đố' },
+    { k: 'words', label: '2. Từ vựng' },
+    { k: 'clues', label: '3. Tìm manh mối' },
+    { k: 'answer', label: '4. Chọn đáp án' },
+    { k: 'grammar', label: '5. smell + tính từ' },
+    { k: 'quiz', label: 'Bài tập' }
+  ];
+
+  const state = { tab: 'read', word: 'smell', showGloss: true, clue: 1, opt: null, drill: {}, quiz: {} };
+
+  function speak(text) {
+    try {
+      const s = window.speechSynthesis; if (!s) return;
+      s.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = ACCENT; u.rate = RATE; s.speak(u);
+    } catch (e) {}
+  }
+
+  function cardStyle(on, ok) {
+    const border = ok === true ? 'var(--success)' : ok === false ? 'var(--destructive)' : on ? 'var(--foreground)' : 'var(--border)';
+    const bg = ok === true ? 'var(--success-bg)' : ok === false ? 'var(--destructive-bg)' : 'var(--card)';
+    return 'text-align:left;padding:18px;border:1px solid ' + border + ';border-radius:12px;background:' + bg +
+      ';font-family:inherit;cursor:pointer;display:flex;flex-direction:column;gap:8px;box-shadow:' + (on ? '0 0 0 3px color-mix(in oklch, var(--foreground) 12%, transparent)' : 'none');
+  }
+  function pillStyle(tone) {
+    const border = tone === 'ok' ? 'var(--success)' : tone === 'no' ? 'var(--destructive)' : 'var(--border)';
+    const bg = tone === 'ok' ? 'var(--success-bg)' : tone === 'no' ? 'var(--destructive-bg)' : 'var(--card)';
+    const color = tone === 'ok' ? 'var(--success-fg)' : tone === 'no' ? 'var(--destructive-fg)' : 'var(--foreground)';
+    return 'padding:9px 16px;border:1px solid ' + border + ';border-radius:var(--radius-md);background:' + bg + ';color:' + color + ';font-family:inherit;font-size:15px;font-weight:600;cursor:pointer';
+  }
+
+  /* ---------------- HEADER + TABBAR ---------------- */
+  function headerHTML() {
+    return `
+      <div class="wrap" style="padding:56px 0 28px;display:flex;flex-direction:column;gap:14px">
+        <span style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-foreground)">Level 1 · Unit 1 · Bài 1</span>
+        <h1 style="margin:0;font-size:42px;line-height:1.12;font-weight:700;letter-spacing:-0.02em">Riddle: “I smell nice… What am I?”</h1>
+        <p style="margin:0;max-width:760px;font-size:16px;line-height:1.65;color:var(--muted-foreground);text-wrap:pretty">Em đọc câu đố, bấm vào <strong style="font-weight:600;color:var(--foreground)">từng từ</strong> để nghe và xem nghĩa, tìm <strong style="font-weight:600;color:var(--foreground)">manh mối (clues)</strong> rồi chọn đáp án đúng.</p>
+      </div>`;
+  }
+  function tabbarHTML() {
+    const btns = TABS.map(t => `<button type="button" class="tab${state.tab === t.k ? ' on' : ''}" data-tab="${t.k}">${t.label}</button>`).join('');
+    return `<div class="wrap" style="margin-bottom:28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap"><div class="tabs">${btns}</div><span class="sub">${esc(HINTS[state.tab])}</span></div>`;
+  }
+
+  /* ---------------- TAB 1: ĐỌC ---------------- */
+  function readHTML() {
+    const lines = LINES.map(([en, vi], li) => {
+      const words = en.split(' ').map((t, wi) => {
+        const k = norm(t), known = !!GLOSS[k], on = known && state.word === k;
+        const st = 'margin-right:6px;padding:2px 4px;border:none;border-radius:5px;font-family:inherit;font-size:19px;line-height:1.7;font-weight:' + (on ? '700' : '500') +
+          ';background:' + (on ? 'var(--primary)' : 'transparent') + ';color:' + (on ? 'var(--primary-foreground)' : known ? 'var(--foreground)' : 'var(--muted-foreground)') + ';cursor:' + (known ? 'pointer' : 'default');
+        return `<button type="button" data-word="${k}" data-say="${esc(t.replace(/[^A-Za-z' ]/g, ''))}" data-known="${known ? 1 : 0}" style="${st}">${esc(t)}</button>`;
+      }).join('');
+      const vi_ = SHOW_VI ? `<span style="padding-left:36px;font-size:14px;line-height:1.6;color:var(--muted-foreground)">${esc(vi)}</span>` : '';
+      return `<div style="display:flex;flex-direction:column;gap:6px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--muted)">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <button type="button" data-line="${li}" style="flex:none;width:26px;height:26px;margin-top:2px;border:1px solid var(--border);border-radius:6px;background:var(--card);color:var(--foreground);font-size:12px;cursor:pointer">▶</button>
+          <div style="display:flex;flex-wrap:wrap;gap:2px 0">${words}</div>
+        </div>${vi_}</div>`;
+    }).join('');
+
+    const g = GLOSS[state.word] || ['', ''];
+    const pickedVi = g[0] ? '' : 'Bấm một từ đậm trong câu đố';
+
+    return `
+      <div class="wrap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start">
+        <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:18px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <h2 class="h2">The riddle</h2>
+            <button type="button" id="read-all" style="padding:8px 14px;border:1px solid var(--primary);border-radius:var(--radius-md);background:var(--primary);color:var(--primary-foreground);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">▶ Nghe cả bài</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">${lines}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card" style="overflow:hidden">
+            <div style="padding:12px 16px;background:var(--muted);border-bottom:1px solid var(--border);font-size:14px;font-weight:600">Từ em vừa bấm</div>
+            <div style="padding:22px 16px;display:flex;flex-direction:column;gap:10px;min-height:150px">
+              <span style="font-size:30px;font-weight:700;letter-spacing:-0.01em">${esc(state.word)}</span>
+              <span style="font-size:15px;font-weight:600;color:var(--muted-foreground)">${esc(g[0])}</span>
+              <span style="font-size:16px;line-height:1.6;color:var(--foreground)">${esc(pickedVi)}</span>
+              <span style="font-size:14px;line-height:1.6;color:var(--muted-foreground)">${esc(g[1])}</span>
+            </div>
+          </div>
+          <div class="card" style="padding:20px;display:flex;flex-direction:column;gap:10px">
+            <h3 style="margin:0;font-size:15px;font-weight:600">Mẹo đọc câu đố</h3>
+            <span style="font-size:14px;line-height:1.7;color:var(--muted-foreground)">Câu đố dùng <strong style="font-weight:600;color:var(--foreground)">“I”</strong> — đồ vật tự kể về mình. Em hãy tìm các câu tả <strong style="font-weight:600;color:var(--foreground)">màu sắc</strong>, <strong style="font-weight:600;color:var(--foreground)">mùi</strong>, <strong style="font-weight:600;color:var(--foreground)">công dụng</strong> và <strong style="font-weight:600;color:var(--foreground)">điểm nguy hiểm</strong>. Chỉ một đáp án khớp cả bốn.</span>
+          </div>
+        </div>
+      </div>`;
+  }
+  function bindRead() {
+    document.querySelectorAll('[data-word]').forEach(b => b.onclick = () => {
+      if (b.dataset.known === '1') state.word = b.dataset.word;
+      speak(b.dataset.say);
+      if (b.dataset.known === '1') { $('tab-content').innerHTML = readHTML(); bindRead(); }
+    });
+    document.querySelectorAll('[data-line]').forEach(b => b.onclick = () => speak(LINES[+b.dataset.line][0]));
+    $('read-all').onclick = () => speak(LINES.map(l => l[0]).join(' '));
+  }
+
+  /* ---------------- TAB 2: TỪ VỰNG ---------------- */
+  function wordsHTML() {
+    const vocab = VOCAB.map(([en, pos, vi], i) => {
+      const viStyle = 'font-size:15px;line-height:1.5;color:' + (state.showGloss ? 'var(--foreground)' : 'var(--muted-foreground)');
+      const viText = state.showGloss ? vi : '• • •';
+      return `<button type="button" data-vocab="${i}" style="text-align:left;padding:16px;border:1px solid var(--border);border-radius:10px;background:var(--card);font-family:inherit;cursor:pointer;display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:18px;font-weight:700;color:var(--foreground)">${esc(en)}</span>
+        <span style="font-size:13px;font-weight:600;color:var(--muted-foreground)">${esc(pos)}</span>
+        <span style="${viStyle}">${esc(viText)}</span>
+      </button>`;
+    }).join('');
+    return `
+      <div class="wrap" style="display:flex;flex-direction:column;gap:16px">
+        <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:18px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <h2 class="h2">Help — 11 từ cần nhớ</h2>
+            <span class="sub">Bấm thẻ để nghe từ. Bấm "Ẩn nghĩa" để tự kiểm tra.</span>
+          </div>
+          <button type="button" id="toggle-gloss" style="align-self:flex-start;padding:8px 14px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--card);color:var(--foreground);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">${state.showGloss ? 'Ẩn nghĩa để tự kiểm tra' : 'Hiện nghĩa tiếng Việt'}</button>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px">${vocab}</div>
+        </div>
+      </div>`;
+  }
+  function bindWords() {
+    document.querySelectorAll('[data-vocab]').forEach(b => b.onclick = () => speak(VOCAB[+b.dataset.vocab][0]));
+    $('toggle-gloss').onclick = () => { state.showGloss = !state.showGloss; $('tab-content').innerHTML = wordsHTML(); bindWords(); };
+  }
+
+  /* ---------------- TAB 3: MANH MỐI ---------------- */
+  function cluesHTML() {
+    const cards = CLUES.map(([tag, en, vi], i) =>
+      `<button type="button" data-clue="${i}" style="${cardStyle(state.clue === i)}">
+        <span style="font-size:13px;font-weight:600;color:var(--muted-foreground)">${esc(tag)}</span>
+        <span style="font-size:16px;font-weight:600;line-height:1.5">${esc(en)}</span>
+        <span style="font-size:14px;line-height:1.6;color:var(--muted-foreground)">${esc(vi)}</span>
+      </button>`).join('');
+    return `
+      <div class="wrap" style="display:flex;flex-direction:column;gap:16px">
+        <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:18px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <h2 class="h2">4 manh mối trong câu đố</h2>
+            <span class="sub">Bấm từng manh mối để xem nó loại bỏ đáp án nào</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">${cards}</div>
+          <div style="padding:16px;border:1px solid var(--border);border-radius:10px;background:var(--muted);display:flex;flex-direction:column;gap:6px;min-height:96px">
+            <span style="font-size:14px;font-weight:600">${esc(CLUES[state.clue][0])}</span>
+            <span style="font-size:15px;line-height:1.7;color:var(--muted-foreground)">${esc(CLUES[state.clue][3])}</span>
+          </div>
+        </div>
+      </div>`;
+  }
+  function bindClues() {
+    document.querySelectorAll('[data-clue]').forEach(b => b.onclick = () => { state.clue = +b.dataset.clue; speak(CLUES[state.clue][1]); $('tab-content').innerHTML = cluesHTML(); bindClues(); });
+  }
+
+  /* ---------------- TAB 4: CHỌN ĐÁP ÁN ---------------- */
+  function answerHTML() {
+    const cards = OPTIONS.map(([num, en, vi, correct], i) => {
+      const chosen = state.opt === i, ok = chosen ? correct : null;
+      const mark = chosen ? (correct ? '✓ Đúng' : '✕ Chưa đúng') : ' ';
+      const markStyle = 'font-size:14px;font-weight:700;color:' + (chosen ? (correct ? 'var(--success-fg)' : 'var(--destructive-fg)') : 'transparent');
+      return `<button type="button" data-opt="${i}" style="${cardStyle(chosen, ok)}">
+        <span style="font-size:13px;font-weight:700;color:var(--muted-foreground)">${num}</span>
+        <span style="font-size:22px;font-weight:700;letter-spacing:-0.01em">${esc(en)}</span>
+        <span style="font-size:14px;color:var(--muted-foreground)">${esc(vi)}</span>
+        <span style="${markStyle}">${mark}</span>
+      </button>`;
+    }).join('');
+    const picked = state.opt !== null ? OPTIONS[state.opt] : null;
+    const v = picked ? { t: picked[3] ? 'Chính xác — a rose' : 'Thử lại nhé', b: picked[4], ok: picked[3] }
+      : { t: 'Chọn một đáp án', b: 'Nhớ 4 manh mối: nhiều màu, thơm, tặng được, có gai.', ok: null };
+    const vBorder = v.ok === true ? 'var(--success-br)' : v.ok === false ? 'var(--destructive-br)' : 'var(--border)';
+    const vBg = v.ok === true ? 'var(--success-bg)' : v.ok === false ? 'var(--destructive-bg)' : 'var(--muted)';
+    const vColor = v.ok === true ? 'var(--success-fg)' : v.ok === false ? 'var(--destructive-fg)' : 'var(--muted-foreground)';
+    return `
+      <div class="wrap" style="display:flex;flex-direction:column;gap:16px">
+        <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <h2 class="h2">Đâu là đáp án đúng cho câu đố trên?</h2>
+            <span class="sub">Chọn một trong ba</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px">${cards}</div>
+          <div style="padding:16px;border-radius:10px;display:flex;flex-direction:column;gap:6px;border:1px solid ${vBorder};background:${vBg};color:${vColor}">
+            <span style="font-size:15px;font-weight:600">${esc(v.t)}</span>
+            <span style="font-size:15px;line-height:1.7">${esc(v.b)}</span>
+          </div>
+        </div>
+      </div>`;
+  }
+  function bindAnswer() {
+    document.querySelectorAll('[data-opt]').forEach(b => b.onclick = () => { state.opt = +b.dataset.opt; speak(OPTIONS[state.opt][1]); $('tab-content').innerHTML = answerHTML(); bindAnswer(); });
+  }
+
+  /* ---------------- TAB 5: NGỮ PHÁP ---------------- */
+  function grammarHTML() {
+    const drills = DRILLS.map(([q, opts, ans, note], i) => {
+      const chosen = state.drill[i], done = chosen !== undefined, right = chosen === ans;
+      const btns = opts.map((label, j) => `<button type="button" data-drill="${i}" data-j="${j}" data-say="${esc(q.replace('___', label))}" style="${pillStyle(done && chosen === j ? (right ? 'ok' : 'no') : null)}">${esc(label)}</button>`).join('');
+      const feed = done ? (right ? '✓ ' + note : '✕ ' + note) : ' ';
+      const feedStyle = 'font-size:14px;line-height:1.6;min-height:20px;color:' + (done ? (right ? 'var(--success-fg)' : 'var(--destructive-fg)') : 'transparent');
+      return `<div style="display:flex;flex-direction:column;gap:8px;padding:14px;border:1px solid var(--border);border-radius:10px;background:var(--muted)">
+        <span style="font-size:16px;font-weight:600">${esc(q)}</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">${btns}</div>
+        <span style="${feedStyle}">${esc(feed)}</span>
+      </div>`;
+    }).join('');
+    return `
+      <div class="wrap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start">
+        <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:16px">
+          <h2 class="h2">Dòng 2: <em style="font-style:normal;color:var(--foreground)">I smell nice.</em></h2>
+          <span style="font-size:15px;line-height:1.7;color:var(--muted-foreground)">Nghĩa: <strong style="font-weight:600;color:var(--foreground)">Tôi có mùi thơm.</strong> Sau động từ <strong style="font-weight:600;color:var(--foreground)">smell</strong> em dùng <strong style="font-weight:600;color:var(--foreground)">tính từ</strong> (nice), <em style="font-style:normal;color:var(--destructive-fg);font-weight:600">không</em> dùng trạng từ (nicely).</span>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--success-br);border-radius:10px;background:var(--success-bg)">
+              <span style="font-size:16px;font-weight:700;color:var(--success-fg)">✓</span>
+              <span style="font-size:16px;font-weight:600">I smell nice.</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--destructive-br);border-radius:10px;background:var(--destructive-bg)">
+              <span style="font-size:16px;font-weight:700;color:var(--destructive-fg)">✕</span>
+              <span style="font-size:16px;font-weight:600;text-decoration:line-through">I smell nicely.</span>
+            </div>
+          </div>
+          <span style="font-size:14px;line-height:1.7;color:var(--muted-foreground)">Các động từ cảm giác khác cũng vậy: <strong style="font-weight:600;color:var(--foreground)">look, taste, sound, feel</strong>.</span>
+        </div>
+        <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:14px">
+          <h3 style="margin:0;font-size:16px;font-weight:600">Luyện nhanh: chọn từ đúng</h3>
+          ${drills}
+        </div>
+      </div>`;
+  }
+  function bindGrammar() {
+    document.querySelectorAll('[data-drill]').forEach(b => b.onclick = () => { state.drill = { ...state.drill, [b.dataset.drill]: +b.dataset.j }; speak(b.dataset.say); $('tab-content').innerHTML = grammarHTML(); bindGrammar(); });
+  }
+
+  /* ---------------- TAB 6: BÀI TẬP ---------------- */
+  function quizHTML() {
+    const answered = Object.keys(state.quiz).length;
+    const correct = Object.keys(state.quiz).filter(k => state.quiz[k] === QUIZ[k][2]).length;
+    const score = answered === 0 ? 'Chưa làm câu nào' : 'Đã làm ' + answered + '/5 · đúng ' + correct;
+    const items = QUIZ.map(([q, opts, ans, note], i) => {
+      const chosen = state.quiz[i], done = chosen !== undefined, right = chosen === ans;
+      const btns = opts.map((label, j) => `<button type="button" data-quiz="${i}" data-j="${j}" style="${pillStyle(done && chosen === j ? (right ? 'ok' : 'no') : null)}">${esc(label)}</button>`).join('');
+      const feed = done ? (right ? '✓ Đúng. ' + note : '✕ Chưa đúng. ' + note) : ' ';
+      const feedStyle = 'font-size:14px;line-height:1.6;min-height:20px;color:' + (done ? (right ? 'var(--success-fg)' : 'var(--destructive-fg)') : 'transparent');
+      return `<div style="display:flex;flex-direction:column;gap:10px;padding:16px;border:1px solid var(--border);border-radius:10px">
+        <span style="font-size:16px;font-weight:600;line-height:1.55">${esc(q)}</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">${btns}</div>
+        <span style="${feedStyle}">${esc(feed)}</span>
+      </div>`;
+    }).join('');
+    return `
+      <div class="wrap" style="display:flex;flex-direction:column;gap:16px">
+        <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <h2 class="h2">Bài tập — 5 câu</h2>
+              <span class="sub">${esc(score)}</span>
+            </div>
+            <button type="button" id="quiz-reset" style="padding:8px 14px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--card);color:var(--foreground);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">Làm lại</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">${items}</div>
+        </div>
+      </div>`;
+  }
+  function bindQuiz() {
+    document.querySelectorAll('[data-quiz]').forEach(b => b.onclick = () => { state.quiz = { ...state.quiz, [b.dataset.quiz]: +b.dataset.j }; $('tab-content').innerHTML = quizHTML(); bindQuiz(); });
+    $('quiz-reset').onclick = () => { state.quiz = {}; $('tab-content').innerHTML = quizHTML(); bindQuiz(); };
+  }
+
+  /* ---------------- RENDER ---------------- */
+  function setTab(t) { state.tab = t; render(); }
+  function render() {
+    $('app').innerHTML = headerHTML() + tabbarHTML() + '<div id="tab-content"></div>';
+    document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => setTab(b.dataset.tab));
+    const c = $('tab-content');
+    if (state.tab === 'read') { c.innerHTML = readHTML(); bindRead(); }
+    else if (state.tab === 'words') { c.innerHTML = wordsHTML(); bindWords(); }
+    else if (state.tab === 'clues') { c.innerHTML = cluesHTML(); bindClues(); }
+    else if (state.tab === 'answer') { c.innerHTML = answerHTML(); bindAnswer(); }
+    else if (state.tab === 'grammar') { c.innerHTML = grammarHTML(); bindGrammar(); }
+    else { c.innerHTML = quizHTML(); bindQuiz(); }
+  }
+  render();
+</script>
+</body>
+</html>
