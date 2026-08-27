@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bí quyết tìm đường của loài vật — Unit 1 Bài 3 — Toán Vui</title>
+<link rel="icon" type="image/jpeg" href="logo-teacher-b.jpg">
+<link rel="apple-touch-icon" href="logo-teacher-b.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --radius: 0.625rem;
+    --background: oklch(1 0 0); --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0); --card-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0); --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0); --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0); --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0); --accent-foreground: oklch(0.205 0 0);
+    --border: oklch(0.922 0 0); --ring: oklch(0.708 0 0);
+    --success: #16A34A; --success-fg: #15803D; --success-br: #86EFAC; --success-bg: #F0FDF4;
+    --destructive: #DC2626; --destructive-fg: #B91C1C; --destructive-br: #FCA5A5; --destructive-bg: #FEF2F2;
+    --radius-md: calc(var(--radius) - 2px);
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: oklch(0.145 0 0); --foreground: oklch(0.985 0 0);
+      --card: oklch(0.205 0 0); --card-foreground: oklch(0.985 0 0);
+      --primary: oklch(0.985 0 0); --primary-foreground: oklch(0.205 0 0);
+      --secondary: oklch(0.269 0 0); --secondary-foreground: oklch(0.985 0 0);
+      --muted: oklch(0.269 0 0); --muted-foreground: oklch(0.708 0 0);
+      --accent: oklch(0.269 0 0); --accent-foreground: oklch(0.985 0 0);
+      --border: oklch(1 0 0 / 10%); --ring: oklch(0.556 0 0);
+      --success: #4ADE80; --success-fg: #86EFAC; --success-br: #166534; --success-bg: rgba(34,197,94,.14);
+      --destructive: #F87171; --destructive-fg: #FCA5A5; --destructive-br: #7F1D1D; --destructive-bg: rgba(248,113,113,.14);
+    }
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; background: var(--background); color: var(--foreground); font-family: Geist, 'Be Vietnam Pro', Inter, ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #app { min-height: 100vh; padding: 0 24px 96px; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1200px; margin: 0 auto; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-sm); }
+  .h2 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+  .sub { font-size: 14px; color: var(--muted-foreground); }
+  .tabs { display: flex; gap: 4px; padding: 4px; background: var(--muted); border-radius: var(--radius); width: fit-content; flex-wrap: wrap; }
+  .tab { padding: 8px 14px; border: none; border-radius: var(--radius-md); white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(.4,0,.2,1); background: transparent; color: var(--muted-foreground); }
+  .tab.on { background: var(--card); color: var(--foreground); font-weight: 600; box-shadow: var(--shadow-xs); }
+</style>
+</head>
+<body>
+
+<a href="tieng-anh.html" id="tv-home" aria-label="Về mục lục" style="position:fixed;top:14px;left:14px;z-index:2147483647;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--foreground);font:500 14px/1 Geist,'Be Vietnam Pro',system-ui,sans-serif;text-decoration:none;box-shadow:var(--shadow-sm)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Mục lục</a>
+
+<div id="app"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+  const RATE = 0.85, ACCENT = 'en-US', SHOW_VI = true;
+
+  const GLOSS = {
+    bees: ["(n) những con ong", "số nhiều của bee"], fly: ["(v) bay", ""],
+    all: ["(det) tất cả, khắp", "all over = khắp"], over: ["(prep) khắp, trên", "all over the fields = khắp cánh đồng"],
+    the: ["(art) (mạo từ)", ""], fields: ["(n) cánh đồng", "số nhiều của field"], but: ["(conj) nhưng", ""],
+    they: ["(pron) chúng, họ", ""], never: ["(adv) không bao giờ", "they never get lost = chúng không bao giờ bị lạc"],
+    get: ["(v) trở nên, bị", "sau get là TÍNH TỪ: get lost, get tired"], lost: ["(adj) bị lạc", ""],
+    how: ["(wh) làm thế nào", "How can they do that? = Làm sao chúng làm được vậy?"], can: ["(v) có thể", ""],
+    do: ["(v) làm", ""], that: ["(pron) điều đó", "thay cho việc vừa nói ở câu trước"],
+    it: ["(pron) điều đó, nó", "thay cho việc vừa nói ở câu trước"], use: ["(v) dùng, sử dụng", "use A as B = dùng A như B"],
+    sun: ["(n) mặt trời", "the sun"], as: ["(prep) như, như là", "as their guide = như người dẫn đường của chúng"],
+    their: ["(det) của chúng", ""], guide: ["(n) người dẫn đường, sự chỉ dẫn", ""],
+    turtles: ["(n) những con rùa", "rùa sống dưới nước"], swim: ["(v) bơi", ""], oceans: ["(n) các đại dương", "số nhiều của ocean"],
+    always: ["(adv) luôn luôn", ""], know: ["(v) biết", ""], way: ["(n) đường, cách", "the way back = đường trở về"],
+    back: ["(adv) trở về", ""], earths: ["(n) của trái đất", "the earth's = của trái đất"],
+    magnetic: ["(adj) thuộc nam châm, có từ tính", "magnetic field = từ trường"], field: ["(n) trường; phạm vi ảnh hưởng", "magnetic field = từ trường"]
+  };
+  const LINES = [
+    ["Bees fly all over the fields.", "Ong bay khắp các cánh đồng."],
+    ["But they never get lost.", "Nhưng chúng không bao giờ bị lạc."],
+    ["How can they do that?", "Làm sao chúng làm được điều đó?"],
+    ["They use the sun as their guide.", "Chúng dùng mặt trời như người dẫn đường."],
+    ["Turtles swim all over the oceans.", "Rùa bơi khắp các đại dương."],
+    ["But they always know the way back.", "Nhưng chúng luôn biết đường trở về."],
+    ["How can they do it?", "Làm sao chúng làm được điều đó?"],
+    ["They use the earth's magnetic field as their guide.", "Chúng dùng từ trường trái đất như người dẫn đường."]
+  ];
+  const VOCAB = [
+    ["all over the field", "", "trên khắp cánh đồng"], ["never", "(adv)", "không bao giờ"],
+    ["guide", "(n)", "người dẫn đường, sự chỉ dẫn"], ["turtle", "(n)", "con rùa (sống dưới nước)"],
+    ["ocean", "(n)", "đại dương"], ["the way back", "", "đường trở về"], ["earth", "(n)", "trái đất"],
+    ["magnetic", "(adj)", "thuộc nam châm, có từ tính"], ["field", "(n)", "phạm vi ảnh hưởng (trường)"]
+  ];
+  const ANIMALS = [["(1)", "bee", "con ong", 1], ["(2)", "turtle", "con rùa", 0]];
+  const GUIDES = [["từ trường trái đất", "the earth's magnetic field"], ["mặt trời", "the sun"], ["biển", "the sea"]];
+  const REFS = [
+    ["(1) that", "How can they do that?", "Câu trước: “Bees fly all over the fields. But they never get lost.”",
+     ["bay khắp cánh đồng mà không bao giờ bị lạc", "dùng mặt trời làm la bàn", "bơi khắp đại dương"], 0,
+     "that = việc ong bay khắp cánh đồng mà không bị lạc."],
+    ["(2) it", "How can they do it?", "Câu trước: “Turtles swim all over the oceans. But they always know the way back.”",
+     ["bơi khắp đại dương mà vẫn biết đường về", "bay khắp cánh đồng", "dùng từ trường trái đất"], 0,
+     "it = việc rùa bơi khắp đại dương mà vẫn luôn biết đường trở về."]
+  ];
+  const DRILLS = [
+    ["They never get ___ .", ["lost", "lostly"], 0, "get + tính từ: get lost."],
+    ["After running, I get ___ .", ["tired", "tiredly"], 0, "get + tính từ: get tired."],
+    ["They use the sun ___ their guide.", ["as", "for"], 0, "use A as B = dùng A như B."],
+    ["Bees fly all ___ the fields.", ["over", "in"], 0, "all over = khắp."]
+  ];
+  const QUIZ = [
+    ["Ong dùng gì để dẫn đường?", ["mặt trời", "từ trường trái đất", "ngôi sao"], 0, "They use the sun as their guide."],
+    ["Rùa dùng gì để dẫn đường?", ["từ trường trái đất", "mặt trời", "sóng biển"], 0, "They use the earth's magnetic field."],
+    ["“the way back” nghĩa là gì?", ["đường trở về", "phía sau lưng", "cách làm lại"], 0, "the way back = đường trở về."],
+    ["Câu nào viết đúng?", ["They never get lost.", "They never get lostly."], 0, "get + tính từ."],
+    ["“as their guide” nghĩa là gì?", ["như người dẫn đường của chúng", "cùng với người dẫn đường", "vì người dẫn đường"], 0, "as = như."]
+  ];
+  const norm = w => w.toLowerCase().replace(/[^a-z]/g, "");
+
+  const HINTS = { read: 'Bấm vào từ để nghe và xem nghĩa', words: '9 từ trong khung Help', match: 'bee ↔ ? · turtle ↔ ?', ref: 'Từ thay thế trỏ về câu trước', grammar: 'get + tính từ · as = như', quiz: 'Kiểm tra lại cả bài' };
+  const TABS = [
+    { k: 'read', label: '1. Đọc bài' }, { k: 'words', label: '2. Từ vựng' },
+    { k: 'match', label: '3. Nối con vật ↔ la bàn' }, { k: 'ref', label: '4. that / it thay cho gì?' },
+    { k: 'grammar', label: '5. get + tính từ' }, { k: 'quiz', label: 'Bài tập' }
+  ];
+
+  const state = { tab: 'read', word: 'get', showGloss: true, animal: null, guess: {}, ref: {}, drill: {}, quiz: {} };
+
+  function speak(text) { try { const s = window.speechSynthesis; if (!s) return; s.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = ACCENT; u.rate = RATE; s.speak(u); } catch (e) {} }
+
+  function cardStyle(on, ok) {
+    const border = ok === true ? 'var(--success)' : ok === false ? 'var(--destructive)' : on ? 'var(--foreground)' : 'var(--border)';
+    const bg = ok === true ? 'var(--success-bg)' : ok === false ? 'var(--destructive-bg)' : 'var(--card)';
+    return 'text-align:left;padding:18px;border:1px solid ' + border + ';border-radius:12px;background:' + bg + ';font-family:inherit;cursor:pointer;display:flex;flex-direction:column;gap:8px;box-shadow:' + (on ? '0 0 0 3px color-mix(in oklch, var(--foreground) 12%, transparent)' : 'none');
+  }
+  function pillStyle(tone) {
+    const border = tone === 'ok' ? 'var(--success)' : tone === 'no' ? 'var(--destructive)' : 'var(--border)';
+    const bg = tone === 'ok' ? 'var(--success-bg)' : tone === 'no' ? 'var(--destructive-bg)' : 'var(--card)';
+    const color = tone === 'ok' ? 'var(--success-fg)' : tone === 'no' ? 'var(--destructive-fg)' : 'var(--foreground)';
+    return 'text-align:left;padding:10px 16px;border:1px solid ' + border + ';border-radius:var(--radius-md);background:' + bg + ';color:' + color + ';font-family:inherit;font-size:15px;font-weight:600;cursor:pointer';
+  }
+
+  function headerHTML() {
+    return `<div class="wrap" style="padding:56px 0 28px;display:flex;flex-direction:column;gap:14px">
+      <span style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-foreground)">Level 1 · Unit 1 · Bài 3 · Thế giới động vật</span>
+      <h1 style="margin:0;font-size:42px;line-height:1.12;font-weight:700;letter-spacing:-0.02em">Bí quyết tìm đường của loài vật</h1>
+      <p style="margin:0;max-width:780px;font-size:16px;line-height:1.65;color:var(--muted-foreground);text-wrap:pretty">Ong bay khắp cánh đồng, rùa bơi khắp đại dương — vậy vì sao chúng <strong style="font-weight:600;color:var(--foreground)">không bao giờ bị lạc</strong>? Bấm vào từng từ để nghe và xem nghĩa.</p>
+    </div>`;
+  }
+  function tabbarHTML() {
+    const btns = TABS.map(t => `<button type="button" class="tab${state.tab === t.k ? ' on' : ''}" data-tab="${t.k}">${t.label}</button>`).join('');
+    return `<div class="wrap" style="margin-bottom:28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap"><div class="tabs">${btns}</div><span class="sub">${esc(HINTS[state.tab])}</span></div>`;
+  }
+
+  /* TAB 1: ĐỌC */
+  function readHTML() {
+    const lines = LINES.map(([en, vi], li) => {
+      const words = en.split(' ').map(t => {
+        const k = norm(t), known = !!GLOSS[k], on = known && state.word === k;
+        const st = 'margin-right:6px;padding:2px 4px;border:none;border-radius:5px;font-family:inherit;font-size:19px;line-height:1.7;font-weight:' + (on ? '700' : '500') + ';background:' + (on ? 'var(--primary)' : 'transparent') + ';color:' + (on ? 'var(--primary-foreground)' : known ? 'var(--foreground)' : 'var(--muted-foreground)') + ';cursor:' + (known ? 'pointer' : 'default');
+        return `<button type="button" data-word="${k}" data-say="${esc(t.replace(/[^A-Za-z' ]/g, ''))}" data-known="${known ? 1 : 0}" style="${st}">${esc(t)}</button>`;
+      }).join('');
+      const vi_ = SHOW_VI ? `<span style="padding-left:36px;font-size:14px;line-height:1.6;color:var(--muted-foreground)">${esc(vi)}</span>` : '';
+      return `<div style="display:flex;flex-direction:column;gap:6px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--muted)"><div style="display:flex;align-items:flex-start;gap:10px"><button type="button" data-line="${li}" style="flex:none;width:26px;height:26px;margin-top:2px;border:1px solid var(--border);border-radius:6px;background:var(--card);color:var(--foreground);font-size:12px;cursor:pointer">▶</button><div style="display:flex;flex-wrap:wrap;gap:2px 0">${words}</div></div>${vi_}</div>`;
+    }).join('');
+    const g = GLOSS[state.word] || ['', ''];
+    const pickedVi = g[0] ? '' : 'Bấm một từ đậm trong bài đọc';
+    return `<div class="wrap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start">
+      <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><h2 class="h2">The reading</h2><button type="button" id="read-all" style="padding:8px 14px;border:1px solid var(--primary);border-radius:var(--radius-md);background:var(--primary);color:var(--primary-foreground);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">▶ Nghe cả bài</button></div>
+        <div style="display:flex;flex-direction:column;gap:12px">${lines}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card" style="overflow:hidden"><div style="padding:12px 16px;background:var(--muted);border-bottom:1px solid var(--border);font-size:14px;font-weight:600">Từ em vừa bấm</div><div style="padding:22px 16px;display:flex;flex-direction:column;gap:10px;min-height:150px"><span style="font-size:30px;font-weight:700;letter-spacing:-0.01em">${esc(state.word)}</span><span style="font-size:15px;font-weight:600;color:var(--muted-foreground)">${esc(g[0])}</span><span style="font-size:16px;line-height:1.6;color:var(--foreground)">${esc(pickedVi)}</span><span style="font-size:14px;line-height:1.6;color:var(--muted-foreground)">${esc(g[1])}</span></div></div>
+        <div class="card" style="padding:20px;display:flex;flex-direction:column;gap:10px"><h3 style="margin:0;font-size:15px;font-weight:600">Bài này có 2 cặp câu giống nhau</h3><span style="font-size:14px;line-height:1.7;color:var(--muted-foreground)">Cả hai đoạn đều theo khuôn: <strong style="font-weight:600;color:var(--foreground)">con vật đi rất xa</strong> → <strong style="font-weight:600;color:var(--foreground)">nhưng không bị lạc</strong> → <strong style="font-weight:600;color:var(--foreground)">How can they do that/it?</strong> → <strong style="font-weight:600;color:var(--foreground)">They use … as their guide.</strong> Nhận ra khuôn này là hiểu cả bài.</span></div>
+      </div>
+    </div>`;
+  }
+  function bindRead() {
+    document.querySelectorAll('[data-word]').forEach(b => b.onclick = () => { if (b.dataset.known === '1') state.word = b.dataset.word; speak(b.dataset.say); if (b.dataset.known === '1') { $('tab-content').innerHTML = readHTML(); bindRead(); } });
+    document.querySelectorAll('[data-line]').forEach(b => b.onclick = () => speak(LINES[+b.dataset.line][0]));
+    $('read-all').onclick = () => speak(LINES.map(l => l[0]).join(' '));
+  }
+
+  /* TAB 2: TỪ VỰNG */
+  function wordsHTML() {
+    const vocab = VOCAB.map(([en, pos, vi], i) => {
+      const viStyle = 'font-size:15px;line-height:1.5;color:' + (state.showGloss ? 'var(--foreground)' : 'var(--muted-foreground)');
+      return `<button type="button" data-vocab="${i}" style="text-align:left;padding:16px;border:1px solid var(--border);border-radius:10px;background:var(--card);font-family:inherit;cursor:pointer;display:flex;flex-direction:column;gap:6px"><span style="font-size:18px;font-weight:700;color:var(--foreground)">${esc(en)}</span><span style="font-size:13px;font-weight:600;color:var(--muted-foreground)">${esc(pos)}</span><span style="${viStyle}">${esc(state.showGloss ? vi : '• • •')}</span></button>`;
+    }).join('');
+    return `<div class="wrap" style="display:flex;flex-direction:column;gap:16px"><div class="card" style="padding:24px;display:flex;flex-direction:column;gap:18px"><div style="display:flex;flex-direction:column;gap:4px"><h2 class="h2">Help — 9 từ cần nhớ</h2><span class="sub">Bấm thẻ để nghe từ. Bấm "Ẩn nghĩa" để tự kiểm tra.</span></div><button type="button" id="toggle-gloss" style="align-self:flex-start;padding:8px 14px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--card);color:var(--foreground);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">${state.showGloss ? 'Ẩn nghĩa để tự kiểm tra' : 'Hiện nghĩa tiếng Việt'}</button><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px">${vocab}</div></div></div>`;
+  }
+  function bindWords() {
+    document.querySelectorAll('[data-vocab]').forEach(b => b.onclick = () => speak(VOCAB[+b.dataset.vocab][0]));
+    $('toggle-gloss').onclick = () => { state.showGloss = !state.showGloss; $('tab-content').innerHTML = wordsHTML(); bindWords(); };
+  }
+
+  /* TAB 3: NỐI */
+  function matchHTML() {
+    const animals = ANIMALS.map(([num, en, vi, ans], i) => {
+      const guessed = state.guess[i], ok = guessed === undefined ? null : guessed === ans;
+      const mark = guessed === undefined ? ' ' : (ok ? '✓ ' + GUIDES[guessed][0] : '✕ ' + GUIDES[guessed][0]);
+      const markStyle = 'font-size:14px;font-weight:700;color:' + (guessed === undefined ? 'transparent' : ok ? 'var(--success-fg)' : 'var(--destructive-fg)');
+      return `<button type="button" data-animal="${i}" style="${cardStyle(state.animal === i, ok)}"><span style="font-size:13px;font-weight:700;color:var(--muted-foreground)">${num}</span><span style="font-size:20px;font-weight:700">${esc(en)}</span><span style="font-size:14px;color:var(--muted-foreground)">${esc(vi)}</span><span style="${markStyle}">${esc(mark)}</span></button>`;
+    }).join('');
+    const guides = GUIDES.map(([vi, en], j) => `<button type="button" data-guide="${j}" style="${cardStyle(false, null)}"><span style="font-size:17px;font-weight:600">${esc(vi)}</span><span style="font-size:14px;color:var(--muted-foreground)">${esc(en)}</span></button>`).join('');
+    const gCount = Object.keys(state.guess).length, gRight = Object.keys(state.guess).filter(k => state.guess[k] === ANIMALS[k][3]).length;
+    const m = state.animal === null && gCount === 0 ? { t: 'Chọn một con vật trước', b: 'Bấm bee hoặc turtle, rồi bấm cách tìm đường của nó.', ok: null }
+      : gCount < 2 ? { t: 'Đã nối ' + gCount + '/2', b: state.animal === null ? 'Chọn tiếp con vật còn lại.' : 'Giờ chọn "la bàn" của nó bên phải.', ok: null }
+      : gRight === 2 ? { t: 'Đúng cả hai!', b: 'Ong dùng mặt trời (the sun); rùa dùng từ trường trái đất (the earth magnetic field). "biển" là bẫy — bài đọc không nói rùa dùng biển để dẫn đường.', ok: true }
+      : { t: 'Đúng ' + gRight + '/2 — thử lại', b: 'Đọc lại dòng 4 và dòng 8: "They use … as their guide." Bấm lại con vật để chọn phương án khác.', ok: false };
+    const mBorder = m.ok === true ? 'var(--success-br)' : m.ok === false ? 'var(--destructive-br)' : 'var(--border)';
+    const mBg = m.ok === true ? 'var(--success-bg)' : m.ok === false ? 'var(--destructive-bg)' : 'var(--muted)';
+    const mColor = m.ok === true ? 'var(--success-fg)' : m.ok === false ? 'var(--destructive-fg)' : 'var(--muted-foreground)';
+    return `<div class="wrap" style="display:flex;flex-direction:column;gap:16px"><div class="card" style="padding:24px;display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;flex-direction:column;gap:4px"><h2 class="h2">Bài 1 — Nối hình con vật với cách tìm đường tương ứng</h2><span class="sub">Chọn một con vật bên trái, rồi chọn "la bàn" của nó bên phải</span></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:12px"><span style="font-size:13px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted-foreground)">Con vật</span>${animals}</div>
+        <div style="display:flex;flex-direction:column;gap:12px"><span style="font-size:13px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted-foreground)">Chúng dùng gì để dẫn đường</span>${guides}</div>
+      </div>
+      <div style="padding:16px;border-radius:10px;display:flex;flex-direction:column;gap:6px;border:1px solid ${mBorder};background:${mBg};color:${mColor}"><span style="font-size:15px;font-weight:600">${esc(m.t)}</span><span style="font-size:15px;line-height:1.7">${esc(m.b)}</span></div>
+    </div></div>`;
+  }
+  function bindMatch() {
+    document.querySelectorAll('[data-animal]').forEach(b => b.onclick = () => { state.animal = +b.dataset.animal; speak(ANIMALS[state.animal][1]); $('tab-content').innerHTML = matchHTML(); bindMatch(); });
+    document.querySelectorAll('[data-guide]').forEach(b => b.onclick = () => { if (state.animal === null) return; const j = +b.dataset.guide; state.guess = { ...state.guess, [state.animal]: j }; speak(GUIDES[j][1]); $('tab-content').innerHTML = matchHTML(); bindMatch(); });
+  }
+
+  /* TAB 4: THAM CHIẾU */
+  function refHTML() {
+    const items = REFS.map(([tag, sentence, before, opts, ans, note], i) => {
+      const chosen = state.ref[i], done = chosen !== undefined, right = chosen === ans;
+      const btns = opts.map((label, j) => `<button type="button" data-ref="${i}" data-j="${j}" style="${pillStyle(done && chosen === j ? (right ? 'ok' : 'no') : null)}">${esc(label)}</button>`).join('');
+      const feed = done ? (right ? '✓ ' + note : '✕ Chưa đúng. ' + note) : ' ';
+      const feedStyle = 'font-size:14px;line-height:1.6;min-height:20px;color:' + (done ? (right ? 'var(--success-fg)' : 'var(--destructive-fg)') : 'transparent');
+      return `<div style="display:flex;flex-direction:column;gap:12px;padding:18px;border:1px solid var(--border);border-radius:10px"><span style="font-size:14px;font-weight:600;color:var(--muted-foreground)">${esc(tag)}</span><span style="font-size:18px;font-weight:600;line-height:1.6">${esc(sentence)}</span><span style="font-size:14px;color:var(--muted-foreground);line-height:1.6">${esc(before)}</span><div style="display:flex;flex-direction:column;gap:8px">${btns}</div><span style="${feedStyle}">${esc(feed)}</span></div>`;
+    }).join('');
+    return `<div class="wrap" style="display:flex;flex-direction:column;gap:16px"><div class="card" style="padding:24px;display:flex;flex-direction:column;gap:22px"><div style="display:flex;flex-direction:column;gap:4px"><h2 class="h2">Bài 2 — <em style="font-style:normal">that</em> và <em style="font-style:normal">it</em> thay thế cho điều gì?</h2><span class="sub">Mẹo: từ thay thế luôn trỏ về việc vừa nói ở câu ngay trước</span></div>${items}</div></div>`;
+  }
+  function bindRef() {
+    document.querySelectorAll('[data-ref]').forEach(b => b.onclick = () => { state.ref = { ...state.ref, [b.dataset.ref]: +b.dataset.j }; $('tab-content').innerHTML = refHTML(); bindRef(); });
+  }
+
+  /* TAB 5: NGỮ PHÁP */
+  function grammarHTML() {
+    const drills = DRILLS.map(([q, opts, ans, note], i) => {
+      const chosen = state.drill[i], done = chosen !== undefined, right = chosen === ans;
+      const btns = opts.map((label, j) => `<button type="button" data-drill="${i}" data-j="${j}" data-say="${esc(q.replace('___', label))}" style="${pillStyle(done && chosen === j ? (right ? 'ok' : 'no') : null)}">${esc(label)}</button>`).join('');
+      const feed = done ? (right ? '✓ ' + note : '✕ ' + note) : ' ';
+      const feedStyle = 'font-size:14px;line-height:1.6;min-height:20px;color:' + (done ? (right ? 'var(--success-fg)' : 'var(--destructive-fg)') : 'transparent');
+      return `<div style="display:flex;flex-direction:column;gap:8px;padding:14px;border:1px solid var(--border);border-radius:10px;background:var(--muted)"><span style="font-size:16px;font-weight:600">${esc(q)}</span><div style="display:flex;gap:8px;flex-wrap:wrap">${btns}</div><span style="${feedStyle}">${esc(feed)}</span></div>`;
+    }).join('');
+    return `<div class="wrap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start">
+      <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:16px">
+        <h2 class="h2">Dòng 1: <em style="font-style:normal;color:var(--foreground)">They never get lost.</em></h2>
+        <span style="font-size:15px;line-height:1.7;color:var(--muted-foreground)">Nghĩa: <strong style="font-weight:600;color:var(--foreground)">Chúng không bao giờ bị lạc.</strong> Sau động từ <strong style="font-weight:600;color:var(--foreground)">get</strong> là <strong style="font-weight:600;color:var(--foreground)">tính từ</strong> — get lost, get tired, get hungry (= trở nên …).</span>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--success-br);border-radius:10px;background:var(--success-bg)"><span style="font-size:16px;font-weight:700;color:var(--success-fg)">✓</span><span style="font-size:16px;font-weight:600">They never get lost.</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--destructive-br);border-radius:10px;background:var(--destructive-bg)"><span style="font-size:16px;font-weight:700;color:var(--destructive-fg)">✕</span><span style="font-size:16px;font-weight:600;text-decoration:line-through">They never get lostly.</span></div>
+        </div>
+        <div style="padding:14px;border:1px solid var(--border);border-radius:10px;background:var(--muted);display:flex;flex-direction:column;gap:6px"><span style="font-size:14px;font-weight:600">Dòng 2: <em style="font-style:normal">as their guide</em></span><span style="font-size:14px;line-height:1.7;color:var(--muted-foreground)">Giới từ <strong style="font-weight:600;color:var(--foreground)">as</strong> mang nghĩa "như". <em style="font-style:normal">They use the sun as their guide.</em> = Chúng dùng mặt trời <strong style="font-weight:600;color:var(--foreground)">như</strong> người dẫn đường.</span></div>
+      </div>
+      <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:14px"><h3 style="margin:0;font-size:16px;font-weight:600">Luyện nhanh: chọn từ đúng</h3>${drills}</div>
+    </div>`;
+  }
+  function bindGrammar() {
+    document.querySelectorAll('[data-drill]').forEach(b => b.onclick = () => { state.drill = { ...state.drill, [b.dataset.drill]: +b.dataset.j }; speak(b.dataset.say); $('tab-content').innerHTML = grammarHTML(); bindGrammar(); });
+  }
+
+  /* TAB 6: BÀI TẬP */
+  function quizHTML() {
+    const answered = Object.keys(state.quiz).length, correct = Object.keys(state.quiz).filter(k => state.quiz[k] === QUIZ[k][2]).length;
+    const score = answered === 0 ? 'Chưa làm câu nào' : 'Đã làm ' + answered + '/5 · đúng ' + correct;
+    const items = QUIZ.map(([q, opts, ans, note], i) => {
+      const chosen = state.quiz[i], done = chosen !== undefined, right = chosen === ans;
+      const btns = opts.map((label, j) => `<button type="button" data-quiz="${i}" data-j="${j}" style="${pillStyle(done && chosen === j ? (right ? 'ok' : 'no') : null)}">${esc(label)}</button>`).join('');
+      const feed = done ? (right ? '✓ Đúng. ' + note : '✕ Chưa đúng. ' + note) : ' ';
+      const feedStyle = 'font-size:14px;line-height:1.6;min-height:20px;color:' + (done ? (right ? 'var(--success-fg)' : 'var(--destructive-fg)') : 'transparent');
+      return `<div style="display:flex;flex-direction:column;gap:10px;padding:16px;border:1px solid var(--border);border-radius:10px"><span style="font-size:16px;font-weight:600;line-height:1.55">${esc(q)}</span><div style="display:flex;gap:8px;flex-wrap:wrap">${btns}</div><span style="${feedStyle}">${esc(feed)}</span></div>`;
+    }).join('');
+    return `<div class="wrap" style="display:flex;flex-direction:column;gap:16px"><div class="card" style="padding:24px;display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:4px"><h2 class="h2">Bài tập — 5 câu</h2><span class="sub">${esc(score)}</span></div><button type="button" id="quiz-reset" style="padding:8px 14px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--card);color:var(--foreground);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">Làm lại</button></div>
+      <div style="display:flex;flex-direction:column;gap:12px">${items}</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap"><a href="en-u1-b2.html" style="padding:12px 18px;border:1px solid var(--border);border-radius:10px;background:var(--card);font-size:15px;font-weight:600;color:var(--foreground)">← Bài 2</a><a href="tieng-anh.html" style="padding:12px 18px;border:1px solid var(--border);border-radius:10px;background:var(--card);font-size:15px;font-weight:600;color:var(--foreground)">Mục lục</a></div>
+    </div></div>`;
+  }
+  function bindQuiz() {
+    document.querySelectorAll('[data-quiz]').forEach(b => b.onclick = () => { state.quiz = { ...state.quiz, [b.dataset.quiz]: +b.dataset.j }; $('tab-content').innerHTML = quizHTML(); bindQuiz(); });
+    $('quiz-reset').onclick = () => { state.quiz = {}; $('tab-content').innerHTML = quizHTML(); bindQuiz(); };
+  }
+
+  function setTab(t) { state.tab = t; render(); }
+  function render() {
+    $('app').innerHTML = headerHTML() + tabbarHTML() + '<div id="tab-content"></div>';
+    document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => setTab(b.dataset.tab));
+    const c = $('tab-content');
+    if (state.tab === 'read') { c.innerHTML = readHTML(); bindRead(); }
+    else if (state.tab === 'words') { c.innerHTML = wordsHTML(); bindWords(); }
+    else if (state.tab === 'match') { c.innerHTML = matchHTML(); bindMatch(); }
+    else if (state.tab === 'ref') { c.innerHTML = refHTML(); bindRef(); }
+    else if (state.tab === 'grammar') { c.innerHTML = grammarHTML(); bindGrammar(); }
+    else { c.innerHTML = quizHTML(); bindQuiz(); }
+  }
+  render();
+</script>
+</body>
+</html>
